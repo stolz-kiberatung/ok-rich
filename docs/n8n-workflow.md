@@ -38,7 +38,7 @@ is readable in the Code node. The secret lives only in the n8n environment, neve
 ## 2. Import and wire up
 
 1. n8n → **Workflows → Import from file** → `n8n/okrich-stripe.json`.
-2. Open **Email owner**: replace `owner@example.com` with your address.
+2. Open **Email owner**: check the recipient (preset: thx@ok-rich.com).
 3. Open both Gmail nodes and select your **Gmail OAuth2** credential (Google Workspace account
    that will also send the photos). Create it under Credentials if missing; Google Cloud OAuth
    client with the Gmail send scope, redirect URL from n8n.

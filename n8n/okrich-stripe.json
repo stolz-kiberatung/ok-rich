@@ -29,7 +29,7 @@
     },
     {
       "parameters": {
-        "sendTo": "owner@example.com",
+        "sendTo": "thx@ok-rich.com",
         "subject": "=💸 {{ $json.amount }} {{ $json.currency }} — someone wants your thumbs-up",
         "emailType": "text",
         "message": "=New order on ok-rich.com\n\nAmount:  {{ $json.amount }} {{ $json.currency }}\nBuyer:   {{ $json.email }}\nMessage: {{ $json.message || '(none)' }}\nSession: {{ $json.sessionId }}\nPaid at: {{ $json.created }}\n\nTake the photo and email it to the buyer within 7 days. Delete this mail afterwards.",
