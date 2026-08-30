@@ -131,3 +131,8 @@ title/description/OG image, A/B testing.
 DOMAIN, SITE_TITLE, OWNER_NAME, CURRENCY, MIN_AMOUNT, STRIPE_PAYMENT_LINK_URL,
 UMAMI_SCRIPT_URL, UMAMI_WEBSITE_ID, WHY_PARAGRAPH. Values come from
 `.env` via `import.meta.env`; build fails if a required one is empty.
+
+## 11. Working files (added 2026-08-30)
+
+Read `HANDOFF.md` first in every session: it holds the current state, what is verified and
+what is open. Phase documents: `spec.md`, `clarify.md`, `plan.md`, `tasks.md`, `analysis.md`.

@@ -75,30 +75,30 @@ prettier, vitest + `@vitest/coverage-v8` (Vitest's own coverage provider, needed
 
 ### Initial composition (design px, stage 1440×900; sizes are CSS widths, heights follow content)
 
-| id                     | x    | y   | w   | rot | notes                                          |
-| ---------------------- | ---- | --- | --- | --- | ---------------------------------------------- |
-| headline               | 400  | 240 | 640 | 0   | fixed, z 1000                                  |
-| cta                    | 440  | 490 | 560 | 0   | fixed, z 900; free corridor 440–1000 × 490–660 |
-| trade-offer            | 80   | 70  | 300 | 0   | thumb image 200×250                            |
-| kid                    | 1090 | 60  | 260 | 0   | kid image 210×280                              |
-| why                    | 110  | 610 | 380 | 0   |                                                |
-| footer                 | 1000 | 730 | 360 | 0   |                                                |
-| kao-1 `^ ω ^`          | 430  | 110 | –   | −6  |                                                |
-| kao-2 `¯\_(ツ)_/¯`     | 960  | 150 | –   | 4   |                                                |
-| kao-3 `(¬_¬)`          | 1060 | 560 | –   | −3  |                                                |
-| kao-4 `{ ^-^ }`        | 560  | 720 | –   | 7   |                                                |
-| nametag                | 700  | 120 | 220 | −4  | above headline                                 |
-| pricetag               | 1020 | 470 | 150 | 8   | right of CTA                                   |
-| legit                  | 250  | 380 | 140 | −9  | between trade-offer and headline               |
-| beachball              | 1340 | 520 | 64  | 0   | inline SVG                                     |
-| folder                 | 40   | 520 | 72  | 5   | inline SVG                                     |
-| paid                   | 1150 | 420 | 120 | −7  | on the kid window's lower edge                 |
-| thumbs                 | 640  | 690 | –   | 3   | below CTA                                      |
-| loading                | 470  | 780 | 200 | −2  |                                                |
-| arrow "you are here →" | 250  | 530 | 170 | 6   | points at the CTA                              |
+| id                     | x    | y   | w   | rot | notes                                     |
+| ---------------------- | ---- | --- | --- | --- | ----------------------------------------- |
+| headline               | 360  | 190 | 720 | 0   | fixed, z 1000                             |
+| cta                    | 440  | 480 | 560 | 0   | fixed, z 900; corridor 440–1000 × 480–755 |
+| trade-offer            | 50   | 70  | 300 | 0   | thumb image 160×200                       |
+| kid                    | 1090 | 60  | 280 | 0   | kid image 210×280                         |
+| why                    | 110  | 610 | 320 | 0   |                                           |
+| footer                 | 1000 | 730 | 400 | 0   |                                           |
+| kao-1 `^ ω ^`          | 430  | 110 | –   | −6  |                                           |
+| kao-2 `¯\_(ツ)_/¯`     | 960  | 130 | –   | 4   |                                           |
+| kao-3 `(¬_¬)`          | 1060 | 560 | –   | −3  |                                           |
+| kao-4 `{ ^-^ }`        | 700  | 800 | –   | 7   |                                           |
+| nametag                | 700  | 90  | 220 | −4  | tucked under the headline's top edge      |
+| pricetag               | 1040 | 505 | 150 | 8   | right of CTA                              |
+| legit                  | 150  | 420 | 140 | −9  | under trade-offer, left of headline       |
+| beachball              | 1340 | 520 | 64  | 0   | inline SVG                                |
+| folder                 | 40   | 520 | 72  | 5   | inline SVG                                |
+| paid                   | 1140 | 330 | 120 | −7  | stamped on the kid photo                  |
+| thumbs                 | 1030 | 640 | –   | 3   | right column below the price tag          |
+| loading                | 470  | 790 | 200 | −2  | below CTA                                 |
+| arrow "you are here →" | 225  | 545 | 170 | 6   | points at the CTA                         |
 
-Verified on paper: no window overlaps another window's content, nothing enters the CTA corridor,
-all elements inside 1440×900. Fine-tuning happens in Phase 4 with 1440 px screenshots.
+Final values after the 1440 px screenshot rounds in Phase 4 (2026-08-30); source of truth is
+`site.config.ts`. No window overlaps another window's content, nothing enters the CTA corridor.
 
 ## 4. Pages
 

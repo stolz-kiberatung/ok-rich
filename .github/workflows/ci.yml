@@ -1,0 +1,120 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Public, non-secret build values so the env validation passes in CI (spec A8).
+  VITE_DOMAIN: okrich.lol
+  VITE_SITE_TITLE: OK RICH
+  VITE_STRIPE_PAYMENT_LINK_URL: https://buy.stripe.com/test_ci_placeholder
+  VITE_WHY_PARAGRAPH: CI build placeholder
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install (npm ci only)
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests with coverage gate
+        run: npm run test:unit
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end and accessibility tests
+        run: npm run test:e2e
+        env:
+          CI: 'true'
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+
+      - name: Dependency audit (high and above)
+        run: npm audit --audit-level=high
+
+      - name: CycloneDX SBOM
+        # No runtime dependencies exist, so the SBOM records the build toolchain (dev deps included).
+        run: npx --yes @cyclonedx/cyclonedx-npm@6 --output-format JSON --output-file sbom.cdx.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.cdx.json
+          retention-days: 30
+
+      - name: Lighthouse (non-blocking on shared runners)
+        run: npm run audit:lighthouse
+        continue-on-error: true
+
+      - name: Upload Lighthouse report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: reports/lighthouse.html
+          if-no-files-found: ignore
+          retention-days: 14
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: >
+          docker build
+          --build-arg VITE_DOMAIN="$VITE_DOMAIN"
+          --build-arg VITE_SITE_TITLE="$VITE_SITE_TITLE"
+          --build-arg VITE_STRIPE_PAYMENT_LINK_URL="$VITE_STRIPE_PAYMENT_LINK_URL"
+          --build-arg VITE_WHY_PARAGRAPH="$VITE_WHY_PARAGRAPH"
+          -t okrich-web:ci .
+
+      - name: Smoke-test the container
+        run: |
+          docker run -d --rm --name okrich-ci -p 8080:8080 --read-only --tmpfs /tmp okrich-web:ci
+          for i in $(seq 1 20); do curl -sf http://localhost:8080/ >/dev/null && break; sleep 1; done
+          curl -sSf -o /dev/null http://localhost:8080/
+          curl -sSf -o /dev/null http://localhost:8080/thanks
+          curl -sSf -o /dev/null http://localhost:8080/terms
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/nope)" = "404"
+          curl -sI http://localhost:8080/ | grep -i "content-security-policy"
+          docker stop okrich-ci
