@@ -1,0 +1,9 @@
+dist
+node_modules
+coverage
+reports
+playwright-report
+test-results
+package-lock.json
+public/og.png
+n8n/*.json
