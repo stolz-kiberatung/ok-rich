@@ -26,7 +26,10 @@ Phases: 0 Constitution → 1 Specify (`spec.md`, `clarify.md`) → 2 Plan
 
 - Code, comments, commits, docs: English.
 - Site copy: English.
-- Legal pages (/impressum, /privacy, /terms): German AND English; German is binding.
+- Legal pages (/impressum, /privacy, /terms): English, following the model of a comparable site
+  (owner decision, 30.08.2026). One exception stays German: the Widerrufsbelehrung on /terms,
+  because § 356 (5) BGB only extinguishes the right of withdrawal if the consumer was instructed
+  in a language they understand. Residual risk noted in analysis.md.
 - Commit messages: Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`).
 
 ## 4. Stack boundaries

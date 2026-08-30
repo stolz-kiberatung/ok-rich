@@ -127,7 +127,7 @@ test.describe('desktop pinboard', () => {
 
   test('a drag that ends over a link does not navigate; a plain click does', async ({ page }) => {
     await page.goto('/');
-    const link = page.locator('[data-pin="footer"] a', { hasText: 'Impressum' });
+    const link = page.locator('[data-pin="footer"] a', { hasText: 'Legal notice' });
     const bar = page.locator('[data-pin="footer"] .bar');
     const barBox = await bar.boundingBox();
     const linkBox = await link.boundingBox();

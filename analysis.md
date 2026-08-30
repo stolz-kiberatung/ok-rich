@@ -115,3 +115,23 @@ User-requested pinboard expansion, implemented and verified with the same gates 
 - Hero sub-line and the whole CTA body are centered (text-wrap: balance on both).
 - Composition rebalanced: certificate into the top strip, counter beside Dad in the bottom band,
   thumbs cluster stamped onto the kid photo. Gates rerun: 34 unit, 29 e2e, Lighthouse 98/100/100.
+
+## v1.6 addendum (2026-08-30, legal pages)
+
+Owner decision after reviewing a comparable site (a German sole trader running an English-only site):
+the legal pages switch from bilingual to **English**, structured like that model (effective date,
+operator and contact, what the service is and is not, payment, refunds, prohibited use, licence,
+liability with the German mandatory carve-outs, governing law).
+
+**One deliberate exception:** the Widerrufsbelehrung on /terms stays German. Reason: § 356 (5) BGB
+only extinguishes the right of withdrawal if the consumer was properly instructed; an instruction
+a German consumer cannot read is attackable, and a defective instruction extends the withdrawal
+period to twelve months and fourteen days. Keeping one German block costs nothing and protects the
+"no refunds after delivery" position that the whole product depends on.
+
+**Residual risk the owner accepts:** for consumers in Germany, an English-only privacy policy and
+legal notice can be challenged (Art. 12 GDPR "clear and plain language"; § 5 DDG "easily
+recognisable" for the addressed public). Same risk comparable sites carry. A lawyer pass is still open.
+
+Contact addresses: ok@ok-rich.com (orders, questions, withdrawal, data-subject requests) and
+complaints@ok-rich.com (complaints, rights notices). This constitution §6 was updated accordingly.
