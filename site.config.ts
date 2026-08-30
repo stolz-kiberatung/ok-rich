@@ -32,7 +32,8 @@ export interface PinElement {
 export const Z_DRAG_START = 30;
 export const Z_DRAG_MAX = 800;
 
-const env = import.meta.env;
+// Playwright and other non-Vite loaders have no import.meta.env; positions must still be importable.
+const env: Partial<ImportMetaEnv> = import.meta.env ?? {};
 
 const umami =
   env.VITE_UMAMI_SCRIPT_URL && env.VITE_UMAMI_WEBSITE_ID
@@ -40,9 +41,9 @@ const umami =
     : null;
 
 export const site = {
-  domain: env.VITE_DOMAIN,
-  url: `https://${env.VITE_DOMAIN}`,
-  title: env.VITE_SITE_TITLE,
+  domain: env.VITE_DOMAIN ?? '',
+  url: `https://${env.VITE_DOMAIN ?? ''}`,
+  title: env.VITE_SITE_TITLE ?? '',
   ownerName: env.VITE_OWNER_NAME ?? 'T',
   currency: env.VITE_CURRENCY ?? 'EUR',
   minAmount: Number(env.VITE_MIN_AMOUNT ?? '5'),
@@ -50,7 +51,7 @@ export const site = {
     .split(',')
     .map((s) => Number(s.trim()))
     .filter((n) => Number.isFinite(n)),
-  stripePaymentLinkUrl: env.VITE_STRIPE_PAYMENT_LINK_URL,
+  stripePaymentLinkUrl: env.VITE_STRIPE_PAYMENT_LINK_URL ?? '',
   umami,
   whyParagraph: env.VITE_WHY_PARAGRAPH ?? '',
 } as const;
