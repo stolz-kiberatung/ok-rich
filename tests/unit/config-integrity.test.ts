@@ -16,7 +16,6 @@ const MOBILE_ORDER = [
   'testimonials',
   'goal',
   'wall',
-  'why',
   'footer',
 ];
 

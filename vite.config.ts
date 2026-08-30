@@ -151,7 +151,6 @@ export default defineConfig(({ mode }) => {
     MIN: `${env.VITE_MIN_AMOUNT ?? '5'} ${currencySymbol(env.VITE_CURRENCY ?? 'EUR')}`,
     MIN_SHORT: `${currencySymbol(env.VITE_CURRENCY ?? 'EUR')}${env.VITE_MIN_AMOUNT ?? '5'}`,
     STRIPE_URL: escapeAttr(env.VITE_STRIPE_PAYMENT_LINK_URL ?? ''),
-    WHY: env.VITE_WHY_PARAGRAPH ?? '',
     SHARE_URL: shareUrl(`https://${env.VITE_DOMAIN}/`),
     GOAL_PERCENT: goalPercent(env),
   };

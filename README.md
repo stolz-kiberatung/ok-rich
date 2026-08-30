@@ -53,16 +53,16 @@ rendered at image build from `nginx/default.conf.template` with the `UMAMI_ORIGI
 
 ## Swapping things
 
-| What                                                      | Where                                                                                                            |
-| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Photos                                                    | drop `public/img/thumb.webp` (4:5) and `public/img/kid.webp` (3:4); the build picks them up, placeholders vanish |
-| Copy                                                      | `index.html` (pinboard), `thanks/index.html`, legal pages under `impressum/`, `privacy/`, `terms/`               |
-| Why paragraph, title, domain, amounts, Stripe link, Umami | `.env`                                                                                                           |
-| Positions, rotation, z-order of the 19 elements           | `elements` in `site.config.ts` (design px on a 1440×900 stage)                                                   |
-| Window widths and typography                              | `src/styles/pinboard.css` (widths), `src/styles/windows.css` (type)                                              |
-| Share text on `/thanks`                                   | `SHARE_TEXT` in `vite.config.ts`                                                                                 |
-| Suggested amount chips                                    | `VITE_SUGGESTED_AMOUNTS` in `.env` (text only; Stripe has the real minimum)                                      |
-| OG image layout                                           | `scripts/og.html`, then `npm run og`                                                                             |
+| What                                                  | Where                                                                                                            |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Photos                                                | drop `public/img/thumb.webp` (4:5) and `public/img/kid.webp` (3:4); the build picks them up, placeholders vanish |
+| Copy                                                  | `index.html` (pinboard), `thanks/index.html`, legal pages under `impressum/`, `privacy/`, `terms/`               |
+| Title, domain, amounts, goal fund, Stripe link, Umami | `.env`                                                                                                           |
+| Positions, rotation, z-order of the 19 elements       | `elements` in `site.config.ts` (design px on a 1440×900 stage)                                                   |
+| Window widths and typography                          | `src/styles/pinboard.css` (widths), `src/styles/windows.css` (type)                                              |
+| Share text on `/thanks`                               | `SHARE_TEXT` in `vite.config.ts`                                                                                 |
+| Suggested amount chips                                | `VITE_SUGGESTED_AMOUNTS` in `.env` (text only; Stripe has the real minimum)                                      |
+| OG image layout                                       | `scripts/og.html`, then `npm run og`                                                                             |
 
 Converting a photo for the board: `node scripts/convert-image.mjs tasks.json` (rotate, crop,
 resize, WebP; see the task JSON shape at the top of the script).

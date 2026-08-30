@@ -10,7 +10,6 @@ interface ImportMetaEnv {
   readonly VITE_STRIPE_PAYMENT_LINK_URL: string;
   readonly VITE_UMAMI_SCRIPT_URL?: string;
   readonly VITE_UMAMI_WEBSITE_ID?: string;
-  readonly VITE_WHY_PARAGRAPH?: string;
 }
 
 interface ImportMeta {

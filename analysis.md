@@ -97,10 +97,21 @@ User-requested pinboard expansion, implemented and verified with the same gates 
   gallery as out of scope; the owner explicitly requested this static, backend-free version.
 - New cards/stickers: sticky todo note, certificate of authenticity, dad messenger popup,
   sample polaroid with SOLD stamp, Hot Wheels garage polaroid (generated with Nano Banana via
-  Higgsfield), taped Paris Hilton meme, retro visitor counter (clock-derived, no storage).
+  Higgsfield), taped "life advice" meme card, retro visitor counter (clock-derived, no storage).
 - Removed on request: price tag, beach ball, folder icon, "you are here" arrow.
 - CTA spacing reworked; mobile now shows the six content cards (`.m-show`) between the windows.
-- Legal flags: the meme card uses a doctored photo of a real person (§ 22 KUG risk, owner
-  informed and chose to keep it — easy to remove); testimonials and counter are unmistakably
-  satirical, so no misleading-advertising concern.
+- Legal flags: testimonials and counter are unmistakably satirical, so no misleading-advertising
+  concern. v1.2 replaced the initial real-person meme photo with an AI-generated fictional
+  lookalike (same shirt text), resolving the § 22 KUG risk.
 - New tool: `scripts/convert-image.mjs` (rotate/crop/resize → WebP via Chromium canvas).
+
+## v1.2 addendum (2026-08-30, evening)
+
+- Meme card photo replaced by a Nano-Banana-generated fictional lookalike (same pose and
+  "STOP BEING POOR" shirt) — no real person on the page any more.
+- The why window (placeholder paragraph) was removed; its slot went to a third FAQ entry
+  ("I paid more than the rest…", full answer verbatim from the owner). was removed from env, config and types.
+- Third testimonial replaced ("the guy who sold me the domain").
+- Hero sub-line and the whole CTA body are centered (text-wrap: balance on both).
+- Composition rebalanced: certificate into the top strip, counter beside Dad in the bottom band,
+  thumbs cluster stamped onto the kid photo. Gates rerun: 34 unit, 29 e2e, Lighthouse 98/100/100.

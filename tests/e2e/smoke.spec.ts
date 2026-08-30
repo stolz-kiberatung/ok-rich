@@ -106,18 +106,18 @@ test.describe('desktop pinboard', () => {
 
   test('a dragged window ends on top and is clamped to the stage', async ({ page }) => {
     await page.goto('/');
-    await dragByBar(page, 'why', 40, 40);
-    const zWhy = await page
-      .locator('[data-pin="why"]')
+    await dragByBar(page, 'wall', 40, 40);
+    const zWall = await page
+      .locator('[data-pin="wall"]')
       .evaluate((el) => Number((el as HTMLElement).style.zIndex));
     const zKid = await page
       .locator('[data-pin="kid"]')
       .evaluate((el) => Number((el as HTMLElement).style.zIndex));
-    expect(zWhy).toBeGreaterThan(zKid);
+    expect(zWall).toBeGreaterThan(zKid);
     // Fling the window far outside: at least 24 design px must remain visible.
-    await dragByBar(page, 'why', -3000, -3000);
-    const pos = await position(page, 'why');
-    const size = await page.locator('[data-pin="why"]').evaluate((el) => ({
+    await dragByBar(page, 'wall', -3000, -3000);
+    const pos = await position(page, 'wall');
+    const size = await page.locator('[data-pin="wall"]').evaluate((el) => ({
       w: (el as HTMLElement).offsetWidth,
       h: (el as HTMLElement).offsetHeight,
     }));
@@ -195,7 +195,6 @@ test.describe('mobile layout', () => {
       'testimonials',
       'goal',
       'wall',
-      'why',
       'footer',
     ];
     let lastBottom = -1;
