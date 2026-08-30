@@ -10,6 +10,19 @@ import {
   unfitStage,
 } from './pinboard';
 
+// Sports car fund: the bar width comes from the build-time percentage (CSSOM, no inline styles).
+for (const fill of document.querySelectorAll<HTMLElement>('.goal-fill')) {
+  const pct = Math.min(100, Math.max(0, parseFloat(fill.dataset.percent ?? '0')));
+  fill.style.width = `${pct}%`;
+}
+
+// Retro visitor counter: deterministic slow count derived from the clock, no storage, no server.
+const counter = document.getElementById('visitor-count');
+if (counter) {
+  const n = 1287 + Math.floor((Date.now() / 1000 - 1_780_000_000) / 913);
+  counter.textContent = String(Math.max(n, 1288)).padStart(6, '0');
+}
+
 const stage = document.getElementById('stage');
 const wrapper = stage?.parentElement;
 

@@ -49,6 +49,13 @@ export function chipsHtml(list: string, currency: string): string {
     .join('');
 }
 
+/** Sports car fund: real percentage from the raised amount, shown with 4 decimals for comedy. */
+export function goalPercent(env: Env): string {
+  const raised = Number(env.VITE_RAISED_EUR ?? '0') || 0;
+  const goal = Number(env.VITE_CAR_GOAL_EUR ?? '200000') || 200000;
+  return ((raised / goal) * 100).toFixed(4);
+}
+
 /** Prepared text for the "Share on X" link on /thanks. Change the wording here. */
 export const SHARE_TEXT = 'I paid a stranger for a thumbs-up. Best money I ever spent.';
 
@@ -146,6 +153,7 @@ export default defineConfig(({ mode }) => {
     STRIPE_URL: escapeAttr(env.VITE_STRIPE_PAYMENT_LINK_URL ?? ''),
     WHY: env.VITE_WHY_PARAGRAPH ?? '',
     SHARE_URL: shareUrl(`https://${env.VITE_DOMAIN}/`),
+    GOAL_PERCENT: goalPercent(env),
   };
 
   return {

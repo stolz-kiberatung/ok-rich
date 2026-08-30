@@ -7,7 +7,18 @@ const html = readFileSync(resolve(process.cwd(), 'index.html'), 'utf8');
 const domIds = [...html.matchAll(/data-pin="([^"]+)"/g)].map((m) => m[1] as string);
 const configIds = elements.map((e) => e.id);
 
-const MOBILE_ORDER = ['headline', 'cta', 'trade-offer', 'kid', 'why', 'footer'];
+const MOBILE_ORDER = [
+  'headline',
+  'cta',
+  'trade-offer',
+  'kid',
+  'faq',
+  'testimonials',
+  'goal',
+  'wall',
+  'why',
+  'footer',
+];
 
 describe('site.config.ts ↔ index.html', () => {
   it('declares exactly the elements that exist in the DOM', () => {
@@ -19,13 +30,10 @@ describe('site.config.ts ↔ index.html', () => {
     expect(new Set(domIds).size).toBe(domIds.length);
   });
 
-  it('keeps the windows in the mobile DOM order, stickers after them', () => {
+  it('keeps the windows in the mobile DOM order, footer last on the stage', () => {
     const windows = domIds.filter((id) => elements.find((e) => e.id === id)?.kind === 'win');
     expect(windows).toEqual(MOBILE_ORDER);
-    const firstSticker = domIds.findIndex(
-      (id) => elements.find((e) => e.id === id)?.kind === 'sticker',
-    );
-    expect(firstSticker).toBe(MOBILE_ORDER.length);
+    expect(domIds[domIds.length - 1]).toBe('footer');
   });
 
   it('marks headline and cta as fixed and above everything else', () => {
@@ -48,10 +56,16 @@ describe('site.config.ts ↔ index.html', () => {
     }
   });
 
-  it('hides every sticker from assistive technology', () => {
+  it('hides purely decorative stickers from assistive technology, but never the mobile cards', () => {
     for (const e of elements.filter((e) => e.kind === 'sticker')) {
-      const tag = new RegExp(`data-pin="${e.id}"[^>]*aria-hidden="true"`);
-      expect(html, e.id).toMatch(tag);
+      const openingTag = html.match(new RegExp(`<[^>]*data-pin="${e.id}"[^>]*>`))?.[0] ?? '';
+      if (e.mobile) {
+        expect(openingTag, e.id).toContain('m-show');
+        expect(openingTag, e.id).not.toContain('aria-hidden');
+      } else {
+        expect(openingTag, e.id).toContain('aria-hidden="true"');
+        expect(openingTag, e.id).not.toContain('m-show');
+      }
     }
   });
 });

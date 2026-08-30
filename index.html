@@ -20,12 +20,13 @@
     <link rel="stylesheet" href="/src/styles/windows.css" />
     <link rel="stylesheet" href="/src/styles/stickers.css" />
     <link rel="stylesheet" href="/src/styles/pinboard.css" />
+    <link rel="stylesheet" href="/src/styles/extras.css" />
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body>
     <main class="board" id="board">
       <div class="stage" id="stage">
-        <!-- Windows in mobile DOM order: headline, cta, trade-offer, kid, why, footer -->
+        <!-- Windows in mobile DOM order; footer is the very last element on the stage -->
 
         <section class="win abs" data-pin="headline" aria-labelledby="site-title">
           <div class="bar">
@@ -81,9 +82,9 @@
                 <p class="trade-label">You receive:</p>
                 <img
                   src="%%THUMB_SRC%%"
-                  width="160"
-                  height="200"
-                  alt="A real thumbs-up photo of me, taken for you"
+                  width="140"
+                  height="175"
+                  alt="My thumb, pointed approvingly at this very website"
                 />
               </div>
             </div>
@@ -96,9 +97,83 @@
             <span class="caption no-drag">kid.jpg</span>
           </div>
           <figure class="body kid no-drag">
-            <img src="%%KID_SRC%%" width="210" height="280" alt="Me as a kid, looking determined" />
-            <figcaption>me, already planning this</figcaption>
+            <img
+              src="%%KID_SRC%%"
+              width="240"
+              height="180"
+              alt="Me as a kid, snorkelling face-down in knee-deep water"
+            />
+            <figcaption>early liquidity research</figcaption>
           </figure>
+        </section>
+
+        <section class="win abs" data-pin="faq" aria-label="Frequently asked questions">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">faq.txt</span>
+          </div>
+          <div class="body faq no-drag">
+            <h2>Is this a scam?</h2>
+            <p>No. You pay, you get a thumbs-up. Delivery of exactly what was promised.</p>
+            <h2>Why should I give you money?</h2>
+            <p>
+              Great question. Economists call this a "terrible investment." But consider: 5 € buys
+              you half a cocktail, 20 minutes of parking, or one (1) genuine photo of a stranger's
+              thumb approving of you specifically. Two of these three will be gone by tomorrow.
+            </p>
+          </div>
+        </section>
+
+        <section class="win abs" data-pin="testimonials" aria-label="Reviews">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">reviews.txt</span>
+          </div>
+          <div class="body reviews no-drag">
+            <p><span class="stars">★★★★★</span> — my mom (biased)</p>
+            <p>
+              <span class="stars">★★★★<span class="star-off">★</span></span> — a guy who meant to
+              order pizza
+            </p>
+            <p><span class="stars">★★★★★</span> — the thumb itself (conflict of interest)</p>
+          </div>
+        </section>
+
+        <section class="win abs" data-pin="goal" aria-label="The goal">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">the_goal.jpg</span>
+          </div>
+          <div class="body goal no-drag">
+            <img
+              src="/img/goal-car.webp"
+              width="280"
+              height="158"
+              alt="A red sports car on a coastal road. The goal."
+            />
+            <p class="goal-label">Sports car fund: <strong>%%GOAL_PERCENT%% % complete</strong></p>
+            <span class="goal-track"
+              ><span class="goal-fill" data-percent="%%GOAL_PERCENT%%"></span
+            ></span>
+          </div>
+        </section>
+
+        <section class="win abs" data-pin="wall" aria-label="Wall of thumbs">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">wall_of_thumbs/</span>
+          </div>
+          <div class="body wall no-drag">
+            <div class="wall-grid">
+              <span class="wall-tile wall-sold">
+                <img src="%%THUMB_SRC%%" width="52" height="65" alt="Sold thumb number one" />
+                <span class="wall-tag">sold</span>
+              </span>
+              <span class="wall-tile wall-empty">you?</span>
+              <span class="wall-tile wall-empty">you?</span>
+            </div>
+            <p class="wall-note">opt in at checkout: write "wall me" in the message</p>
+          </div>
         </section>
 
         <section class="win abs" data-pin="why" aria-label="Why">
@@ -110,6 +185,114 @@
             <p>%%WHY%%</p>
           </div>
         </section>
+
+        <!-- Cards shown on mobile too (.m-show) -->
+
+        <div class="sticker abs polaroid m-show" data-pin="sample">
+          <img
+            src="%%THUMB_SRC%%"
+            width="110"
+            height="138"
+            alt="Sample thumbs-up photo. Already sold."
+            class="no-drag"
+          />
+          <span class="pol-cap no-drag">sample</span>
+          <span class="stamp stamp-sold no-drag" aria-hidden="true">sold</span>
+        </div>
+
+        <div class="sticker abs sticky m-show" data-pin="sticky" aria-label="Todo list">
+          <span class="sticky-title no-drag">todo</span>
+          <ul class="sticky-list no-drag">
+            <li class="done">build website</li>
+            <li>get rich</li>
+            <li>buy car</li>
+          </ul>
+        </div>
+
+        <div class="sticker abs dadmsg m-show" data-pin="dad" aria-label="Message from Dad">
+          <span class="dad-header no-drag">
+            <span class="dad-avatar" aria-hidden="true">D</span>
+            <span class="dad-name">Dad</span>
+            <span class="dad-time">now</span>
+          </span>
+          <p class="dad-text no-drag">Hows the job search going?</p>
+          <span class="dad-status no-drag">Read. No reply.</span>
+        </div>
+
+        <div class="sticker abs polaroid m-show" data-pin="garage">
+          <img
+            src="/img/garage.webp"
+            width="150"
+            height="120"
+            alt="My hand holding a tiny toy sports car"
+            class="no-drag"
+          />
+          <span class="pol-cap no-drag">current garage. help!</span>
+        </div>
+
+        <div class="sticker abs taped m-show" data-pin="meme">
+          <img
+            src="/img/meme.webp"
+            width="140"
+            height="127"
+            alt="Paris Hilton wearing a shirt that reads Stop Being Poor"
+            class="no-drag"
+          />
+          <span class="pol-cap no-drag">life advice</span>
+        </div>
+
+        <div class="sticker abs counter m-show" data-pin="counter">
+          <span class="counter-label no-drag">You are visitor</span>
+          <span class="counter-digits no-drag" id="visitor-count">011302</span>
+        </div>
+
+        <!-- Decorative stickers: desktop board only -->
+
+        <div class="sticker abs kao" data-pin="kao-1" aria-hidden="true">^ ω ^</div>
+        <div class="sticker abs kao" data-pin="kao-2" aria-hidden="true">¯\_(ツ)_/¯</div>
+        <div class="sticker abs kao" data-pin="kao-3" aria-hidden="true">(¬_¬)</div>
+        <div class="sticker abs kao" data-pin="kao-4" aria-hidden="true">{ ^-^ }</div>
+
+        <div class="sticker abs nametag" data-pin="nametag" aria-hidden="true">
+          <span class="nametag-head">HELLO</span>
+          <span class="nametag-sub">my name is</span>
+          <span class="nametag-name">rich (soon)</span>
+        </div>
+
+        <div class="sticker abs stamp stamp-legit" data-pin="legit" aria-hidden="true">
+          100 % legit
+        </div>
+
+        <div class="sticker abs cert" data-pin="cert" aria-hidden="true">
+          <svg width="64" height="72" viewBox="0 0 64 72" focusable="false">
+            <path d="M20 52l-8 16-3-7-8 2 10-16Z" fill="#c4231b" />
+            <path d="M44 52l8 16 3-7 8 2-10-16Z" fill="#c4231b" />
+            <circle cx="32" cy="28" r="24" fill="#e8b800" stroke="#b38600" stroke-width="2" />
+            <circle
+              cx="32"
+              cy="28"
+              r="18"
+              fill="none"
+              stroke="#fffdf2"
+              stroke-width="2"
+              stroke-dasharray="4 3"
+            />
+            <text x="32" y="37" text-anchor="middle" font-size="22">👍</text>
+          </svg>
+          <span class="cert-title">Certificate of Authenticity</span>
+          <span class="cert-sub">1 of 1 genuine thumb</span>
+        </div>
+
+        <div class="sticker abs stamp stamp-paid" data-pin="paid" aria-hidden="true">paid</div>
+
+        <div class="sticker abs thumbs" data-pin="thumbs" aria-hidden="true">👍👍👍</div>
+
+        <div class="sticker abs loading" data-pin="loading" aria-hidden="true">
+          <span class="loading-label">getting rich… 99 %</span>
+          <span class="loading-track"><span class="loading-fill"></span></span>
+        </div>
+
+        <!-- Footer window: last on the stage so mobile ends with the legal links -->
 
         <section class="win abs" data-pin="footer" aria-label="Legal">
           <div class="bar">
@@ -127,68 +310,6 @@
             <p class="no-drag">Made in Germany. No cookies. Seriously.</p>
           </div>
         </section>
-
-        <!-- Stickers: decorative, hidden in the stacked layout -->
-
-        <div class="sticker abs kao" data-pin="kao-1" aria-hidden="true">^ ω ^</div>
-        <div class="sticker abs kao" data-pin="kao-2" aria-hidden="true">¯\_(ツ)_/¯</div>
-        <div class="sticker abs kao" data-pin="kao-3" aria-hidden="true">(¬_¬)</div>
-        <div class="sticker abs kao" data-pin="kao-4" aria-hidden="true">{ ^-^ }</div>
-
-        <div class="sticker abs nametag" data-pin="nametag" aria-hidden="true">
-          <span class="nametag-head">HELLO</span>
-          <span class="nametag-sub">my name is</span>
-          <span class="nametag-name">rich (soon)</span>
-        </div>
-
-        <div class="sticker abs pricetag" data-pin="pricetag" aria-hidden="true">
-          %%MIN_SHORT%% → 👍
-        </div>
-
-        <div class="sticker abs stamp stamp-legit" data-pin="legit" aria-hidden="true">
-          100 % legit
-        </div>
-
-        <div class="sticker abs beachball" data-pin="beachball" aria-hidden="true">
-          <svg width="64" height="64" viewBox="0 0 64 64" role="img" focusable="false">
-            <path d="M32 32L60 32A28 28 0 0 1 46 56.25Z" fill="#ff3b30" />
-            <path d="M32 32L46 56.25A28 28 0 0 1 18 56.25Z" fill="#ff9500" />
-            <path d="M32 32L18 56.25A28 28 0 0 1 4 32Z" fill="#ffcc00" />
-            <path d="M32 32L4 32A28 28 0 0 1 18 7.75Z" fill="#34c759" />
-            <path d="M32 32L18 7.75A28 28 0 0 1 46 7.75Z" fill="#007aff" />
-            <path d="M32 32L46 7.75A28 28 0 0 1 60 32Z" fill="#af52de" />
-            <circle cx="32" cy="32" r="28" fill="none" stroke="#161616" stroke-width="2" />
-            <circle cx="32" cy="32" r="5" fill="#fff" stroke="#161616" stroke-width="2" />
-          </svg>
-        </div>
-
-        <div class="sticker abs folder" data-pin="folder" aria-hidden="true">
-          <svg width="72" height="60" viewBox="0 0 72 60" role="img" focusable="false">
-            <path
-              d="M3 10a4 4 0 0 1 4-4h18l6 6h32a4 4 0 0 1 4 4v36a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"
-              fill="#8ec5ff"
-              stroke="#161616"
-              stroke-width="2"
-            />
-            <path
-              d="M3 22h66v30a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"
-              fill="#5aa9ff"
-              stroke="#161616"
-              stroke-width="2"
-            />
-          </svg>
-        </div>
-
-        <div class="sticker abs stamp stamp-paid" data-pin="paid" aria-hidden="true">paid</div>
-
-        <div class="sticker abs thumbs" data-pin="thumbs" aria-hidden="true">👍👍👍</div>
-
-        <div class="sticker abs loading" data-pin="loading" aria-hidden="true">
-          <span class="loading-label">getting rich… 99 %</span>
-          <span class="loading-track"><span class="loading-fill"></span></span>
-        </div>
-
-        <div class="sticker abs arrow" data-pin="arrow" aria-hidden="true">you are here →</div>
       </div>
     </main>
   </body>

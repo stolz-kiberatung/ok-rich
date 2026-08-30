@@ -64,6 +64,9 @@ rendered at image build from `nginx/default.conf.template` with the `UMAMI_ORIGI
 | Suggested amount chips                                    | `VITE_SUGGESTED_AMOUNTS` in `.env` (text only; Stripe has the real minimum)                                      |
 | OG image layout                                           | `scripts/og.html`, then `npm run og`                                                                             |
 
+Converting a photo for the board: `node scripts/convert-image.mjs tasks.json` (rotate, crop,
+resize, WebP; see the task JSON shape at the top of the script).
+
 Adding a sticker: markup in `index.html` (with `aria-hidden="true"`), an entry in `elements`, CSS
 in `stickers.css`. The config-integrity unit test fails until both sides match.
 

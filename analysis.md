@@ -83,3 +83,24 @@ visual regression snapshot per width once the real photos are in.
    5 EUR self-purchase → owner email + buyer confirmation arrive → refund.
 7. Umami: website appears in the dashboard after the first visit; CTA event `make-me-rich` counted.
 8. Remove `TODO-LEGAL` guard: `grep -r TODO-LEGAL impressum privacy terms` returns nothing.
+
+## v1.1 addendum (2026-08-30, same day)
+
+User-requested pinboard expansion, implemented and verified with the same gates (all green:
+34 unit, 29 e2e, Lighthouse rerun below, build guards unchanged):
+
+- Real photos: `thumb.webp` (thumbs-up in front of the site, EXIF rotation honoured), `kid.webp`
+  (snorkel photo, cropped 4:3). Placeholders remain as build-time fallback.
+- New windows: FAQ (2 questions), reviews (3 obviously-joke testimonials), the goal (AI sports
+  car photo + real progress bar from `VITE_RAISED_EUR` / `VITE_CAR_GOAL_EUR`), wall of thumbs
+  (static mini gallery: 1 sold + 2 empty slots). Note: constitution §9 lists a Wall-of-Thumbs
+  gallery as out of scope; the owner explicitly requested this static, backend-free version.
+- New cards/stickers: sticky todo note, certificate of authenticity, dad messenger popup,
+  sample polaroid with SOLD stamp, Hot Wheels garage polaroid (generated with Nano Banana via
+  Higgsfield), taped Paris Hilton meme, retro visitor counter (clock-derived, no storage).
+- Removed on request: price tag, beach ball, folder icon, "you are here" arrow.
+- CTA spacing reworked; mobile now shows the six content cards (`.m-show`) between the windows.
+- Legal flags: the meme card uses a doctored photo of a real person (§ 22 KUG risk, owner
+  informed and chose to keep it — easy to remove); testimonials and counter are unmistakably
+  satirical, so no misleading-advertising concern.
+- New tool: `scripts/convert-image.mjs` (rotate/crop/resize → WebP via Chromium canvas).

@@ -27,6 +27,8 @@ export interface PinElement {
   draggable: boolean;
   /** Initial stacking order; drags raise elements from Z_DRAG_START upwards, capped at Z_DRAG_MAX. */
   z: number;
+  /** Stickers with real content that also appear in the stacked mobile layout (.m-show). */
+  mobile?: boolean;
 }
 
 export const Z_DRAG_START = 30;
@@ -58,23 +60,48 @@ export const site = {
 
 /** Composition from plan.md §3. Windows first (mobile DOM order), stickers after. */
 export const elements: readonly PinElement[] = [
-  { id: 'headline', kind: 'win', x: 360, y: 190, draggable: false, z: 1000 },
-  { id: 'cta', kind: 'win', x: 440, y: 480, draggable: false, z: 900 },
-  { id: 'trade-offer', kind: 'win', x: 50, y: 70, draggable: true, z: 1 },
-  { id: 'kid', kind: 'win', x: 1090, y: 60, draggable: true, z: 2 },
-  { id: 'why', kind: 'win', x: 110, y: 610, draggable: true, z: 3 },
-  { id: 'footer', kind: 'win', x: 1000, y: 730, draggable: true, z: 4 },
-  { id: 'kao-1', kind: 'sticker', x: 430, y: 110, rotate: -6, draggable: true, z: 10 },
-  { id: 'kao-2', kind: 'sticker', x: 960, y: 130, rotate: 4, draggable: true, z: 11 },
-  { id: 'kao-3', kind: 'sticker', x: 1060, y: 560, rotate: -3, draggable: true, z: 12 },
-  { id: 'kao-4', kind: 'sticker', x: 700, y: 800, rotate: 7, draggable: true, z: 13 },
-  { id: 'nametag', kind: 'sticker', x: 700, y: 90, rotate: -4, draggable: true, z: 14 },
-  { id: 'pricetag', kind: 'sticker', x: 1040, y: 505, rotate: 8, draggable: true, z: 15 },
-  { id: 'legit', kind: 'sticker', x: 150, y: 420, rotate: -9, draggable: true, z: 16 },
-  { id: 'beachball', kind: 'sticker', x: 1340, y: 520, rotate: 0, draggable: true, z: 17 },
-  { id: 'folder', kind: 'sticker', x: 40, y: 520, rotate: 5, draggable: true, z: 18 },
-  { id: 'paid', kind: 'sticker', x: 1140, y: 330, rotate: -7, draggable: true, z: 19 },
-  { id: 'thumbs', kind: 'sticker', x: 1030, y: 640, rotate: 3, draggable: true, z: 20 },
-  { id: 'loading', kind: 'sticker', x: 470, y: 790, rotate: -2, draggable: true, z: 21 },
-  { id: 'arrow', kind: 'sticker', x: 225, y: 545, rotate: 6, draggable: true, z: 22 },
+  { id: 'headline', kind: 'win', x: 360, y: 180, draggable: false, z: 1000 },
+  { id: 'cta', kind: 'win', x: 440, y: 470, draggable: false, z: 900 },
+  { id: 'trade-offer', kind: 'win', x: 40, y: 45, draggable: true, z: 1 },
+  { id: 'kid', kind: 'win', x: 1140, y: 30, draggable: true, z: 2 },
+  { id: 'faq', kind: 'win', x: 20, y: 360, draggable: true, z: 3 },
+  { id: 'testimonials', kind: 'win', x: 1090, y: 305, draggable: true, z: 4 },
+  { id: 'goal', kind: 'win', x: 1100, y: 515, draggable: true, z: 5 },
+  { id: 'wall', kind: 'win', x: 905, y: 748, draggable: true, z: 6 },
+  { id: 'why', kind: 'win', x: 30, y: 812, draggable: true, z: 7 },
+  { id: 'footer', kind: 'win', x: 1100, y: 800, draggable: true, z: 8 },
+  { id: 'garage', kind: 'sticker', x: 365, y: 8, rotate: -5, draggable: true, z: 10, mobile: true },
+  { id: 'sticky', kind: 'sticker', x: 540, y: 12, rotate: 3, draggable: true, z: 11, mobile: true },
+  { id: 'meme', kind: 'sticker', x: 748, y: 8, rotate: 6, draggable: true, z: 12, mobile: true },
+  {
+    id: 'counter',
+    kind: 'sticker',
+    x: 60,
+    y: 748,
+    rotate: 0,
+    draggable: true,
+    z: 13,
+    mobile: true,
+  },
+  {
+    id: 'sample',
+    kind: 'sticker',
+    x: 918,
+    y: 6,
+    rotate: -5,
+    draggable: true,
+    z: 25,
+    mobile: true,
+  },
+  { id: 'dad', kind: 'sticker', x: 450, y: 780, rotate: -1, draggable: true, z: 24, mobile: true },
+  { id: 'kao-1', kind: 'sticker', x: 345, y: 845, rotate: -6, draggable: true, z: 14 },
+  { id: 'kao-2', kind: 'sticker', x: 1258, y: 256, rotate: 4, draggable: true, z: 15 },
+  { id: 'kao-3', kind: 'sticker', x: 345, y: 748, rotate: -3, draggable: true, z: 16 },
+  { id: 'kao-4', kind: 'sticker', x: 1005, y: 470, rotate: 7, draggable: true, z: 17 },
+  { id: 'nametag', kind: 'sticker', x: 1048, y: 10, rotate: -4, draggable: true, z: 18 },
+  { id: 'legit', kind: 'sticker', x: 35, y: 315, rotate: -9, draggable: true, z: 26 },
+  { id: 'cert', kind: 'sticker', x: 190, y: 262, rotate: -5, draggable: true, z: 20 },
+  { id: 'paid', kind: 'sticker', x: 1200, y: 205, rotate: -7, draggable: true, z: 21 },
+  { id: 'thumbs', kind: 'sticker', x: 745, y: 795, rotate: 3, draggable: true, z: 22 },
+  { id: 'loading', kind: 'sticker', x: 30, y: 15, rotate: -2, draggable: true, z: 23 },
 ];

@@ -1,0 +1,393 @@
+/* extras.css — v1.1 additions: FAQ, reviews, goal, wall of thumbs, sticky note, certificate,
+   dad popup, polaroids, taped meme, visitor counter, CTA rhythm and the mobile card layout.
+   Loads after the other sheets, so equal-specificity overrides here win the cascade. */
+
+/* --- CTA rhythm ------------------------------------------------------------------------- */
+
+.cta .deal {
+  margin: 20px 0 14px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.chips .chip {
+  margin: 0;
+}
+
+.is-board .cta .deal {
+  margin: 24px 0 16px;
+}
+
+/* --- Board widths for new and resized windows -------------------------------------------- */
+
+.stage.is-board > [data-pin='trade-offer'] {
+  width: 280px;
+}
+.stage.is-board > [data-pin='why'] {
+  width: 300px;
+}
+.stage.is-board > [data-pin='footer'] {
+  width: 320px;
+}
+.stage.is-board > [data-pin='faq'] {
+  width: 400px;
+}
+.stage.is-board > [data-pin='testimonials'] {
+  width: 320px;
+}
+.stage.is-board > [data-pin='goal'] {
+  width: 320px;
+}
+.stage.is-board > [data-pin='wall'] {
+  width: 190px;
+}
+
+/* Resized photos (v1.1) */
+
+.trade img {
+  width: 140px;
+  height: 175px;
+}
+
+.kid img {
+  width: 240px;
+  height: 180px;
+}
+
+/* Compact footer on the board */
+
+.is-board .footer .body {
+  padding: 8px 16px 14px;
+}
+.is-board .footer nav {
+  font-size: 22px;
+}
+.is-board .footer p {
+  font-size: 16px;
+  margin-top: 6px;
+}
+
+/* --- FAQ ---------------------------------------------------------------------------------- */
+
+.faq h2 {
+  font-size: 20px;
+  margin: 14px 0 4px;
+}
+.faq h2:first-child {
+  margin-top: 0;
+}
+.faq p {
+  font-size: 17px;
+  line-height: 1.4;
+}
+.is-board .faq h2 {
+  font-size: 23px;
+}
+.is-board .faq p {
+  font-size: 20px;
+}
+
+/* --- Reviews ------------------------------------------------------------------------------ */
+
+.reviews p {
+  margin: 0 0 10px;
+  font-size: 17px;
+}
+.reviews p:last-child {
+  margin-bottom: 0;
+}
+.stars {
+  color: #d99a00;
+  letter-spacing: 2px;
+}
+.star-off {
+  color: #cfcfc7;
+}
+.is-board .reviews p {
+  font-size: 18px;
+}
+
+/* --- Goal --------------------------------------------------------------------------------- */
+
+.goal img {
+  border-radius: 6px;
+}
+.goal-label {
+  margin: 10px 0 8px;
+  font-size: 16px;
+}
+.goal-track {
+  display: block;
+  height: 16px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+  background: #fff;
+}
+.goal-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--green);
+}
+.is-board .goal-label {
+  font-size: 16px;
+}
+
+/* --- Wall of thumbs ----------------------------------------------------------------------- */
+
+.wall-grid {
+  display: flex;
+  gap: 8px;
+}
+.wall-tile {
+  position: relative;
+  width: 52px;
+  height: 65px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.wall-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.wall-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #b5b5ad;
+  color: var(--muted);
+  font-size: 13px;
+}
+.wall-tag {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--red);
+  color: #fff;
+  font: 800 10px/1.5 var(--font);
+  text-transform: uppercase;
+  text-align: center;
+}
+.wall-note {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* --- Sticky note -------------------------------------------------------------------------- */
+
+.sticky {
+  width: 185px;
+  padding: 12px 14px 14px;
+  background: #ffe66b;
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 3px 4px 8px rgba(0, 0, 0, 0.18);
+  white-space: normal;
+  font-family: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive;
+}
+.sticky-title {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.sticky-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.sticky-list li::before {
+  content: '☐ ';
+}
+.sticky-list li.done::before {
+  content: '☑ ';
+}
+.sticky-list li.done {
+  text-decoration: line-through;
+}
+
+/* --- Certificate -------------------------------------------------------------------------- */
+
+.cert {
+  width: 170px;
+  padding: 10px 12px 12px;
+  text-align: center;
+  white-space: normal;
+  border-radius: 4px;
+  background: #fffdf2;
+}
+.cert svg {
+  margin: 0 auto 4px;
+}
+.cert-title {
+  display: block;
+  font: 700 13px/1.2 var(--font);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.cert-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* --- Dad popup ---------------------------------------------------------------------------- */
+
+.dadmsg {
+  width: 280px;
+  padding: 10px 14px;
+  white-space: normal;
+  border: 1px solid #d9d9d2;
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+  background: #f8f8f6;
+}
+.dad-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.dad-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #8e8e93;
+  color: #fff;
+  font: 700 12px/1 var(--font);
+}
+.dad-name {
+  font-weight: 700;
+  color: var(--ink);
+}
+.dad-time {
+  margin-left: auto;
+}
+.dad-text {
+  margin: 8px 0 6px;
+  font-size: 16px;
+  line-height: 1.3;
+  background: #e9e9eb;
+  border-radius: 12px;
+  padding: 8px 12px;
+  width: max-content;
+  max-width: 100%;
+}
+.dad-status {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* --- Polaroids and the taped meme --------------------------------------------------------- */
+
+.polaroid,
+.taped {
+  position: relative;
+  padding: 8px 8px 4px;
+  background: #fff;
+  border: 1px solid #e2e2da;
+  border-radius: 2px;
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.18);
+  white-space: normal;
+  text-align: center;
+}
+.pol-cap {
+  display: block;
+  padding: 6px 2px 2px;
+  font:
+    400 14px/1.2 'Segoe Print',
+    'Bradley Hand',
+    'Comic Sans MS',
+    cursive;
+}
+.stamp-sold {
+  position: absolute;
+  top: 34%;
+  left: 6%;
+  transform: rotate(-14deg);
+  font-size: 20px;
+  color: var(--red);
+  border-color: var(--red);
+  background: transparent;
+}
+.taped::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 70px;
+  height: 20px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(255, 244, 179, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* --- Visitor counter ---------------------------------------------------------------------- */
+
+.counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #161616;
+  color: #d7ffd7;
+  border: 2px solid #000;
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+}
+.counter-label {
+  font: 500 13px/1.2 var(--mono);
+  max-width: 72px;
+  white-space: normal;
+}
+.counter-digits {
+  font: 700 22px/1 var(--mono);
+  letter-spacing: 3px;
+  padding: 4px 6px;
+  background: #000;
+  color: #6cff6c;
+  border-radius: 3px;
+}
+
+/* Emoji cluster a bit narrower so it fits the right rail */
+
+.thumbs {
+  font-size: 32px;
+}
+
+/* --- Mobile / stacked: curated cards are visible and centered ----------------------------- */
+
+.stage:not(.is-board) > .sticker.m-show {
+  display: block;
+  width: max-content;
+  max-width: calc(100% - 8px);
+  margin: 0 auto 20px;
+}
+.stage:not(.is-board) > .counter.m-show {
+  display: inline-flex;
+  width: max-content;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Compact why window on the board */
+.is-board .why .body {
+  padding: 10px 16px 14px;
+}

@@ -29,7 +29,8 @@ async function dragByBar(page: Page, id: string, dx: number, dy: number): Promis
   const bar = page.locator(`[data-pin="${id}"] .bar`);
   const box = await bar.boundingBox();
   if (!box) throw new Error(`no box for ${id}`);
-  const x = box.x + 20;
+  // Grab near the bar's right end: stickers may overlap the left corner and would swallow the pointer.
+  const x = box.x + box.width - 30;
   const y = box.y + box.height / 2;
   await page.mouse.move(x, y);
   await page.mouse.down();
@@ -185,7 +186,18 @@ test.describe('mobile layout', () => {
   test('windows stack in DOM order, stickers are hidden, drag does nothing', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#stage')).not.toHaveClass(/is-board/);
-    const order = ['headline', 'cta', 'trade-offer', 'kid', 'why', 'footer'];
+    const order = [
+      'headline',
+      'cta',
+      'trade-offer',
+      'kid',
+      'faq',
+      'testimonials',
+      'goal',
+      'wall',
+      'why',
+      'footer',
+    ];
     let lastBottom = -1;
     for (const id of order) {
       const box = await page.locator(`[data-pin="${id}"]`).boundingBox();
@@ -194,7 +206,10 @@ test.describe('mobile layout', () => {
       lastBottom = box.y + box.height;
     }
     await expect(page.locator('[data-pin="kao-1"]')).toBeHidden();
-    await expect(page.locator('[data-pin="arrow"]')).toBeHidden();
+    await expect(page.locator('[data-pin="nametag"]')).toBeHidden();
+    await expect(page.locator('[data-pin="sticky"]')).toBeVisible();
+    await expect(page.locator('[data-pin="dad"]')).toBeVisible();
+    await expect(page.locator('[data-pin="counter"]')).toBeVisible();
 
     const kid = page.locator('[data-pin="kid"]');
     await kid.scrollIntoViewIfNeeded();

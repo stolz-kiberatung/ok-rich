@@ -154,3 +154,10 @@ Everything in `CLAUDE.md` §9 (accounts, own checkout/backend, live counter, gal
 ## 10. Open questions
 
 Three, in `clarify.md`. Each has a recommended default that applies if not answered.
+
+## Addendum v1.1 (2026-08-30)
+
+The element inventory in §4 grew from 19 to 26 elements on owner request: new windows faq,
+testimonials, goal, wall; new cards sticky, cert, dad, sample, garage, meme, counter; removed
+pricetag, beachball, folder, arrow. Mobile now also shows the content cards (`mobile: true` in
+`site.config.ts`). Current source of truth: `site.config.ts` and `index.html`.

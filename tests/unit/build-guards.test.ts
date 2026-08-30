@@ -44,10 +44,10 @@ describe('validateEnv', () => {
 });
 
 describe('helpers', () => {
-  it('falls back to the placeholder when the photo is missing', () => {
-    expect(resolveImage(process.cwd() + '/public', 'thumb.webp', 'thumb-placeholder.svg')).toBe(
-      '/img/thumb-placeholder.svg',
-    );
+  it('falls back to the placeholder only when the photo is missing', () => {
+    expect(
+      resolveImage(process.cwd() + '/public', 'does-not-exist.webp', 'thumb-placeholder.svg'),
+    ).toBe('/img/thumb-placeholder.svg');
     expect(resolveImage(process.cwd() + '/public', 'thumb-placeholder.svg', 'never.svg')).toBe(
       '/img/thumb-placeholder.svg',
     );
