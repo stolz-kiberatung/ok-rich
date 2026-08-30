@@ -8,6 +8,9 @@ type Env = Record<string, string | undefined>;
 /** Extension-less routes that resolve to <name>/index.html (see cleanUrls and nginx.conf). */
 const PAGES = ['thanks', 'impressum', 'privacy', 'terms'];
 
+/** Bump when a file in public/img is replaced in place, so browser caches refetch it. */
+const IMG_V = '?v=2';
+
 const REQUIRED = ['VITE_DOMAIN', 'VITE_SITE_TITLE', 'VITE_STRIPE_PAYMENT_LINK_URL'] as const;
 
 /** Fails the build loudly when a required variable is missing (constitution §8, §10). */
@@ -144,8 +147,8 @@ export default defineConfig(({ mode }) => {
   validateEnv(env);
   const publicDir = resolve(root, 'public');
   const values: Record<string, string> = {
-    THUMB_SRC: resolveImage(publicDir, 'thumb.webp', 'thumb-placeholder.svg'),
-    KID_SRC: resolveImage(publicDir, 'kid.webp', 'kid-placeholder.svg'),
+    THUMB_SRC: resolveImage(publicDir, 'thumb.webp', 'thumb-placeholder.svg') + IMG_V,
+    KID_SRC: resolveImage(publicDir, 'kid.webp', 'kid-placeholder.svg') + IMG_V,
     CHIPS: chipsHtml(env.VITE_SUGGESTED_AMOUNTS ?? '5, 10, 50', env.VITE_CURRENCY ?? 'EUR'),
     SITE_URL: `https://${env.VITE_DOMAIN}`,
     MIN: `${env.VITE_MIN_AMOUNT ?? '5'} ${currencySymbol(env.VITE_CURRENCY ?? 'EUR')}`,
