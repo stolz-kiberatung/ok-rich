@@ -110,7 +110,7 @@ User-requested pinboard expansion, implemented and verified with the same gates 
 - Meme card photo replaced by a Nano-Banana-generated fictional lookalike (same pose and
   "STOP BEING POOR" shirt) — no real person on the page any more.
 - The why window (placeholder paragraph) was removed; its slot went to a third FAQ entry
-  ("I paid more than the rest…", full answer verbatim from the owner). was removed from env, config and types.
+  ("I paid more than the rest…", full answer verbatim from the owner); `VITE_WHY_PARAGRAPH` was removed from env, config and types.
 - Third testimonial replaced ("the guy who sold me the domain").
 - Hero sub-line and the whole CTA body are centered (text-wrap: balance on both).
 - Composition rebalanced: certificate into the top strip, counter beside Dad in the bottom band,
