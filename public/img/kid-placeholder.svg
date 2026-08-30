@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="400" viewBox="0 0 300 400" role="img" aria-label="Placeholder for the childhood photo">
+  <rect x="6" y="6" width="288" height="388" rx="16" fill="#ecece6" stroke="#9a9a94" stroke-width="4" stroke-dasharray="14 10"/>
+  <circle cx="150" cy="140" r="58" fill="#161616"/>
+  <path d="M60 330c0-62 40-100 90-100s90 38 90 100v20H60Z" fill="#161616"/>
+  <circle cx="132" cy="130" r="7" fill="#ffd400"/>
+  <circle cx="168" cy="130" r="7" fill="#ffd400"/>
+  <path d="M128 162q22 14 44 0" stroke="#ffd400" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <text x="150" y="376" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" fill="#5b5b57">kid photo goes here</text>
+</svg>

@@ -1,0 +1,91 @@
+/* pinboard.css — stacked layout by default (no JS, < 768 px); .is-board = scaled 1440×900 stage */
+
+.board {
+  max-width: 1440px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  padding: 24px 16px 40px;
+}
+
+/* Stacked: windows flow in DOM order, stickers stay hidden */
+
+.stage > .win {
+  width: min(100%, 560px);
+  margin: 0 auto 20px;
+}
+
+.stage > .sticker {
+  display: none;
+}
+
+/* Board: absolute positions in design px, applied by JS from site.config.ts */
+
+.stage.is-board {
+  width: 1440px;
+  height: 900px;
+  padding: 0;
+  isolation: isolate;
+  transform-origin: top left;
+}
+
+.stage.is-board > .abs {
+  position: absolute;
+  margin: 0;
+}
+
+.stage.is-board > .win {
+  width: auto;
+}
+
+/* Board widths per window (design px); must follow the width: auto rule above */
+
+.stage.is-board > [data-pin='headline'] {
+  width: 720px;
+}
+.stage.is-board > [data-pin='cta'] {
+  width: 560px;
+}
+.stage.is-board > [data-pin='trade-offer'] {
+  width: 300px;
+}
+.stage.is-board > [data-pin='kid'] {
+  width: 280px;
+}
+.stage.is-board > [data-pin='why'] {
+  width: 320px;
+}
+.stage.is-board > [data-pin='footer'] {
+  width: 400px;
+}
+
+.stage.is-board > .sticker {
+  display: inline-block;
+  transform: rotate(var(--rot, 0deg));
+}
+
+.draggable {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.draggable.dragging {
+  cursor: grabbing;
+}
+
+.is-board > .win.dragging {
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.2));
+}
+
+.no-drag {
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}

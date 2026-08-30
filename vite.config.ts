@@ -31,9 +31,13 @@ export function resolveImage(publicDir: string, file: string, placeholder: strin
   return existsSync(resolve(publicDir, 'img', file)) ? `/img/${file}` : `/img/${placeholder}`;
 }
 
+export function currencySymbol(currency: string): string {
+  return currency === 'EUR' ? '€' : currency;
+}
+
 /** "5, 10, 50" + "EUR" → three text chips. */
 export function chipsHtml(list: string, currency: string): string {
-  const symbol = currency === 'EUR' ? '€' : currency;
+  const symbol = currencySymbol(currency);
   return list
     .split(',')
     .map((s) => s.trim())
@@ -93,6 +97,8 @@ export default defineConfig(({ mode }) => {
     KID_SRC: resolveImage(publicDir, 'kid.webp', 'kid-placeholder.svg'),
     CHIPS: chipsHtml(env.VITE_SUGGESTED_AMOUNTS ?? '5, 10, 50', env.VITE_CURRENCY ?? 'EUR'),
     SITE_URL: `https://${env.VITE_DOMAIN}`,
+    MIN: `${env.VITE_MIN_AMOUNT ?? '5'} ${currencySymbol(env.VITE_CURRENCY ?? 'EUR')}`,
+    MIN_SHORT: `${currencySymbol(env.VITE_CURRENCY ?? 'EUR')}${env.VITE_MIN_AMOUNT ?? '5'}`,
     STRIPE_URL: escapeAttr(env.VITE_STRIPE_PAYMENT_LINK_URL ?? ''),
     WHY: env.VITE_WHY_PARAGRAPH ?? '',
   };

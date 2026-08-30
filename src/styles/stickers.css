@@ -1,0 +1,133 @@
+/* stickers.css — small decorative stickers; only visible on the board layout */
+
+.sticker {
+  display: inline-block;
+  font-size: 28px;
+  line-height: 1;
+  padding: 6px 10px;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 var(--ink);
+  white-space: nowrap;
+}
+
+.kao {
+  font-size: 34px;
+  font-weight: 400;
+}
+
+.nametag {
+  width: 220px;
+  padding: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  white-space: normal;
+}
+
+.nametag-head {
+  display: block;
+  background: #e3342f;
+  color: #fff;
+  font-weight: 900;
+  font-size: 26px;
+  letter-spacing: 0.12em;
+  padding: 8px 0 0;
+}
+
+.nametag-sub {
+  display: block;
+  background: #e3342f;
+  color: #fff;
+  font-size: 13px;
+  padding: 2px 0 8px;
+}
+
+.nametag-name {
+  display: block;
+  padding: 12px 8px 14px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.pricetag {
+  background: var(--accent);
+  border-radius: 4px 999px 999px 4px;
+  font-weight: 800;
+  padding: 8px 18px 8px 12px;
+}
+
+.stamp {
+  background: transparent;
+  border: 4px double;
+  border-radius: 6px;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  padding: 6px 12px;
+  box-shadow: none;
+}
+
+.stamp-legit {
+  color: var(--green);
+  border-color: var(--green);
+  font-size: 24px;
+}
+
+.stamp-paid {
+  color: var(--red);
+  border-color: var(--red);
+  font-size: 36px;
+}
+
+.thumbs {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  font-size: 40px;
+  letter-spacing: -0.2em;
+}
+
+.beachball,
+.folder {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.25));
+}
+
+.loading {
+  width: 200px;
+  white-space: normal;
+  padding: 8px 10px 10px;
+  font: 500 14px/1.2 var(--mono);
+}
+
+.loading-label {
+  display: block;
+}
+
+.loading-track {
+  display: block;
+  height: 14px;
+  margin-top: 6px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.loading-fill {
+  display: block;
+  width: 99%;
+  height: 100%;
+  background: repeating-linear-gradient(90deg, var(--ink) 0 8px, transparent 8px 12px);
+}
+
+.arrow {
+  background: var(--accent);
+  font-weight: 800;
+  font-size: 24px;
+}

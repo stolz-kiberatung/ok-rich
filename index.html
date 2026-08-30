@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>%VITE_SITE_TITLE% — make me rich</title>
+    <meta
+      name="description"
+      content="Pay any amount, get one personal thumbs-up photo of me by email within 7 days. That's it. That's the site."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="%VITE_SITE_TITLE% — make me rich" />
+    <meta
+      property="og:description"
+      content="Pay any amount, get one personal thumbs-up photo of me by email within 7 days. That's it."
+    />
+    <meta property="og:url" content="%%SITE_URL%%/" />
+    <link rel="canonical" href="%%SITE_URL%%/" />
+    <link rel="stylesheet" href="/src/styles/base.css" />
+    <link rel="stylesheet" href="/src/styles/windows.css" />
+    <link rel="stylesheet" href="/src/styles/stickers.css" />
+    <link rel="stylesheet" href="/src/styles/pinboard.css" />
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <main class="board" id="board">
+      <div class="stage" id="stage">
+        <!-- Windows in mobile DOM order: headline, cta, trade-offer, kid, why, footer -->
+
+        <section class="win abs" data-pin="headline" aria-labelledby="site-title">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">%VITE_DOMAIN%</span>
+          </div>
+          <div class="body headline no-drag">
+            <h1 id="site-title">%VITE_SITE_TITLE%</h1>
+            <p class="sub">
+              This page exists for one purpose only: to make me rich. I want to prove that life's a
+              game.
+            </p>
+          </div>
+        </section>
+
+        <section class="win abs" data-pin="cta" aria-label="Make me rich">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">checkout.exe</span>
+          </div>
+          <div class="body cta">
+            <a
+              class="btn"
+              href="%%STRIPE_URL%%"
+              rel="noopener noreferrer"
+              data-umami-event="make-me-rich"
+              >Make me rich →</a
+            >
+            <p class="deal no-drag">
+              You get: one (1) personal thumbs-up photo, taken by me, for you. Delivered by email
+              within 7 days. That's it.
+            </p>
+            <p class="chips no-drag">
+              %%CHIPS%%
+              <span class="chip-note">you choose, min. %%MIN%%</span>
+            </p>
+          </div>
+        </section>
+
+        <section class="win abs" data-pin="trade-offer" aria-label="Trade offer">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">trade_offer.jpg</span>
+          </div>
+          <div class="body trade no-drag">
+            <p class="trade-head">Trade offer</p>
+            <div class="trade-cols">
+              <div class="trade-col">
+                <p class="trade-label">I receive:</p>
+                <p class="trade-big">$$$</p>
+              </div>
+              <div class="trade-col">
+                <p class="trade-label">You receive:</p>
+                <img
+                  src="%%THUMB_SRC%%"
+                  width="160"
+                  height="200"
+                  alt="A real thumbs-up photo of me, taken for you"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="win abs" data-pin="kid" aria-label="Childhood photo">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">kid.jpg</span>
+          </div>
+          <figure class="body kid no-drag">
+            <img src="%%KID_SRC%%" width="210" height="280" alt="Me as a kid, looking determined" />
+            <figcaption>me, already planning this</figcaption>
+          </figure>
+        </section>
+
+        <section class="win abs" data-pin="why" aria-label="Why">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">why.txt</span>
+          </div>
+          <div class="body why no-drag">
+            <p>%%WHY%%</p>
+          </div>
+        </section>
+
+        <section class="win abs" data-pin="footer" aria-label="Legal">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">legal.txt</span>
+          </div>
+          <div class="body footer">
+            <nav aria-label="Legal pages">
+              <a href="/impressum">Impressum</a>
+              <span class="no-drag" aria-hidden="true">·</span>
+              <a href="/privacy">Privacy</a>
+              <span class="no-drag" aria-hidden="true">·</span>
+              <a href="/terms">Terms</a>
+            </nav>
+            <p class="no-drag">Made in Germany. No cookies. Seriously.</p>
+          </div>
+        </section>
+
+        <!-- Stickers: decorative, hidden in the stacked layout -->
+
+        <div class="sticker abs kao" data-pin="kao-1" aria-hidden="true">^ ω ^</div>
+        <div class="sticker abs kao" data-pin="kao-2" aria-hidden="true">¯\_(ツ)_/¯</div>
+        <div class="sticker abs kao" data-pin="kao-3" aria-hidden="true">(¬_¬)</div>
+        <div class="sticker abs kao" data-pin="kao-4" aria-hidden="true">{ ^-^ }</div>
+
+        <div class="sticker abs nametag" data-pin="nametag" aria-hidden="true">
+          <span class="nametag-head">HELLO</span>
+          <span class="nametag-sub">my name is</span>
+          <span class="nametag-name">rich (soon)</span>
+        </div>
+
+        <div class="sticker abs pricetag" data-pin="pricetag" aria-hidden="true">
+          %%MIN_SHORT%% → 👍
+        </div>
+
+        <div class="sticker abs stamp stamp-legit" data-pin="legit" aria-hidden="true">
+          100 % legit
+        </div>
+
+        <div class="sticker abs beachball" data-pin="beachball" aria-hidden="true">
+          <svg width="64" height="64" viewBox="0 0 64 64" role="img" focusable="false">
+            <path d="M32 32L60 32A28 28 0 0 1 46 56.25Z" fill="#ff3b30" />
+            <path d="M32 32L46 56.25A28 28 0 0 1 18 56.25Z" fill="#ff9500" />
+            <path d="M32 32L18 56.25A28 28 0 0 1 4 32Z" fill="#ffcc00" />
+            <path d="M32 32L4 32A28 28 0 0 1 18 7.75Z" fill="#34c759" />
+            <path d="M32 32L18 7.75A28 28 0 0 1 46 7.75Z" fill="#007aff" />
+            <path d="M32 32L46 7.75A28 28 0 0 1 60 32Z" fill="#af52de" />
+            <circle cx="32" cy="32" r="28" fill="none" stroke="#161616" stroke-width="2" />
+            <circle cx="32" cy="32" r="5" fill="#fff" stroke="#161616" stroke-width="2" />
+          </svg>
+        </div>
+
+        <div class="sticker abs folder" data-pin="folder" aria-hidden="true">
+          <svg width="72" height="60" viewBox="0 0 72 60" role="img" focusable="false">
+            <path
+              d="M3 10a4 4 0 0 1 4-4h18l6 6h32a4 4 0 0 1 4 4v36a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"
+              fill="#8ec5ff"
+              stroke="#161616"
+              stroke-width="2"
+            />
+            <path
+              d="M3 22h66v30a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"
+              fill="#5aa9ff"
+              stroke="#161616"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+
+        <div class="sticker abs stamp stamp-paid" data-pin="paid" aria-hidden="true">paid</div>
+
+        <div class="sticker abs thumbs" data-pin="thumbs" aria-hidden="true">👍👍👍</div>
+
+        <div class="sticker abs loading" data-pin="loading" aria-hidden="true">
+          <span class="loading-label">getting rich… 99 %</span>
+          <span class="loading-track"><span class="loading-fill"></span></span>
+        </div>
+
+        <div class="sticker abs arrow" data-pin="arrow" aria-hidden="true">you are here →</div>
+      </div>
+    </main>
+  </body>
+</html>

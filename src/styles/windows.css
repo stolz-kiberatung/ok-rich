@@ -1,0 +1,251 @@
+/* windows.css — retro window chrome (docs/drag-reference.md §3) and per-window content */
+
+.win {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 4px 4px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#fff, #f3f3f3) padding-box,
+    linear-gradient(#e6e6e6, #bdbdbd) border-box;
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.12));
+}
+
+.win .bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px 8px;
+}
+
+.win .dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.win .dots span:nth-child(1) {
+  background: var(--dot-red);
+}
+.win .dots span:nth-child(2) {
+  background: var(--dot-yellow);
+}
+.win .dots span:nth-child(3) {
+  background: var(--dot-green);
+}
+
+.win .caption {
+  font: 500 14px/1 var(--mono);
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.win .body {
+  padding: 12px 20px 20px;
+  font-size: 18px;
+}
+
+.win .body p {
+  margin: 0;
+}
+
+/* Headline */
+
+.headline {
+  text-align: center;
+}
+
+.headline h1 {
+  margin: 0;
+  font-size: clamp(56px, 18vw, 96px);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+}
+
+.headline .sub {
+  max-width: 44ch;
+  margin: 14px auto 0;
+  font-size: 18px;
+}
+
+/* CTA */
+
+.btn {
+  display: inline-block;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 1.1;
+  padding: 14px 24px;
+  border-radius: 14px;
+  text-decoration: none;
+  box-shadow: 6px 6px 0 var(--accent);
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 var(--accent);
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--accent);
+}
+
+.cta .deal {
+  margin: 16px 0 10px;
+  font-size: 17px;
+}
+
+.chips .chip {
+  display: inline-block;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 1px 12px;
+  margin: 0 6px 6px 0;
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.chip-note {
+  display: inline-block;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* Trade offer */
+
+.trade-head {
+  text-align: center;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.trade-cols {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.trade-label {
+  color: var(--muted);
+  font-size: 16px;
+  margin: 0 0 4px;
+}
+
+.trade-big {
+  font-size: 44px;
+  font-weight: 900;
+  color: var(--green);
+  line-height: 1;
+}
+
+.trade img {
+  width: 160px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* Kid */
+
+figure.kid {
+  margin: 0;
+}
+
+.kid img {
+  width: 210px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin: 0 auto;
+}
+
+.kid figcaption {
+  margin-top: 10px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 17px;
+}
+
+/* Why */
+
+.why p {
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+/* Footer */
+
+.footer nav {
+  font-size: 18px;
+}
+
+.footer nav a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* Board typography (design px on the 1440×900 stage; scaled down to 0.533 at 768 px) */
+
+.is-board .win .body {
+  font-size: 24px;
+}
+.is-board .headline h1 {
+  font-size: 140px;
+}
+.is-board .headline .sub {
+  font-size: 24px;
+}
+.is-board .btn {
+  font-size: 34px;
+  padding: 16px 28px;
+}
+.is-board .cta .deal {
+  font-size: 22px;
+}
+.is-board .chips .chip,
+.is-board .chip-note {
+  font-size: 20px;
+}
+.is-board .trade-head {
+  font-size: 28px;
+}
+.is-board .trade-label {
+  font-size: 20px;
+}
+.is-board .trade-big {
+  font-size: 56px;
+}
+.is-board .why p {
+  font-size: 22px;
+}
+.is-board .kid figcaption {
+  font-size: 20px;
+}
+.is-board .footer nav {
+  font-size: 24px;
+}
+.is-board .footer p {
+  font-size: 20px;
+}

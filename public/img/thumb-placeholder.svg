@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500" role="img" aria-label="Placeholder for the thumbs-up photo">
+  <rect x="6" y="6" width="388" height="488" rx="16" fill="#ecece6" stroke="#9a9a94" stroke-width="4" stroke-dasharray="14 10"/>
+  <circle cx="200" cy="205" r="90" fill="#ffd400"/>
+  <path d="M170 275v-95l40-70c14-4 26 4 26 22l-6 42h48c16 0 26 14 22 30l-18 60c-4 12-14 20-26 20h-56c-10 0-20-3-30-9Z" fill="#161616"/>
+  <rect x="110" y="180" width="54" height="96" rx="10" fill="#161616"/>
+  <text x="200" y="360" text-anchor="middle" font-family="system-ui, sans-serif" font-size="26" font-weight="700" fill="#161616">your thumbs-up photo</text>
+  <text x="200" y="396" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" fill="#5b5b57">(real one arrives by email)</text>
+</svg>
