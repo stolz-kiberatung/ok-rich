@@ -441,3 +441,8 @@
     opacity: 0.12;
   }
 }
+
+/* .win .body p { margin: 0 } outranks .headline .sub and killed its auto margins — restore them */
+.win .body p.sub {
+  margin: 14px auto 0;
+}
