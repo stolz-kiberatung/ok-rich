@@ -1,0 +1,60 @@
+# docker-compose.yml — production shape for the Hetzner host behind the existing TLS reverse proxy.
+# The container publishes no ports; the proxy reaches it over the shared "proxy" network on 8080.
+# Local verification: docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+
+services:
+  web:
+    container_name: okrich-web
+    build:
+      context: .
+      args:
+        # Public build-time values from .env (VITE_* keys). No secrets here.
+        VITE_DOMAIN: ${VITE_DOMAIN}
+        VITE_SITE_TITLE: ${VITE_SITE_TITLE}
+        VITE_OWNER_NAME: ${VITE_OWNER_NAME:-T}
+        VITE_CURRENCY: ${VITE_CURRENCY:-EUR}
+        VITE_MIN_AMOUNT: ${VITE_MIN_AMOUNT:-5}
+        VITE_SUGGESTED_AMOUNTS: ${VITE_SUGGESTED_AMOUNTS:-5, 10, 50}
+        VITE_STRIPE_PAYMENT_LINK_URL: ${VITE_STRIPE_PAYMENT_LINK_URL}
+        VITE_UMAMI_SCRIPT_URL: ${VITE_UMAMI_SCRIPT_URL:-}
+        VITE_UMAMI_WEBSITE_ID: ${VITE_UMAMI_WEBSITE_ID:-}
+        VITE_WHY_PARAGRAPH: ${VITE_WHY_PARAGRAPH:-}
+        # Origin allowed in the CSP for the Umami script (e.g. https://umami.example.com).
+        # Rendered into nginx.conf at build time; rebuild after changing it.
+        UMAMI_ORIGIN: ${UMAMI_ORIGIN:-}
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+
+    # --- Pick ONE label block for your reverse proxy and uncomment it -----------------------
+    #
+    # Traefik (v2/v3, entrypoint "websecure", certresolver "letsencrypt"):
+    # labels:
+    #   traefik.enable: "true"
+    #   traefik.docker.network: proxy
+    #   traefik.http.routers.okrich.rule: Host(`okrich.lol`) || Host(`www.okrich.lol`)
+    #   traefik.http.routers.okrich.entrypoints: websecure
+    #   traefik.http.routers.okrich.tls.certresolver: letsencrypt
+    #   traefik.http.services.okrich.loadbalancer.server.port: "8080"
+    #   traefik.http.middlewares.okrich-hsts.headers.stsSeconds: "31536000"
+    #   traefik.http.middlewares.okrich-hsts.headers.stsIncludeSubdomains: "true"
+    #   traefik.http.routers.okrich.middlewares: okrich-hsts
+    #
+    # Caddy (lucaslorentz/caddy-docker-proxy):
+    # labels:
+    #   caddy: okrich.lol, www.okrich.lol
+    #   caddy.reverse_proxy: "{{upstreams 8080}}"
+    #   caddy.header.Strict-Transport-Security: "max-age=31536000; includeSubDomains"
+    #
+    # Coolify: no labels needed. Create a "Docker Compose" resource pointing at this repo, set the
+    # domain to https://okrich.lol and the port to 8080 in the UI; Coolify's proxy handles TLS.
+    # Coolify manages its own network, so remove the "networks" section in that case.
+
+networks:
+  proxy:
+    external: true

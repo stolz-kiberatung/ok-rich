@@ -1,0 +1,16 @@
+# docker-compose.local.yml — override for local verification only.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+# Publishes port 8080 and uses the default network instead of the external "proxy" network.
+
+services:
+  web:
+    ports:
+      - '8080:8080'
+    networks:
+      - default
+    restart: 'no'
+
+networks:
+  proxy:
+    external: false
+    name: okrich-local-unused

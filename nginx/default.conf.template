@@ -1,0 +1,62 @@
+# nginx/default.conf.template — rendered with envsubst during the image build.
+# ${UMAMI_ORIGIN} is the only variable (build arg, see Dockerfile); leave it empty when Umami is not used.
+# TLS, HSTS and compression-at-the-edge belong to the reverse proxy in front of this container.
+
+server {
+    listen 8080;
+    listen [::]:8080;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    server_tokens off;
+
+    # --- Security headers (constitution §5) ------------------------------------------------
+    # Exactly two origins: the site itself and the self-hosted Umami instance.
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' ${UMAMI_ORIGIN}; connect-src 'self' ${UMAMI_ORIGIN}; img-src 'self' data:; style-src 'self'; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" always;
+    add_header Cross-Origin-Opener-Policy "same-origin" always;
+
+    # --- Compression ------------------------------------------------------------------------
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 512;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml text/xml;
+
+    # --- Caching ------------------------------------------------------------------------------
+    # Vite hashes everything under /assets; HTML must always be revalidated.
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' ${UMAMI_ORIGIN}; connect-src 'self' ${UMAMI_ORIGIN}; img-src 'self' data:; style-src 'self'; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        try_files $uri =404;
+    }
+
+    location ~* \.(svg|png|webp|jpg|ico|txt)$ {
+        add_header Cache-Control "public, max-age=86400" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        try_files $uri =404;
+    }
+
+    # --- Routes -------------------------------------------------------------------------------
+    # /thanks → thanks/index.html without a redirect; unknown paths → the custom 404 page.
+    location / {
+        add_header Cache-Control "no-cache" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' ${UMAMI_ORIGIN}; connect-src 'self' ${UMAMI_ORIGIN}; img-src 'self' data:; style-src 'self'; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "DENY" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" always;
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        try_files $uri $uri/index.html =404;
+    }
+
+    error_page 404 /404.html;
+    location = /404.html {
+        internal;
+    }
+}
