@@ -1,9 +1,12 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { loadEnv, type HtmlTagDescriptor, type Plugin } from 'vite';
+import { loadEnv, type Connect, type HtmlTagDescriptor, type Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
 type Env = Record<string, string | undefined>;
+
+/** Extension-less routes that resolve to <name>/index.html (see cleanUrls and nginx.conf). */
+const PAGES = ['thanks', 'impressum', 'privacy', 'terms'];
 
 const REQUIRED = ['VITE_DOMAIN', 'VITE_SITE_TITLE', 'VITE_STRIPE_PAYMENT_LINK_URL'] as const;
 
@@ -44,6 +47,14 @@ export function chipsHtml(list: string, currency: string): string {
     .filter(Boolean)
     .map((amount) => `<span class="chip">${amount} ${symbol}</span>`)
     .join('');
+}
+
+/** Prepared text for the "Share on X" link on /thanks. Change the wording here. */
+export const SHARE_TEXT = 'I paid a stranger for a thumbs-up. Best money I ever spent.';
+
+export function shareUrl(siteUrl: string): string {
+  const params = new URLSearchParams({ text: SHARE_TEXT, url: siteUrl });
+  return `https://x.com/intent/post?${params.toString()}`;
 }
 
 function escapeAttr(value: string): string {
@@ -87,6 +98,39 @@ function headPlugin(env: Env, values: Record<string, string>): Plugin {
   };
 }
 
+/**
+ * Clean URLs in dev and preview, mirroring the nginx config: /thanks → thanks/index.html,
+ * unknown extension-less paths → 404.html with a real 404 status (preview only).
+ */
+function cleanUrls(pages: string[], outDir: string): Plugin {
+  const isAsset = (path: string) =>
+    path === '/' || /\.[a-z0-9]+$/i.test(path) || path.startsWith('/@') || path.startsWith('/src/');
+  const rewrite: Connect.NextHandleFunction = (req, _res, next) => {
+    const path = (req.url ?? '/').split('?')[0] ?? '/';
+    if (isAsset(path)) return next();
+    const name = path.replace(/^\/|\/$/g, '');
+    if (pages.includes(name)) req.url = `/${name}/index.html`;
+    next();
+  };
+  const notFound: Connect.NextHandleFunction = (req, res, next) => {
+    const path = (req.url ?? '/').split('?')[0] ?? '/';
+    if (isAsset(path) || pages.includes(path.replace(/^\/|\/$/g, ''))) return next();
+    res.statusCode = 404;
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.end(readFileSync(resolve(outDir, '404.html')));
+  };
+  return {
+    name: 'okrich-clean-urls',
+    configureServer(server) {
+      server.middlewares.use(rewrite);
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(rewrite);
+      server.middlewares.use(notFound);
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const root = process.cwd();
   const env: Env = loadEnv(mode, root, 'VITE_');
@@ -101,10 +145,13 @@ export default defineConfig(({ mode }) => {
     MIN_SHORT: `${currencySymbol(env.VITE_CURRENCY ?? 'EUR')}${env.VITE_MIN_AMOUNT ?? '5'}`,
     STRIPE_URL: escapeAttr(env.VITE_STRIPE_PAYMENT_LINK_URL ?? ''),
     WHY: env.VITE_WHY_PARAGRAPH ?? '',
+    SHARE_URL: shareUrl(`https://${env.VITE_DOMAIN}/`),
   };
 
   return {
-    plugins: [headPlugin(env, values)],
+    // Multi-page site: no SPA fallback, unknown routes are real 404s in dev and preview.
+    appType: 'mpa',
+    plugins: [headPlugin(env, values), cleanUrls(PAGES, resolve(root, 'dist'))],
     build: {
       target: 'es2022',
       rollupOptions: {

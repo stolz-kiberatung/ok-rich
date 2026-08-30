@@ -53,8 +53,6 @@ export const site = {
   stripePaymentLinkUrl: env.VITE_STRIPE_PAYMENT_LINK_URL,
   umami,
   whyParagraph: env.VITE_WHY_PARAGRAPH ?? '',
-  /** Prepared text for the "Share on X" link on /thanks. */
-  shareText: 'I paid a stranger for a thumbs-up. Best money I ever spent.',
 } as const;
 
 /** Composition from plan.md §3. Windows first (mobile DOM order), stickers after. */

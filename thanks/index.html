@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Payment received — %VITE_SITE_TITLE%</title>
+    <meta name="description" content="Payment received. Your thumbs-up photo is on its way." />
+    <meta name="robots" content="noindex" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="%VITE_SITE_TITLE% — make me rich" />
+    <meta
+      property="og:description"
+      content="Pay any amount, get one personal thumbs-up photo of me by email within 7 days. That's it."
+    />
+    <meta property="og:url" content="%%SITE_URL%%/thanks" />
+    <link rel="stylesheet" href="/src/styles/base.css" />
+    <link rel="stylesheet" href="/src/styles/windows.css" />
+    <link rel="stylesheet" href="/src/styles/pages.css" />
+    <script type="module" src="/src/thanks.ts"></script>
+  </head>
+  <body>
+    <main class="page">
+      <section class="win" aria-labelledby="thanks-title">
+        <div class="bar">
+          <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="caption">payment_received.txt</span>
+        </div>
+        <div class="body">
+          <h1 id="thanks-title">Payment received. 👍</h1>
+          <p>Now I go take your photo. Check your inbox within 7 days.</p>
+          <p class="note">
+            You will also get a short confirmation email. If nothing shows up, check spam first,
+            then reply to the confirmation.
+          </p>
+          <p>Meanwhile, tell someone. Misery loves company; so does generosity.</p>
+          <div class="actions">
+            <button class="btn btn-small" id="copy-link" type="button" data-url="%%SITE_URL%%/">
+              Copy link
+            </button>
+            <a
+              class="btn btn-small btn-alt"
+              id="share-x"
+              href="%%SHARE_URL%%"
+              rel="noopener noreferrer"
+              data-umami-event="share-x"
+              >Share on X</a
+            >
+          </div>
+          <label class="share-url-wrap" id="share-url-wrap" hidden>
+            <span class="note">Copy this link:</span>
+            <input class="share-url" id="share-url" type="text" readonly value="%%SITE_URL%%/" />
+          </label>
+          <a class="home" href="/">← back to the pinboard</a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<!-- OG image template, rendered by scripts/make-og.mjs into public/og.png (1200×630). Not served. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          sans-serif;
+        color: #161616;
+        background-color: #f6f6f2;
+        background-image: radial-gradient(#00000021 1px, transparent 1.3px);
+        background-size: 34px 34px;
+        position: relative;
+      }
+      .win {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        padding: 8px 4px 4px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        background:
+          linear-gradient(#fff, #f3f3f3) padding-box,
+          linear-gradient(#e6e6e6, #bdbdbd) border-box;
+        filter: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.14));
+      }
+      .bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 6px 10px;
+      }
+      .dots span {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+      }
+      .dots span:nth-child(1) {
+        background: #ff5f57;
+      }
+      .dots span:nth-child(2) {
+        background: #febc2e;
+      }
+      .dots span:nth-child(3) {
+        background: #28c840;
+      }
+      .caption {
+        font:
+          500 16px/1 ui-monospace,
+          Menlo,
+          Consolas,
+          monospace;
+        color: #5b5b57;
+      }
+      .main {
+        left: 120px;
+        top: 112px;
+        width: 960px;
+        text-align: center;
+      }
+      .main .body {
+        padding: 10px 40px 30px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 164px;
+        font-weight: 900;
+        letter-spacing: -0.05em;
+        line-height: 0.9;
+      }
+      .sub {
+        margin: 16px auto 0;
+        font-size: 27px;
+        max-width: 30ch;
+      }
+      .btn {
+        display: inline-block;
+        margin-top: 20px;
+        background: #161616;
+        color: #fff;
+        font-weight: 800;
+        font-size: 34px;
+        padding: 14px 30px;
+        border-radius: 14px;
+        box-shadow: 7px 7px 0 #ffd400;
+      }
+      .sticker {
+        position: absolute;
+        display: inline-block;
+        font-size: 36px;
+        line-height: 1;
+        padding: 8px 14px;
+        background: #fff;
+        border: 2px solid #161616;
+        border-radius: 8px;
+        box-shadow: 4px 4px 0 #161616;
+        white-space: nowrap;
+      }
+      .s1 {
+        left: 40px;
+        top: 26px;
+        transform: rotate(-8deg);
+      }
+      .s2 {
+        right: 40px;
+        top: 30px;
+        transform: rotate(6deg);
+      }
+      .s3 {
+        left: 26px;
+        bottom: 44px;
+        transform: rotate(5deg);
+        background: #ffd400;
+        font-weight: 800;
+      }
+      .s4 {
+        right: 30px;
+        bottom: 50px;
+        transform: rotate(-5deg);
+        font-size: 44px;
+        letter-spacing: -0.2em;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+      }
+      .domain {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 26px;
+        text-align: center;
+        font:
+          600 22px/1 ui-monospace,
+          Menlo,
+          Consolas,
+          monospace;
+        color: #5b5b57;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sticker s1">^ ω ^</div>
+    <div class="sticker s2">¯\_(ツ)_/¯</div>
+    <div class="sticker s3">€5 → 👍</div>
+    <div class="sticker s4">👍👍👍</div>
+    <section class="win main">
+      <div class="bar">
+        <span class="dots"><span></span><span></span><span></span></span>
+        <span class="caption">{{DOMAIN}}</span>
+      </div>
+      <div class="body">
+        <h1>{{TITLE}}</h1>
+        <p class="sub">Pay any amount. Get one personal thumbs-up photo. That's it.</p>
+        <span class="btn">Make me rich →</span>
+      </div>
+    </section>
+  </body>
+</html>
