@@ -1,6 +1,6 @@
 # plan.md — OK RICH implementation plan
 
-Phase 2 · Plan · 2026-08-30 · status: **draft, awaiting approval**
+Phase 2 · Plan · 2026-08-30 · status: **approved 2026-08-30 (defaults from clarify.md)**
 Based on `spec.md` (approved with clarify defaults: 768 px breakpoint + copy ≥ 24 design px;
 `lighthouse` and `@axe-core/playwright` approved as devDependencies; private GitHub repo).
 

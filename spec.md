@@ -1,6 +1,6 @@
 # spec.md — OK RICH (okrich.lol)
 
-Phase 1 · Specify · 2026-08-30 · status: **draft, awaiting approval**
+Phase 1 · Specify · 2026-08-30 · status: **approved 2026-08-30 (defaults from clarify.md)**
 Inputs: `CLAUDE.md` (constitution), `docs/drag-reference.md` (binding pinboard
 reference), `PROMPT.md` (kickoff v2). This document adds only what those do not
 already fix; where it references a section, that section is authoritative.
