@@ -152,7 +152,7 @@ On push and PR: checkout → Node 22 (`npm ci`) → `lint`, `format:check`, `typ
 
 - `docs/stripe-setup.md`: Payment Link with "customer chooses price", min 5 EUR, collect email, custom
   field "Anything you want me to know? (optional)", terms-acceptance with the § 356 Abs. 5 BGB consent
-  text (DE + EN), success URL `https://okrich.lol/thanks`, receipts on, webhook endpoint for
+  text (DE + EN), success URL `https://ok-rich.com/thanks`, receipts on, webhook endpoint for
   `checkout.session.completed`, test-mode walkthrough with card 4242.
 - `n8n/okrich-stripe.json` nodes: **Stripe Trigger** (signature verified by n8n) → **Code** "guard":
   reject if `now − event.created > 300 s`; idempotency via `$getWorkflowStaticData('global').seen`

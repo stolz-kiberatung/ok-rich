@@ -23,6 +23,9 @@ export function validateEnv(env: Env): void {
   if (!env.VITE_STRIPE_PAYMENT_LINK_URL?.startsWith('https://')) {
     throw new Error('[okrich] VITE_STRIPE_PAYMENT_LINK_URL must be an https:// URL.');
   }
+  if (env.VITE_STATS_URL?.trim() && !env.VITE_STATS_URL.startsWith('https://')) {
+    throw new Error('[okrich] VITE_STATS_URL must be an https:// URL (or empty).');
+  }
   const hasScript = Boolean(env.VITE_UMAMI_SCRIPT_URL?.trim());
   const hasId = Boolean(env.VITE_UMAMI_WEBSITE_ID?.trim());
   if (hasScript !== hasId) {
@@ -41,15 +44,31 @@ export function currencySymbol(currency: string): string {
   return currency === 'EUR' ? '€' : currency;
 }
 
-/** "5, 10, 50" + "EUR" → three text chips. */
+/** "5, 10, 50" + "EUR" → "5 €, 10 € or 50 €" as plain text (nothing here is clickable). */
 export function chipsHtml(list: string, currency: string): string {
   const symbol = currencySymbol(currency);
-  return list
+  const amounts = list
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean)
-    .map((amount) => `<span class="chip">${amount} ${symbol}</span>`)
-    .join('');
+    .map((amount) => `${amount} ${symbol}`);
+  if (amounts.length === 0) return '';
+  if (amounts.length === 1) return amounts[0] as string;
+  return `${amounts.slice(0, -1).join(', ')} or ${amounts[amounts.length - 1]}`;
+}
+
+const MILLION_GOAL_EUR = 1_000_000;
+
+/** Millionaire fund: raised amount as a share of one million euros, 4 decimals. */
+export function millionPercent(env: Env): string {
+  const raised = Number(env.VITE_RAISED_EUR ?? '0') || 0;
+  return ((raised / MILLION_GOAL_EUR) * 100).toFixed(4);
+}
+
+/** "12345" → "12,345 €" for the millionaire meter. */
+export function formatEur(env: Env): string {
+  const raised = Number(env.VITE_RAISED_EUR ?? '0') || 0;
+  return raised.toLocaleString('en-US') + ' €';
 }
 
 /** Sports car fund: real percentage from the raised amount, shown with 4 decimals for comedy. */
@@ -86,6 +105,8 @@ function headPlugin(env: Env, values: Record<string, string>): Plugin {
         });
         const head: HtmlTagDescriptor[] = [
           { tag: 'link', attrs: { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' } },
+          { tag: 'link', attrs: { rel: 'icon', href: '/favicon.png', sizes: '96x96' } },
+          { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
           { tag: 'meta', attrs: { name: 'theme-color', content: '#f6f6f2' } },
           { tag: 'meta', attrs: { property: 'og:image', content: `https://${domain}/og.png` } },
           { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
@@ -156,6 +177,8 @@ export default defineConfig(({ mode }) => {
     STRIPE_URL: escapeAttr(env.VITE_STRIPE_PAYMENT_LINK_URL ?? ''),
     SHARE_URL: shareUrl(`https://${env.VITE_DOMAIN}/`),
     GOAL_PERCENT: goalPercent(env),
+    MILLION_PERCENT: millionPercent(env),
+    RAISED: formatEur(env),
   };
 
   return {

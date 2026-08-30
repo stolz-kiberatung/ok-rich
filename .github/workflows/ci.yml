@@ -14,7 +14,7 @@ concurrency:
 
 env:
   # Public, non-secret build values so the env validation passes in CI (spec A8).
-  VITE_DOMAIN: okrich.lol
+  VITE_DOMAIN: ok-rich.com
   VITE_SITE_TITLE: OK RICH
   VITE_STRIPE_PAYMENT_LINK_URL: https://buy.stripe.com/test_ci_placeholder
   VITE_WHY_PARAGRAPH: CI build placeholder

@@ -16,12 +16,15 @@ services:
         VITE_MIN_AMOUNT: ${VITE_MIN_AMOUNT:-5}
         VITE_SUGGESTED_AMOUNTS: ${VITE_SUGGESTED_AMOUNTS:-5, 10, 50}
         VITE_STRIPE_PAYMENT_LINK_URL: ${VITE_STRIPE_PAYMENT_LINK_URL}
+        VITE_STATS_URL: ${VITE_STATS_URL:-}
         VITE_UMAMI_SCRIPT_URL: ${VITE_UMAMI_SCRIPT_URL:-}
         VITE_UMAMI_WEBSITE_ID: ${VITE_UMAMI_WEBSITE_ID:-}
         VITE_WHY_PARAGRAPH: ${VITE_WHY_PARAGRAPH:-}
         # Origin allowed in the CSP for the Umami script (e.g. https://umami.example.com).
         # Rendered into nginx.conf at build time; rebuild after changing it.
         UMAMI_ORIGIN: ${UMAMI_ORIGIN:-}
+        # Origin of VITE_STATS_URL, allowed in the CSP connect-src.
+        STATS_ORIGIN: ${STATS_ORIGIN:-}
     restart: unless-stopped
     read_only: true
     tmpfs:
@@ -37,7 +40,7 @@ services:
     # labels:
     #   traefik.enable: "true"
     #   traefik.docker.network: proxy
-    #   traefik.http.routers.okrich.rule: Host(`okrich.lol`) || Host(`www.okrich.lol`)
+    #   traefik.http.routers.okrich.rule: Host(`ok-rich.com`) || Host(`www.ok-rich.com`)
     #   traefik.http.routers.okrich.entrypoints: websecure
     #   traefik.http.routers.okrich.tls.certresolver: letsencrypt
     #   traefik.http.services.okrich.loadbalancer.server.port: "8080"
@@ -47,12 +50,12 @@ services:
     #
     # Caddy (lucaslorentz/caddy-docker-proxy):
     # labels:
-    #   caddy: okrich.lol, www.okrich.lol
+    #   caddy: ok-rich.com, www.ok-rich.com
     #   caddy.reverse_proxy: "{{upstreams 8080}}"
     #   caddy.header.Strict-Transport-Security: "max-age=31536000; includeSubDomains"
     #
     # Coolify: no labels needed. Create a "Docker Compose" resource pointing at this repo, set the
-    # domain to https://okrich.lol and the port to 8080 in the UI; Coolify's proxy handles TLS.
+    # domain to https://ok-rich.com and the port to 8080 in the UI; Coolify's proxy handles TLS.
     # Coolify manages its own network, so remove the "networks" section in that case.
 
 networks:

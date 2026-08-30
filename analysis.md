@@ -72,12 +72,12 @@ visual regression snapshot per width once the real photos are in.
 
 ## 6. Hetzner rollout checklist (separate step)
 
-1. DNS A/AAAA for `okrich.lol` (and `www`) → host; wait for propagation.
+1. DNS A/AAAA for `ok-rich.com` (and `www`) → host; wait for propagation.
 2. Clone the repo on the host, create `.env` with live values (Payment Link, Umami, `UMAMI_ORIGIN`).
 3. Uncomment the proxy label block (Traefik / Caddy / Coolify) in `docker-compose.yml`; ensure the
    `proxy` network name matches the host's.
 4. `docker compose up -d --build`; `docker compose ps` shows healthy.
-5. From outside: `curl -sI https://okrich.lol/` shows the CSP header and HSTS (from the proxy);
+5. From outside: `curl -sI https://ok-rich.com/` shows the CSP header and HSTS (from the proxy);
    `/thanks`, `/terms` 200; `/nope` 404.
 6. Stripe: switch the Payment Link and webhook endpoint to live; n8n workflow active; one real
    5 EUR self-purchase → owner email + buyer confirmation arrive → refund.

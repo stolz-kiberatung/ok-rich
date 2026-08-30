@@ -1,0 +1,6 @@
+/* board.css — the only stylesheet the pinboard page links. Order is the cascade. */
+@import './base.css';
+@import './windows.css';
+@import './stickers.css';
+@import './pinboard.css';
+@import './extras.css';

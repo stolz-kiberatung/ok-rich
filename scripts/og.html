@@ -69,25 +69,26 @@
         color: #5b5b57;
       }
       .main {
-        left: 120px;
-        top: 112px;
-        width: 960px;
+        left: 56px;
+        top: 118px;
+        width: 780px;
         text-align: center;
+        z-index: 1;
       }
       .main .body {
         padding: 10px 40px 30px;
       }
       h1 {
         margin: 0;
-        font-size: 164px;
+        font-size: 138px;
         font-weight: 900;
         letter-spacing: -0.05em;
         line-height: 0.9;
       }
       .sub {
         margin: 16px auto 0;
-        font-size: 27px;
-        max-width: 30ch;
+        font-size: 26px;
+        max-width: 26ch;
       }
       .btn {
         display: inline-block;
@@ -130,8 +131,8 @@
         font-weight: 800;
       }
       .s4 {
-        right: 30px;
-        bottom: 50px;
+        right: 300px;
+        bottom: 52px;
         transform: rotate(-5deg);
         font-size: 44px;
         letter-spacing: -0.2em;
@@ -152,6 +153,20 @@
           monospace;
         color: #5b5b57;
       }
+      .photo {
+        position: absolute;
+        right: 74px;
+        top: 132px;
+        width: 196px;
+        height: 245px;
+        object-fit: cover;
+        border: 12px solid #fff;
+        border-bottom-width: 40px;
+        border-radius: 3px;
+        box-shadow: 0 14px 24px rgba(0, 0, 0, 0.3);
+        transform: rotate(6deg);
+        z-index: 2;
+      }
     </style>
   </head>
   <body>
@@ -159,6 +174,7 @@
     <div class="sticker s2">¯\_(ツ)_/¯</div>
     <div class="sticker s3">€5 → 👍</div>
     <div class="sticker s4">👍👍👍</div>
+    <img class="photo" src="{{THUMB}}" alt="" />
     <section class="win main">
       <div class="bar">
         <span class="dots"><span></span><span></span><span></span></span>

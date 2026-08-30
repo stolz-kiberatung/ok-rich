@@ -30,7 +30,7 @@ The CI deliverable presumes GitHub. Options:
 
 | Topic                                          | Decision                                                                                                                  | Source                  |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| Domain, title, owner, currency, minimum, chips | okrich.lol, OK RICH, T, EUR, 5, 5/10/50                                                                                   | PROMPT.md variables     |
+| Domain, title, owner, currency, minimum, chips | ok-rich.com, OK RICH, T, EUR, 5, 5/10/50                                                                                  | PROMPT.md variables     |
 | Stack                                          | Vite + vanilla TS strict + plain CSS, no runtime deps                                                                     | CLAUDE.md §4            |
 | Payment                                        | Stripe Payment Link as a plain `<a>`, no Stripe JS                                                                        | CLAUDE.md §4, §5        |
 | Pinboard mechanics                             | stage 1440×900, scale = min(1, width/1440), Pointer Events, 3 px threshold, 24 px clamp, click-swallow, stacking < 768 px | drag-reference §1–2     |

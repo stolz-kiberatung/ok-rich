@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { chipsHtml, resolveImage, shareUrl, validateEnv } from '../../vite.config';
 
 const good = {
-  VITE_DOMAIN: 'okrich.lol',
+  VITE_DOMAIN: 'ok-rich.com',
   VITE_SITE_TITLE: 'OK RICH',
   VITE_STRIPE_PAYMENT_LINK_URL: 'https://buy.stripe.com/test_x',
 };
@@ -53,16 +53,16 @@ describe('helpers', () => {
     );
   });
 
-  it('renders amount chips with the currency symbol', () => {
-    expect(chipsHtml('5, 10, 50', 'EUR')).toBe(
-      '<span class="chip">5 €</span><span class="chip">10 €</span><span class="chip">50 €</span>',
-    );
+  it('renders the amount line as plain text with the currency symbol', () => {
+    expect(chipsHtml('5, 10, 50', 'EUR')).toBe('5 €, 10 € or 50 €');
+    expect(chipsHtml('5', 'EUR')).toBe('5 €');
+    expect(chipsHtml('', 'EUR')).toBe('');
   });
 
   it('builds an X intent URL with the site URL', () => {
-    const url = new URL(shareUrl('https://okrich.lol/'));
+    const url = new URL(shareUrl('https://ok-rich.com/'));
     expect(url.origin + url.pathname).toBe('https://x.com/intent/post');
-    expect(url.searchParams.get('url')).toBe('https://okrich.lol/');
+    expect(url.searchParams.get('url')).toBe('https://ok-rich.com/');
     expect(url.searchParams.get('text')).toContain('thumbs-up');
   });
 });

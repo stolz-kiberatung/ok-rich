@@ -6,7 +6,7 @@ Phase 0 is done. Start with Phase 1.
 
 ## Project variables (edit before starting)
 
-- DOMAIN: okrich.lol # alternatives: richok.lol, makemerich.lol
+- DOMAIN: ok-rich.com # alternatives: richok.lol, makemerich.lol
 - SITE_TITLE: OK RICH
 - OWNER_NAME: T
 - CURRENCY: EUR

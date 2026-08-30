@@ -16,11 +16,7 @@
     />
     <meta property="og:url" content="%%SITE_URL%%/" />
     <link rel="canonical" href="%%SITE_URL%%/" />
-    <link rel="stylesheet" href="/src/styles/base.css" />
-    <link rel="stylesheet" href="/src/styles/windows.css" />
-    <link rel="stylesheet" href="/src/styles/stickers.css" />
-    <link rel="stylesheet" href="/src/styles/pinboard.css" />
-    <link rel="stylesheet" href="/src/styles/extras.css" />
+    <link rel="stylesheet" href="/src/styles/board.css" />
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body>
@@ -48,6 +44,15 @@
             <span class="caption no-drag">checkout.exe</span>
           </div>
           <div class="body cta">
+            <div class="meter no-drag">
+              <p class="meter-label">
+                Millionaire fund: <strong id="million-percent">%%MILLION_PERCENT%% %</strong>
+                <span class="meter-note" id="million-note">%%RAISED%% of 1,000,000 €</span>
+              </p>
+              <span class="meter-track"
+                ><span class="meter-fill" data-percent="%%MILLION_PERCENT%%"></span
+              ></span>
+            </div>
             <a
               class="btn"
               href="%%STRIPE_URL%%"
@@ -59,9 +64,10 @@
               You get: one (1) personal thumbs-up photo, taken by me, for you. Delivered by email
               within 7 days. That's it.
             </p>
-            <p class="chips no-drag">
-              %%CHIPS%%
-              <span class="chip-note">you choose, min. %%MIN%%</span>
+            <p class="chips no-drag">%%CHIPS%%, or more. You choose, min. %%MIN%%.</p>
+            <p class="chip-hint no-drag">
+              Paying more does not get you more thumbs. Thumb supply is fixed at one (1). It does
+              get you a happier man holding it.
             </p>
           </div>
         </section>
@@ -99,8 +105,8 @@
           <figure class="body kid no-drag">
             <img
               src="%%KID_SRC%%"
-              width="240"
-              height="180"
+              width="200"
+              height="150"
               alt="Me as a kid, snorkelling face-down in knee-deep water"
             />
             <figcaption>early liquidity research</figcaption>
@@ -153,11 +159,13 @@
           <div class="body goal no-drag">
             <img
               src="/img/goal-car.webp?v=2"
-              width="280"
-              height="158"
+              width="240"
+              height="135"
               alt="A red sports car on a coastal road. The goal."
             />
-            <p class="goal-label">Sports car fund: <strong>%%GOAL_PERCENT%% % complete</strong></p>
+            <p class="goal-label">
+              Sports car fund: <strong id="car-percent">%%GOAL_PERCENT%% % complete</strong>
+            </p>
             <span class="goal-track"
               ><span class="goal-fill" data-percent="%%GOAL_PERCENT%%"></span
             ></span>
@@ -167,7 +175,7 @@
         <section class="win abs" data-pin="wall" aria-label="Wall of thumbs">
           <div class="bar">
             <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
-            <span class="caption no-drag">wall_of_thumbs/</span>
+            <span class="caption no-drag">wall/</span>
           </div>
           <div class="body wall no-drag">
             <div class="wall-grid">
@@ -178,7 +186,7 @@
               <span class="wall-tile wall-empty">you?</span>
               <span class="wall-tile wall-empty">you?</span>
             </div>
-            <p class="wall-note">opt in at checkout: write "wall me" in the message</p>
+            <p class="wall-note">opt in: write "wall me"</p>
           </div>
         </section>
 
@@ -239,7 +247,7 @@
 
         <div class="sticker abs counter m-show" data-pin="counter">
           <span class="counter-label no-drag">You are visitor</span>
-          <span class="counter-digits no-drag" id="visitor-count">011302</span>
+          <span class="counter-digits no-drag" id="visitor-count">······</span>
         </div>
 
         <!-- Decorative stickers: desktop board only -->

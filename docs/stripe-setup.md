@@ -33,7 +33,7 @@ Do this first in **Test mode** (toggle top right), walk through a payment with c
    - Label: `Anything you want me to know? (optional)`
    - Optional: yes. Max length: 255 (Stripe's default).
 5. **Require customers to accept your terms of service**: on.
-   - Terms URL: `https://okrich.lol/terms`.
+   - Terms URL: `https://ok-rich.com/terms`.
    - Custom text (Stripe shows this as the checkbox label). Paste exactly, German first:
 
      ```
@@ -41,12 +41,12 @@ Do this first in **Test mode** (toggle top right), walk through a payment with c
      Widerrufsfrist begonnen wird. Mir ist bekannt, dass ich mit Beginn der Ausführung mein
      Widerrufsrecht verliere. / I expressly request that performance of the contract begins
      before the end of the withdrawal period. I understand that I lose my right of withdrawal
-     once performance has begun. (AGB: https://okrich.lol/terms)
+     once performance has begun. (AGB: https://ok-rich.com/terms)
      ```
 
      This is the § 356 Abs. 5 BGB consent; the same wording is on `/terms`.
 6. **After payment** → "Don't show confirmation page" → **Redirect customers to your website**:
-   `https://okrich.lol/thanks` (no `session_id` parameter; the site does not read it).
+   `https://ok-rich.com/thanks` (no `session_id` parameter; the site does not read it).
 7. **Advanced**:
    - Allow promotion codes: off.
    - Allow business customers to provide tax IDs: off.
@@ -67,7 +67,7 @@ changes.
 
 1. **Settings → Business → Customer emails**: enable "Successful payments" so buyers get a Stripe
    receipt. Set the support email and the public business name (`TODO-LEGAL: as in Impressum`).
-2. **Settings → Business → Public details**: statement descriptor, e.g. `OKRICH.LOL THUMBS UP`
+2. **Settings → Business → Public details**: statement descriptor, e.g. `OK-RICH.COM THUMBS`
    (max 22 characters), so nobody disputes a charge they do not recognise.
 
 ## 5. Webhook to n8n

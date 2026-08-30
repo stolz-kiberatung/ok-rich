@@ -12,6 +12,7 @@ ARG VITE_CURRENCY
 ARG VITE_MIN_AMOUNT
 ARG VITE_SUGGESTED_AMOUNTS
 ARG VITE_STRIPE_PAYMENT_LINK_URL
+ARG VITE_STATS_URL
 ARG VITE_UMAMI_SCRIPT_URL
 ARG VITE_UMAMI_WEBSITE_ID
 ARG VITE_WHY_PARAGRAPH
@@ -28,8 +29,9 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Origin allowed in the CSP for the Umami script; empty when analytics is off. Rendered here at
 # build time (not by the entrypoint), so the container can run with a read-only root filesystem.
 ARG UMAMI_ORIGIN=""
+ARG STATS_ORIGIN=""
 COPY --chown=nginx:nginx nginx/default.conf.template /tmp/default.conf.template
-RUN envsubst '${UMAMI_ORIGIN}' < /tmp/default.conf.template > /etc/nginx/conf.d/default.conf \
+RUN envsubst '${UMAMI_ORIGIN} ${STATS_ORIGIN}' < /tmp/default.conf.template > /etc/nginx/conf.d/default.conf \
   && rm /tmp/default.conf.template \
   && nginx -t
 

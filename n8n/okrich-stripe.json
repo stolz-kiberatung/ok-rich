@@ -1,5 +1,5 @@
 {
-  "name": "OK RICH — Stripe checkout completed",
+  "name": "OK RICH — payments and public stats",
   "nodes": [
     {
       "parameters": {
@@ -14,25 +14,25 @@
       "name": "Stripe webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 0],
+      "position": [0, -160],
       "webhookId": "okrich-stripe"
     },
     {
       "parameters": {
-        "jsCode": "// Verifies the Stripe signature, rejects events older than 5 minutes and processes each\n// checkout session at most once. Returns [] (stops the workflow) for anything invalid.\n// Requires on the n8n host: STRIPE_WEBHOOK_SECRET (whsec_...) and NODE_FUNCTION_ALLOW_BUILTIN=crypto\nconst crypto = require('crypto');\n\nconst item = $input.first();\nconst secret = $env.STRIPE_WEBHOOK_SECRET;\nif (!secret) throw new Error('STRIPE_WEBHOOK_SECRET is not set on the n8n host');\n\nconst header = item.json.headers['stripe-signature'] || '';\nconst parts = Object.fromEntries(header.split(',').map((p) => p.split('=')));\nconst timestamp = Number(parts.t);\nconst signature = parts.v1;\nif (!timestamp || !signature) { console.log('rejected: missing signature header'); return []; }\n\n// Reject events older than 5 minutes (replay protection).\nconst ageSeconds = Math.floor(Date.now() / 1000) - timestamp;\nif (ageSeconds > 300) { console.log(`rejected: event too old (${ageSeconds}s)`); return []; }\n\n// Raw body is required for the HMAC; the Webhook node provides it as binary \"data\".\nconst rawBody = Buffer.from(item.binary.data.data, 'base64').toString('utf8');\nconst expected = crypto.createHmac('sha256', secret).update(`${timestamp}.${rawBody}`).digest('hex');\nconst a = Buffer.from(expected); const b = Buffer.from(signature);\nif (a.length !== b.length || !crypto.timingSafeEqual(a, b)) { console.log('rejected: bad signature'); return []; }\n\nconst event = JSON.parse(rawBody);\nif (event.type !== 'checkout.session.completed') { console.log(`ignored: ${event.type}`); return []; }\nconst session = event.data.object;\nif (session.payment_status !== 'paid') { console.log('ignored: not paid'); return []; }\n\n// Idempotency on checkout.session.id, kept in workflow static data (ring buffer of 500 ids).\nconst store = $getWorkflowStaticData('global');\nstore.seen = Array.isArray(store.seen) ? store.seen : [];\nif (store.seen.includes(session.id)) { console.log('ignored: duplicate session'); return []; }\nstore.seen.push(session.id);\nif (store.seen.length > 500) store.seen.splice(0, store.seen.length - 500);\n\nconst email = (session.customer_details && session.customer_details.email) || session.customer_email || '';\nconst masked = email.replace(/^(.).*(@.*)$/, '$1***$2');\nconst custom = Array.isArray(session.custom_fields) && session.custom_fields[0] && session.custom_fields[0].text ? session.custom_fields[0].text.value || '' : '';\nconst amount = (session.amount_total || 0) / 100;\nconst currency = (session.currency || 'eur').toUpperCase();\n\n// Only the masked address goes to the console log.\nconsole.log(`accepted: ${session.id} ${amount} ${currency} from ${masked}`);\n\nreturn [{ json: { sessionId: session.id, amount, currency, email, maskedEmail: masked, message: custom, created: new Date(event.created * 1000).toISOString() } }];"
+        "jsCode": "// Verifies the Stripe signature, rejects events older than 5 minutes, processes each checkout\n// session at most once, and adds the amount to the public totals. Returns [] to stop the flow.\n// n8n host needs: STRIPE_WEBHOOK_SECRET (whsec_...) and NODE_FUNCTION_ALLOW_BUILTIN=crypto\nconst crypto = require('crypto');\n\nconst item = $input.first();\nconst secret = $env.STRIPE_WEBHOOK_SECRET;\nif (!secret) throw new Error('STRIPE_WEBHOOK_SECRET is not set on the n8n host');\n\nconst header = item.json.headers['stripe-signature'] || '';\nconst parts = Object.fromEntries(header.split(',').map((p) => p.split('=')));\nconst timestamp = Number(parts.t);\nconst signature = parts.v1;\nif (!timestamp || !signature) { console.log('rejected: missing signature header'); return []; }\n\n// Replay protection: ignore anything older than five minutes.\nconst ageSeconds = Math.floor(Date.now() / 1000) - timestamp;\nif (ageSeconds > 300) { console.log(`rejected: event too old (${ageSeconds}s)`); return []; }\n\n// The HMAC needs the raw body; the Webhook node provides it as binary \"data\".\nconst rawBody = Buffer.from(item.binary.data.data, 'base64').toString('utf8');\nconst expected = crypto.createHmac('sha256', secret).update(`${timestamp}.${rawBody}`).digest('hex');\nconst a = Buffer.from(expected); const b = Buffer.from(signature);\nif (a.length !== b.length || !crypto.timingSafeEqual(a, b)) { console.log('rejected: bad signature'); return []; }\n\nconst event = JSON.parse(rawBody);\nif (event.type !== 'checkout.session.completed') { console.log(`ignored: ${event.type}`); return []; }\nconst session = event.data.object;\nif (session.payment_status !== 'paid') { console.log('ignored: not paid'); return []; }\n\n// Idempotency on checkout.session.id (ring buffer of the last 500 ids in workflow static data).\nconst store = $getWorkflowStaticData('global');\nstore.seen = Array.isArray(store.seen) ? store.seen : [];\nif (store.seen.includes(session.id)) { console.log('ignored: duplicate session'); return []; }\nstore.seen.push(session.id);\nif (store.seen.length > 500) store.seen.splice(0, store.seen.length - 500);\n\nconst amount = (session.amount_total || 0) / 100;\nconst currency = (session.currency || 'eur').toUpperCase();\n\n// Public totals, read by the website through the stats endpoint below.\nstore.raised = Math.round(((Number(store.raised) || 0) + amount) * 100) / 100;\nstore.sales = (Number(store.sales) || 0) + 1;\n\nconst email = (session.customer_details && session.customer_details.email) || session.customer_email || '';\nconst masked = email.replace(/^(.).*(@.*)$/, '$1***$2');\nconst custom = Array.isArray(session.custom_fields) && session.custom_fields[0] && session.custom_fields[0].text ? session.custom_fields[0].text.value || '' : '';\n\n// Only the masked address is logged.\nconsole.log(`accepted: ${session.id} ${amount} ${currency} from ${masked} — raised now ${store.raised}`);\n\nreturn [{ json: { sessionId: session.id, amount, currency, email, maskedEmail: masked, message: custom, created: new Date(event.created * 1000).toISOString() } }];"
       },
       "id": "a1c4d7e0-0002-4000-8000-000000000002",
-      "name": "Verify, dedupe, extract",
+      "name": "Verify, dedupe, count",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [260, 0]
+      "position": [260, -160]
     },
     {
       "parameters": {
         "sendTo": "owner@example.com",
         "subject": "=💸 {{ $json.amount }} {{ $json.currency }} — someone wants your thumbs-up",
         "emailType": "text",
-        "message": "=New order on okrich.lol\n\nAmount:  {{ $json.amount }} {{ $json.currency }}\nBuyer:   {{ $json.email }}\nMessage: {{ $json.message || '(none)' }}\nSession: {{ $json.sessionId }}\nPaid at: {{ $json.created }}\n\nTake the photo and email it to the buyer within 7 days. Delete this mail afterwards.",
+        "message": "=New order on ok-rich.com\n\nAmount:  {{ $json.amount }} {{ $json.currency }}\nBuyer:   {{ $json.email }}\nMessage: {{ $json.message || '(none)' }}\nSession: {{ $json.sessionId }}\nPaid at: {{ $json.created }}\n\nTake the photo and email it to the buyer within 7 days. Delete this mail afterwards.",
         "options": {
           "appendAttribution": false
         }
@@ -41,7 +41,7 @@
       "name": "Email owner",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [520, -120],
+      "position": [520, -260],
       "credentials": {
         "gmailOAuth2": {
           "id": "REPLACE_WITH_CREDENTIAL_ID",
@@ -54,7 +54,7 @@
         "sendTo": "={{ $json.email }}",
         "subject": "Payment received — your thumbs-up is in production 👍",
         "emailType": "text",
-        "message": "=Hi,\n\nyour payment of {{ $json.amount }} {{ $json.currency }} arrived. Thank you. Genuinely.\n\nI will now go and take your personal thumbs-up photo. It lands in this inbox within 7 days.\n\nReference: {{ $json.sessionId }}\nTerms: https://okrich.lol/terms · Privacy: https://okrich.lol/privacy\n\nOK RICH\nhttps://okrich.lol",
+        "message": "=Hi,\n\nyour payment of {{ $json.amount }} {{ $json.currency }} arrived. Thank you. Genuinely.\n\nI will now go and take your personal thumbs-up photo. It lands in this inbox within 7 days.\n\nReference: {{ $json.sessionId }}\nTerms: https://ok-rich.com/terms · Privacy: https://ok-rich.com/privacy\n\nOK RICH\nhttps://ok-rich.com",
         "options": {
           "appendAttribution": false
         }
@@ -63,26 +63,81 @@
       "name": "Confirm to buyer",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [520, 120],
+      "position": [520, -60],
       "credentials": {
         "gmailOAuth2": {
           "id": "REPLACE_WITH_CREDENTIAL_ID",
           "name": "Gmail (Google Workspace)"
         }
       }
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "okrich-stats",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1c4d7e0-0005-4000-8000-000000000005",
+      "name": "Stats endpoint",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 200],
+      "webhookId": "okrich-stats"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Public counter: one visit per IP per 12 hours, plus the running total from the Stripe branch.\n// Shares workflow static data with the payment branch, which is why both live in one workflow.\nconst crypto = require('crypto');\n\nconst store = $getWorkflowStaticData('global');\nconst headers = $input.first().json.headers || {};\n\n// Behind a reverse proxy the client IP is the LAST entry the proxy appended.\nconst xff = String(headers['x-forwarded-for'] || '');\nconst ip = (xff.split(',').pop() || headers['x-real-ip'] || 'unknown').trim();\n// Only a salted hash is kept, never the address itself (privacy policy §4).\nconst salt = $env.OKRICH_IP_SALT || 'okrich-static-salt';\nconst hash = crypto.createHash('sha256').update(salt + ip).digest('hex').slice(0, 16);\n\nconst now = Date.now();\nconst WINDOW_MS = 12 * 60 * 60 * 1000;\nstore.seenIps = (Array.isArray(store.seenIps) ? store.seenIps : []).filter((e) => now - e.t < WINDOW_MS);\nif (!store.seenIps.some((e) => e.h === hash)) {\n  store.seenIps.push({ h: hash, t: now });\n  store.visitors = (Number(store.visitors) || 0) + 1;\n}\n// Cap the rolling window so static data cannot grow without bound.\nif (store.seenIps.length > 5000) store.seenIps.splice(0, store.seenIps.length - 5000);\n\nreturn [{ json: { raised: Number(store.raised) || 0, visitors: Number(store.visitors) || 0, sales: Number(store.sales) || 0 } }];"
+      },
+      "id": "a1c4d7e0-0006-4000-8000-000000000006",
+      "name": "Count visit, read totals",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [260, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://ok-rich.com"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "public, max-age=60"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a1c4d7e0-0007-4000-8000-000000000007",
+      "name": "Respond with totals",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [520, 200]
     }
   ],
   "connections": {
     "Stripe webhook": {
-      "main": [[{ "node": "Verify, dedupe, extract", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Verify, dedupe, count", "type": "main", "index": 0 }]]
     },
-    "Verify, dedupe, extract": {
+    "Verify, dedupe, count": {
       "main": [
         [
           { "node": "Email owner", "type": "main", "index": 0 },
           { "node": "Confirm to buyer", "type": "main", "index": 0 }
         ]
       ]
+    },
+    "Stats endpoint": {
+      "main": [[{ "node": "Count visit, read totals", "type": "main", "index": 0 }]]
+    },
+    "Count visit, read totals": {
+      "main": [[{ "node": "Respond with totals", "type": "main", "index": 0 }]]
     }
   },
   "settings": {
@@ -93,7 +148,7 @@
     "saveExecutionProgress": false
   },
   "active": false,
-  "versionId": "1",
+  "versionId": "2",
   "meta": {
     "instanceId": "okrich"
   },

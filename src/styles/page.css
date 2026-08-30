@@ -1,0 +1,4 @@
+/* page.css — the only stylesheet the text pages link (thanks, legal, 404). */
+@import './base.css';
+@import './windows.css';
+@import './pages.css';

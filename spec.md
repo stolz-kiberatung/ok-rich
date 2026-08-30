@@ -1,4 +1,4 @@
-# spec.md — OK RICH (okrich.lol)
+# spec.md — OK RICH (ok-rich.com)
 
 Phase 1 · Specify · 2026-08-30 · status: **approved 2026-08-30 (defaults from clarify.md)**
 Inputs: `CLAUDE.md` (constitution), `docs/drag-reference.md` (binding pinboard
@@ -139,8 +139,8 @@ Everything in `CLAUDE.md` §9 (accounts, own checkout/backend, live counter, gal
 - A2 Stage scale uses `document.documentElement.clientWidth` instead of `window.innerWidth` so the vertical scrollbar never causes horizontal overflow; same intent as the reference.
 - A3 Trade-offer text stays "I receive: $$$" verbatim (meme convention) although the currency is EUR.
 - A4 Suggested amounts are non-interactive text chips; Stripe "customer chooses price" cannot be pre-filled from a link.
-- A5 The Stripe success URL is `https://okrich.lol/thanks` without `session_id`, so no identifiers land in Umami or logs.
-- A6 The `/thanks` share text: "I paid a stranger for a thumbs-up. Best money I ever spent. okrich.lol" — owner may change it in `site.config.ts`.
+- A5 The Stripe success URL is `https://ok-rich.com/thanks` without `session_id`, so no identifiers land in Umami or logs.
+- A6 The `/thanks` share text: "I paid a stranger for a thumbs-up. Best money I ever spent. ok-rich.com" — owner may change it in `site.config.ts`.
 - A7 The Umami origin for the CSP is injected at container start through the nginx image's built-in `envsubst` template mechanism (no extra dependency); the same value is passed as a build arg for the script tag.
 - A8 CI builds with dummy, non-secret values (`STRIPE_PAYMENT_LINK_URL=https://buy.stripe.com/test_ci`) set in the workflow file.
 - A9 Placeholder images are resolved in `vite.config.ts` (file exists → real path, else placeholder) and exposed as build-time constants.

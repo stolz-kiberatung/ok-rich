@@ -1,7 +1,7 @@
 // scripts/make-og.mjs — renders scripts/og.html to public/og.png (1200×630) with Playwright.
 // Usage: npm run og   (reads VITE_DOMAIN and VITE_SITE_TITLE from .env)
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 
 function loadEnvFile(path) {
@@ -21,7 +21,13 @@ const env = { ...loadEnvFile('.env'), ...process.env };
 const domain = env.VITE_DOMAIN || 'okrich.lol';
 const title = env.VITE_SITE_TITLE || 'OK RICH';
 
+const photo = existsSync('public/img/thumb.webp')
+  ? 'data:image/webp;base64,' + readFileSync('public/img/thumb.webp').toString('base64')
+  : 'data:image/svg+xml;base64,' +
+    readFileSync('public/img/thumb-placeholder.svg').toString('base64');
+
 const html = readFileSync('scripts/og.html', 'utf8')
+  .replaceAll('{{THUMB}}', photo)
   .replaceAll('{{DOMAIN}}', domain)
   .replaceAll('{{TITLE}}', title);
 

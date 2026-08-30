@@ -1,4 +1,4 @@
-# CLAUDE.md — Project Constitution: OK RICH (okrich.lol)
+# CLAUDE.md — Project Constitution: OK RICH (ok-rich.com)
 
 This file is the single source of truth for how this project is built.
 When a request conflicts with this file, stop and ask before proceeding.

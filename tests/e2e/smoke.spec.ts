@@ -208,7 +208,7 @@ test.describe('mobile layout', () => {
     await expect(page.locator('[data-pin="nametag"]')).toBeHidden();
     await expect(page.locator('[data-pin="sticky"]')).toBeVisible();
     await expect(page.locator('[data-pin="dad"]')).toBeVisible();
-    await expect(page.locator('[data-pin="counter"]')).toBeVisible();
+    await expect(page.locator('[data-pin="sample"]')).toBeVisible();
 
     const kid = page.locator('[data-pin="kid"]');
     await kid.scrollIntoViewIfNeeded();
@@ -223,6 +223,17 @@ test.describe('mobile layout', () => {
     const after = await kid.boundingBox();
     expect(after?.x).toBe(before.x);
     expect(after?.y).toBe(before.y);
+  });
+});
+
+test.describe('live counters', () => {
+  test('shows real totals when the stats endpoint answers, and no invented number otherwise', async ({
+    page,
+  }) => {
+    // Without a configured endpoint the visitor card must disappear rather than show a guess.
+    await page.goto('/');
+    await expect(page.locator('[data-pin="counter"]')).toHaveCount(0);
+    await expect(page.locator('#million-percent')).toHaveText(/^\d+\.\d{4} %$/);
   });
 });
 

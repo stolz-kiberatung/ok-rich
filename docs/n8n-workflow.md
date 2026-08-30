@@ -1,13 +1,20 @@
 # docs/n8n-workflow.md — Stripe → owner email + buyer confirmation
 
-Export: `n8n/okrich-stripe.json`. Four nodes, no extra services:
+Export: `n8n/okrich-stripe.json`. One workflow, two endpoints, no extra services:
 
 ```
-Stripe webhook (Webhook, raw body)
-  → Verify, dedupe, extract (Code)   signature · age ≤ 5 min · idempotency on session id
-      → Email owner (Gmail)          amount, buyer email, message, session id
-      → Confirm to buyer (Gmail)     "payment received, photo within 7 days"
+POST /webhook/okrich-stripe (raw body)
+  → Verify, dedupe, count (Code)   signature · age ≤ 5 min · idempotency · raised += amount
+      → Email owner (Gmail)        amount, buyer email, message, session id
+      → Confirm to buyer (Gmail)   "payment received, photo within 7 days"
+
+GET /webhook/okrich-stats
+  → Count visit, read totals (Code)  one visit per IP hash per 12 h
+      → Respond with totals          {"raised":…, "visitors":…, "sales":…}
 ```
+
+Both endpoints live in the **same** workflow on purpose: they share `$getWorkflowStaticData`,
+which is where the running totals are kept. Splitting them would break the shared counter.
 
 Why a Webhook node instead of n8n's Stripe Trigger: the Code node verifies the
 `Stripe-Signature` header itself (HMAC-SHA256, constant-time compare) and rejects events older
@@ -19,7 +26,8 @@ Add to the n8n service environment and restart n8n:
 
 ```
 STRIPE_WEBHOOK_SECRET=whsec_...          # from the Stripe webhook endpoint (docs/stripe-setup.md §5)
-NODE_FUNCTION_ALLOW_BUILTIN=crypto       # lets the Code node require('crypto')
+NODE_FUNCTION_ALLOW_BUILTIN=crypto       # lets the Code nodes require('crypto')
+OKRICH_IP_SALT=<random 32+ chars>        # salt for the visitor-counter IP hash (never logged)
 EXECUTIONS_DATA_PRUNE=true               # keep execution data short-lived (privacy, A13)
 EXECUTIONS_DATA_MAX_AGE=720              # hours = 30 days
 ```
@@ -72,3 +80,33 @@ is readable in the Code node. The secret lives only in the n8n environment, neve
 | `STRIPE_WEBHOOK_SECRET is not set`                    | env var missing or env access blocked                         | set it; check `N8N_BLOCK_ENV_ACCESS_IN_NODE`             |
 | Gmail node fails with 401                             | OAuth token expired / scope missing                           | reconnect the credential                                 |
 | Stripe shows failed deliveries                        | workflow inactive or URL changed                              | activate, re-copy the production URL                     |
+
+## 6. The public stats endpoint (live counters on the site)
+
+The site shows two real numbers: the millionaire meter above the CTA button and the sports car
+fund. Both come from this endpoint, together with the retro visitor counter.
+
+1. Activate the workflow and copy the **production URL** of the _Stats endpoint_ node, e.g.
+   `https://n8n.example.com/webhook/okrich-stats`.
+2. Put it into the site's `.env`:
+
+   ```
+   VITE_STATS_URL=https://n8n.example.com/webhook/okrich-stats
+   STATS_ORIGIN=https://n8n.example.com
+   ```
+
+   `VITE_STATS_URL` is read by the page, `STATS_ORIGIN` goes into the nginx CSP `connect-src`
+   at image build time. Rebuild the container after changing either.
+
+3. The _Respond with totals_ node sets `Access-Control-Allow-Origin: https://ok-rich.com`.
+   Change that value if you serve the site from another host, otherwise the browser blocks it.
+4. Check it: `curl https://n8n.example.com/webhook/okrich-stats` returns
+   `{"raised":0,"visitors":1,"sales":0}` and the number rises on the next call from another IP.
+
+**Honesty by design:** when `VITE_STATS_URL` is empty or the endpoint is unreachable, the page
+removes the visitor card instead of inventing a number, and both meters keep the build-time value
+from `VITE_RAISED_EUR`. Nothing on the page ever shows a made-up count.
+
+**Counting rules:** one visit per IP hash per 12 hours (salted SHA-256, address never stored,
+rolling window capped at 5000 entries). `raised` only grows inside the signature-verified Stripe
+branch, so it cannot be inflated from outside.
