@@ -494,7 +494,6 @@
 /* Board: trade-offer title clears the certificate above; Dad card fits under the taller CTA */
 .is-board .trade-head {
   font-size: 22px;
-  text-align: left;
 }
 .is-board .dadmsg {
   padding: 8px 12px;
