@@ -952,3 +952,84 @@
 .is-board .meter-track {
   height: 26px;
 }
+
+/* ---------------------------------------------------------------------------
+   Vertical rhythm inside window bodies (v2.0).
+   Replaces the old blanket ".win .body p { margin: 0 }" reset, which had higher
+   specificity than every per-element rule and kept swallowing spacing (three
+   separate bugs came from it). Now spacing lives on ONE rule and every override
+   is naturally more specific, so a single class is enough to change a gap.
+   --------------------------------------------------------------------------- */
+.win .body > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.win .body > * + * {
+  margin-top: var(--flow, 14px);
+}
+.is-board .win .body > * + * {
+  margin-top: var(--flow, 16px);
+}
+/* Headings open a new block, so they get more air above than the flow gap. */
+.win .body > h2 + *,
+.win .body > h3 + * {
+  margin-top: 10px;
+}
+.win .body > * + h2,
+.win .body > * + h3 {
+  margin-top: 26px;
+}
+/* A footnote that comments on the line above it, not a new block. */
+.win .body > .chip-hint {
+  margin-top: 24px;
+}
+.win .body > .board-note,
+.win .body > .wall-note,
+.win .body > .goal-note {
+  margin-top: 14px;
+}
+
+/* Top contributors and Wall of Thumbs are centred announcement cards */
+.body.board,
+.body.wall {
+  text-align: center;
+}
+.body.board .board-list {
+  text-align: left;
+}
+.body.board .board-empty {
+  text-align: center;
+}
+.body.wall .wall-grid {
+  justify-content: center;
+}
+.body.wall h2 {
+  justify-content: center;
+}
+
+/* Bigger Wall of Thumbs: two rows of larger tiles */
+.stage.is-board > [data-pin='wall'] {
+  width: 420px;
+}
+.wall-grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: center;
+  gap: 12px;
+}
+.is-board .wall-tile {
+  width: 60px;
+  height: 75px;
+}
+.is-board .wall-empty {
+  font-size: 14px;
+}
+.is-board .wall h2 {
+  font-size: 22px;
+}
+.is-board .wall-note {
+  font-size: 14px;
+}
+.is-board .body.wall {
+  padding: 10px 20px 18px;
+}

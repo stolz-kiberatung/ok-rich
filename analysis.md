@@ -159,3 +159,37 @@ complaints@ok-rich.com (complaints, rights notices). This constitution §6 was u
   directory instead of the repo root (it only ever worked because a manually started server was
   being reused; CI would have failed), and a stale preview server had been masking a real 404 on
   `/pay`. Both fixed.
+
+## v2.0 addendum (2026-08-31, spacing system)
+
+The blanket `.win .body p { margin: 0 }` reset in windows.css had specificity (0,2,1) and beat
+every per-element spacing rule written later. It caused three separate "the gap is still too
+small" reports (hero sub line, FAQ headings, thumb-supply footnote), each fixed by hand until the
+next one appeared.
+
+Removed. Vertical rhythm inside window bodies now lives on one pair of rules in extras.css:
+
+```css
+.win .body > * {
+  margin-block: 0;
+}
+.win .body > * + * {
+  margin-top: var(--flow, 14px);
+} /* 16px on the board */
+.win .body > * + h2 {
+  margin-top: 26px;
+} /* headings open a block */
+.win .body > h2 + * {
+  margin-top: 10px;
+}
+.win .body > .chip-hint {
+  margin-top: 24px;
+} /* a footnote, not a block */
+```
+
+Every override is a direct child selector and therefore more specific than the flow rule, so a
+single class is enough to change a gap and nothing can silently swallow it again.
+
+Also in this pass: Wall of Thumbs enlarged (420 px, 3x2 tiles of 60x75, centred) and moved under
+the contributors board, both cards centred, the FAQ answer got its third item back, and the stage
+grew to 1440x1460.
