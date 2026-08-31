@@ -36,6 +36,16 @@ services:
     networks:
       - proxy
 
+    # nginx logs to stdout, so Docker holds the access log — including visitor IP addresses.
+    # Without this block the json-file driver never rotates and the file grows without limit,
+    # which would contradict the 14-day retention stated on /privacy. Size is capped here; the
+    # time limit itself comes from the host (README → "Server logs and the 14-day retention").
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
     # --- Pick ONE label block for your reverse proxy and uncomment it -----------------------
     #
     # Traefik (v2/v3, entrypoint "websecure", certresolver "letsencrypt"):

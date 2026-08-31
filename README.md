@@ -83,27 +83,61 @@ on the proxy network; it publishes no port of its own.
 5. **Verify from outside**:
 
    ```bash
-   curl -sI https://ok-rich.com/ | grep -i "content-security-policy|strict-transport"
+   curl -sI https://ok-rich.com/ | grep -iE 'content-security-policy|strict-transport'
    for p in / /pay /thanks /impressum /privacy /terms; do
-     printf '%s %s
+     printf '%s %s\n' "$p" "$(curl -s -o /dev/null -w '%{http_code}' "https://ok-rich.com$p")"
+   done
+   curl -s -o /dev/null -w '%{http_code}\n' https://ok-rich.com/nope   # expect 404
    ```
 
-' "$p" "$(curl -s -o /dev/null -w '%{http_code}' https://ok-rich.com$p)"
-done
-curl -s -o /dev/null -w '%{http_code}
-' https://ok-rich.com/nope # expect 404
-
-```
-
-The CSP must come from this container and HSTS from the proxy.
+   The CSP must come from this container and HSTS from the proxy.
 
 6. **Payments and counters**: `docs/dodo-setup.md` (product, link, webhook) and
-`docs/n8n-workflow.md` (import, secrets, stats endpoint). Then buy your own thumb once for
-5 €, end to end, and refund it.
-7. **Before announcing**: `grep -r TODO-LEGAL impressum privacy terms` must come back empty.
+   `docs/n8n-workflow.md` (import, secrets, stats endpoint). Then buy your own thumb once for
+   5 €, end to end, and refund it.
+7. **Server logs**: set the retention that `/privacy` promises — see the section below.
+8. **Before announcing**: `grep -r TODO-LEGAL impressum privacy terms` must come back empty.
 
 Updating later: `git pull && docker compose up -d --build`. The image builds on the host; never
 copy a local `dist/` up.
+
+## Server logs and the 14-day retention
+
+`/privacy` states that server logs holding IP addresses are deleted after 14 days. That sentence is
+only true if the host enforces it — set this up **before** the site goes public.
+
+Two places log the same request, and both need the limit.
+
+**The container.** nginx writes its access log to stdout, so Docker keeps it. The `logging` block
+in `docker-compose.yml` caps the size (3 × 10 MB), but Docker's `json-file` driver has no
+time-based rotation at all — the time limit has to come from logrotate on the host. Write this
+file, keeping the glob exactly as shown:
+
+```conf
+# /etc/logrotate.d/docker-containers
+/var/lib/docker/containers/*/*-json.log {
+  daily
+  rotate 14
+  maxage 14
+  missingok
+  notifempty
+  compress
+  copytruncate
+}
+```
+
+`copytruncate` matters: Docker holds the file open, so a plain rename would leave it writing into
+an unlinked inode. Dry-run it with `logrotate -d /etc/logrotate.d/docker-containers` before
+trusting it.
+
+**The reverse proxy**, which terminates TLS and therefore sees the real client IP. Caddy: add
+`roll_keep_for 14d` to the `log` directive. Traefik: point `accessLog.filePath` at a file and give
+it the same logrotate stanza. If the proxy keeps logs longer than 14 days, the privacy page is
+wrong no matter what the container does.
+
+The honest alternative, if you would rather not maintain any of this: put `access_log off;` into
+`nginx/default.conf.template`, keep only the proxy log, and rewrite the hosting paragraph on
+`/privacy` accordingly. Fewer copies of an IP address is the better privacy answer anyway.
 
 ## Swapping things
 
@@ -138,4 +172,7 @@ swallow after a drag. Details: `docs/drag-reference.md`.
 `.github/workflows/ci.yml`: lint, prettier, tsc, unit, build, Playwright (Chromium), `npm audit`
 (high+), CycloneDX SBOM artifact, Lighthouse artifact (non-blocking), Docker image build with a
 container smoke test.
+
+```
+
 ```
