@@ -880,3 +880,75 @@
 .stage.is-board > [data-pin='wall'] {
   width: 320px;
 }
+
+/* Top contributors reads as a centred announcement (v1.9).
+   Note: <main> also carries class "board", so this must stay scoped to the window body. */
+.body.board {
+  text-align: center;
+}
+.body.board .board-list {
+  text-align: left;
+}
+
+/* The thumb-supply footnote is a separate thought, so give it real air */
+.chip-hint {
+  margin-top: 18px;
+}
+.is-board .chip-hint {
+  margin-top: 22px;
+}
+
+/* Millionaire meter: a proper gauge instead of a plain bar (v1.9) */
+.meter-track {
+  position: relative;
+  height: 22px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background:
+    repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.05) 0 6px, rgba(0, 0, 0, 0) 6px 12px), #fffdf2;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+.meter-fill {
+  position: relative;
+  min-width: 10px;
+  height: 100%;
+  border-radius: 999px 0 0 999px;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.45) 0 8px,
+      rgba(255, 255, 255, 0) 8px 16px
+    ),
+    linear-gradient(180deg, #ffe067 0%, #ffd400 45%, #e8a900 100%);
+  box-shadow:
+    inset 0 -2px 0 rgba(0, 0, 0, 0.18),
+    0 0 12px rgba(255, 212, 0, 0.6);
+  animation: okmeter 1.1s linear infinite;
+}
+@keyframes okmeter {
+  from {
+    background-position:
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      22px 0,
+      0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .meter-fill {
+    animation: none;
+  }
+}
+.meter-label {
+  font-variant-numeric: tabular-nums;
+}
+.meter-label strong {
+  font-size: 1.15em;
+}
+.is-board .meter-track {
+  height: 26px;
+}
