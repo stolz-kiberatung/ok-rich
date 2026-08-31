@@ -820,3 +820,63 @@
 .is-board .hashtag-tag {
   font-size: 26px;
 }
+
+/* Wall of Thumbs sits under the contributors board and is a teaser for now (v1.8) */
+.stage.is-board > [data-pin='wall'] {
+  width: 270px;
+}
+.wall h2 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.wall-soon {
+  font: 700 10px/1.6 var(--font);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  background: var(--accent);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+.is-board .wall h2 {
+  font-size: 18px;
+}
+.is-board .wall-tile {
+  width: 44px;
+  height: 55px;
+}
+.is-board .wall-empty {
+  font-size: 12px;
+}
+.is-board .wall-note {
+  font-size: 12px;
+  margin-top: 8px;
+}
+.is-board .body.wall {
+  padding: 6px 14px 12px;
+}
+
+/* One heading rhythm across the board windows (v1.8): air above, half of it below */
+.win .body h2 {
+  margin: 24px 0 10px;
+}
+.win .body h2:first-child {
+  margin-top: 0;
+}
+.is-board .win .body h2 {
+  margin: 26px 0 12px;
+}
+.is-board .win .body h2:first-child {
+  margin-top: 0;
+}
+.faq p + h2,
+.reviews p + h2 {
+  margin-top: 24px;
+}
+.stage.is-board > [data-pin='wall'] {
+  width: 320px;
+}

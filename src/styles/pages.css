@@ -143,3 +143,11 @@ mark.todo {
 .payment-note {
   margin-top: 12px;
 }
+
+/* Same heading rhythm as the pinboard windows (v1.8) */
+.page h2 {
+  margin: 28px 0 10px;
+}
+.page h3 {
+  margin: 22px 0 8px;
+}
