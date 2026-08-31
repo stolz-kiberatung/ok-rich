@@ -193,3 +193,29 @@ single class is enough to change a gap and nothing can silently swallow it again
 Also in this pass: Wall of Thumbs enlarged (420 px, 3x2 tiles of 60x75, centred) and moved under
 the contributors board, both cards centred, the FAQ answer got its third item back, and the stage
 grew to 1440x1460.
+
+## v2.1 addendum (2026-08-31, a stage that grows)
+
+The contributors board is the one window whose height depends on live data, so the fixed stage
+could not stay fixed. `growStageBelow()` in pinboard.ts measures how much the board grew
+(`offsetHeight`, which ignores the stage transform), moves every element that starts below it down
+by exactly that amount, and adds the same amount to the stage height. Every designed gap therefore
+survives and nothing collides. The stage height is state now, not a constant: clamping and the
+wrapper height both read it, and it resets when the board layout is torn down.
+
+Covered by an e2e test that serves eight contributors and asserts the invariant rather than a fixed
+number: the stage grows by exactly the board's growth, and the gap to the section below is
+unchanged.
+
+Also in this pass: the three blinking arrows sit outside the CTA window (which is z 900 and would
+otherwise cover them) and point at the button from the left and from below; the thumbs cluster
+moved to free space in the bottom right; the board-to-wall gap went from 2 px to 40 px.
+
+**Two silent bugs found on the way:**
+
+- `.env` had lost three keys that `.env.example` documents (`VITE_STATS_URL`, `VITE_RAISED_EUR`,
+  `VITE_CAR_GOAL_EUR`), so the live counters could never have run locally. `vite.config.ts` now
+  warns at build time when `.env` misses a documented key.
+- The smoke test's "no console errors" assertion flaked once a stats URL was configured, because an
+  unreachable optional endpoint logs a network error by design. The collector now ignores that one
+  host, with the reason written next to it.
