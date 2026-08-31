@@ -5,14 +5,32 @@ import {
   applyLayout,
   clearLayout,
   fitStage,
+  growStageBelow,
   initPinboard,
   reclampAll,
   unfitStage,
 } from './pinboard';
 import { initStats } from './stats';
 
-// Live totals (millionaire meter, sports car fund, visitor counter). Fails silently by design.
-void initStats();
+/**
+ * Live totals, then make room for them: when names arrive the contributors board grows, and
+ * everything below it moves down by exactly that much so the designed gaps survive. offsetHeight
+ * is used because it is the unscaled layout height, unaffected by the stage transform.
+ */
+async function loadLiveNumbers(): Promise<void> {
+  const board = document.querySelector<HTMLElement>('[data-pin="board"]');
+  const before = board?.offsetHeight ?? 0;
+  await initStats();
+  const stageEl = document.getElementById('stage');
+  const wrap = stageEl?.parentElement;
+  if (!board || !stageEl || !wrap || !stageEl.classList.contains('is-board')) return;
+  const grown = board.offsetHeight - before;
+  if (grown > 0) {
+    growStageBelow(stageEl, wrap, (parseFloat(board.style.top) || 0) + before, grown);
+  }
+}
+
+void loadLiveNumbers();
 
 const stage = document.getElementById('stage');
 const wrapper = stage?.parentElement;

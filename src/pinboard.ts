@@ -5,7 +5,14 @@ import { STAGE, Z_DRAG_MAX, Z_DRAG_START, elements } from '../site.config';
 import { clamp, delta, isDrag } from './drag';
 import { computeScale, scaledStageHeight } from './stage';
 
-const BOUNDS = { w: STAGE.width, h: STAGE.height };
+// The stage grows when a window below the fold gets taller (contributors arriving), so the
+// height is state, not a constant. Clamping and the wrapper height both read it.
+let stageHeight = STAGE.height;
+const bounds = () => ({ w: STAGE.width, h: stageHeight });
+
+export function getStageHeight(): number {
+  return stageHeight;
+}
 
 /** Writes positions, rotation, z-index and draggability from site.config.ts through the CSSOM. */
 export function applyLayout(stage: HTMLElement): void {
@@ -35,12 +42,35 @@ export function clearLayout(stage: HTMLElement): void {
 export function fitStage(stage: HTMLElement, wrapper: HTMLElement): number {
   const scale = computeScale(document.documentElement.clientWidth);
   stage.style.transform = `scale(${scale})`;
-  wrapper.style.height = `${scaledStageHeight(scale)}px`;
+  stage.style.height = `${stageHeight}px`;
+  wrapper.style.height = `${scaledStageHeight(scale, stageHeight)}px`;
   return scale;
 }
 
+/**
+ * Makes room for a window that grew (the contributors board when names arrive): everything that
+ * starts below `fromY` moves down by `delta`, so every gap stays exactly as designed, and the
+ * stage itself gets taller instead of letting the content collide.
+ */
+export function growStageBelow(
+  stage: HTMLElement,
+  wrapper: HTMLElement,
+  fromY: number,
+  delta: number,
+): void {
+  if (!Number.isFinite(delta) || delta <= 0) return;
+  for (const el of stage.querySelectorAll<HTMLElement>(':scope > .abs')) {
+    const top = parseFloat(el.style.top);
+    if (Number.isFinite(top) && top >= fromY) el.style.top = `${top + delta}px`;
+  }
+  stageHeight += delta;
+  fitStage(stage, wrapper);
+}
+
 export function unfitStage(stage: HTMLElement, wrapper: HTMLElement): void {
+  stageHeight = STAGE.height;
   stage.style.removeProperty('transform');
+  stage.style.removeProperty('height');
   wrapper.style.removeProperty('height');
 }
 
@@ -54,7 +84,7 @@ export function reclampAll(stage: HTMLElement): void {
         w: el.offsetWidth,
         h: el.offsetHeight,
       },
-      BOUNDS,
+      bounds(),
       STAGE.clampMargin,
     );
     el.style.left = `${x}px`;
@@ -106,7 +136,7 @@ export function initPinboard(stage: HTMLElement, getScale: () => number): () => 
           if (!moved) return;
           const { x, y } = clamp(
             { x: startX + dx, y: startY + dy, w: el.offsetWidth, h: el.offsetHeight },
-            BOUNDS,
+            bounds(),
             STAGE.clampMargin,
           );
           el.style.left = `${x}px`;

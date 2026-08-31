@@ -27,7 +27,7 @@
 
 .stage.is-board {
   width: 1440px;
-  height: 1460px;
+  height: 1500px;
   padding: 0;
   isolation: isolate;
   transform-origin: top left;

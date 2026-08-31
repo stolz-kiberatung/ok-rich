@@ -13,6 +13,32 @@ const IMG_V = '?v=2';
 
 const REQUIRED = ['VITE_DOMAIN', 'VITE_SITE_TITLE', 'VITE_PAY_URL'] as const;
 
+/**
+ * .env silently losing a key that .env.example documents costs an afternoon to notice, because
+ * everything still builds and only a feature quietly disappears. Say it out loud at build time.
+ */
+export function missingEnvKeys(envFile: string, exampleFile: string): string[] {
+  const keys = (s: string) => [...s.matchAll(/^([A-Z][A-Z0-9_]*)=/gm)].map((m) => m[1] as string);
+  const have = new Set(keys(envFile));
+  return keys(exampleFile).filter((k) => !have.has(k));
+}
+
+function warnMissingEnvKeys(root: string): void {
+  try {
+    const missing = missingEnvKeys(
+      readFileSync(resolve(root, '.env'), 'utf8'),
+      readFileSync(resolve(root, '.env.example'), 'utf8'),
+    );
+    if (missing.length) {
+      console.warn(
+        `[okrich] .env is missing keys that .env.example documents: ${missing.join(', ')}`,
+      );
+    }
+  } catch {
+    // no .env (CI passes values as env vars) — nothing to compare
+  }
+}
+
 /** Fails the build loudly when a required variable is missing (constitution §8, §10). */
 export function validateEnv(env: Env): void {
   for (const key of REQUIRED) {
@@ -165,6 +191,7 @@ function cleanUrls(pages: string[], outDir: string): Plugin {
 export default defineConfig(({ mode }) => {
   const root = process.cwd();
   const env: Env = loadEnv(mode, root, 'VITE_');
+  warnMissingEnvKeys(root);
   validateEnv(env);
   const publicDir = resolve(root, 'public');
   const values: Record<string, string> = {

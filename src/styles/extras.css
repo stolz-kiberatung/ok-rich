@@ -413,7 +413,7 @@
   display: block;
 }
 .blink-arrow.blink-2 svg {
-  transform: scaleX(-1);
+  transform: rotate(-42deg);
 }
 .blink-arrow.blink-3 svg {
   transform: rotate(215deg);
@@ -1031,4 +1031,9 @@
 }
 .is-board .body.wall {
   padding: 10px 20px 18px;
+}
+
+/* All three arrows aim at the CTA button, from the left and from below (v2.1) */
+.blink-arrow.blink-3 svg {
+  transform: rotate(218deg);
 }

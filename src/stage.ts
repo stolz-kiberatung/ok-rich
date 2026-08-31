@@ -17,6 +17,6 @@ export function isBoardViewport(
 }
 
 /** Height the wrapper must reserve so the page flows correctly below the scaled stage. */
-export function scaledStageHeight(scale: number): number {
-  return STAGE.height * scale;
+export function scaledStageHeight(scale: number, height: number = STAGE.height): number {
+  return height * scale;
 }

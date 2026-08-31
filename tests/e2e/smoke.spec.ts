@@ -8,10 +8,19 @@ const DESIGN_WIDTH = STAGE.width;
 
 type Errors = string[];
 
+const STATS_HOST = PAY_URL && env.VITE_STATS_URL ? new URL(env.VITE_STATS_URL).host : '';
+
+/**
+ * The live-counter endpoint is optional by design: when it cannot be reached the page drops the
+ * visitor card and carries on. Its network error is therefore expected, not a defect, so it is
+ * the one console message this collector ignores.
+ */
 function collectErrors(page: Page): Errors {
   const errors: Errors = [];
   page.on('console', (m) => {
-    if (m.type() === 'error') errors.push(m.text());
+    if (m.type() !== 'error') return;
+    if (STATS_HOST && m.text().includes(STATS_HOST)) return;
+    errors.push(m.text());
   });
   page.on('pageerror', (e) => errors.push(String(e)));
   return errors;
@@ -231,6 +240,62 @@ test.describe('live counters', () => {
     await page.goto('/');
     await expect(page.locator('[data-pin="counter"]')).toHaveCount(0);
     await expect(page.locator('#million-percent')).toHaveText(/^\d+\.\d{4} %$/);
+  });
+});
+
+test.describe('growing contributors board', () => {
+  test.beforeEach(() => {
+    test.skip(test.info().project.name !== 'desktop', 'desktop only');
+  });
+
+  /** Board top, its rendered height and the gap to the section below, all in design pixels. */
+  async function geometry(page: import('@playwright/test').Page) {
+    return page.evaluate(() => {
+      const stage = document.getElementById('stage') as HTMLElement;
+      const top = (id: string) =>
+        parseFloat((document.querySelector(`[data-pin="${id}"]`) as HTMLElement).style.top);
+      const board = document.querySelector('[data-pin="board"]') as HTMLElement;
+      return {
+        stageHeight: parseFloat(stage.style.height),
+        boardHeight: board.offsetHeight,
+        gap: top('wall') - (top('board') + board.offsetHeight),
+      };
+    });
+  }
+
+  async function serveContributors(page: import('@playwright/test').Page, count: number) {
+    const contributors = Array.from({ length: count }, (_, i) => ({
+      name: `Person ${i + 1}`,
+      amount: 100 - i * 5,
+    }));
+    await page.route('**/okrich-stats*', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'access-control-allow-origin': '*' },
+        body: JSON.stringify({ raised: 460, visitors: 4711, contributors }),
+      }),
+    );
+  }
+
+  test('the stage grows with the list and every gap below it stays as designed', async ({
+    page,
+  }) => {
+    await serveContributors(page, 0);
+    await page.goto('/');
+    const empty = await geometry(page);
+
+    await serveContributors(page, 8);
+    await page.goto('/');
+    await expect(page.locator('.board-name')).toHaveCount(8);
+    const filled = await geometry(page);
+
+    const grown = filled.boardHeight - empty.boardHeight;
+    expect(grown).toBeGreaterThan(0);
+    // The stage takes on exactly the extra height the board needed ...
+    expect(filled.stageHeight - empty.stageHeight).toBeCloseTo(grown, 0);
+    // ... and the designed distance to the section below is untouched.
+    expect(filled.gap).toBeCloseTo(empty.gap, 0);
   });
 });
 

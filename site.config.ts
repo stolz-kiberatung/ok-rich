@@ -6,7 +6,7 @@
 
 export const STAGE = {
   width: 1440,
-  height: 1460,
+  height: 1500,
   /** Below this viewport width the stage is not scaled and elements stack in DOM order. */
   breakpoint: 768,
   /** Minimum px of an element that must stay inside the stage when dragged. */
@@ -73,7 +73,7 @@ export const elements: readonly PinElement[] = [
   { id: 'faq', kind: 'win', x: 20, y: 430, draggable: true, z: 3 },
   { id: 'testimonials', kind: 'win', x: 1100, y: 410, draggable: true, z: 4 },
   { id: 'goal', kind: 'win', x: 1064, y: 650, draggable: true, z: 5 },
-  { id: 'wall', kind: 'win', x: 430, y: 1110, draggable: true, z: 6 },
+  { id: 'wall', kind: 'win', x: 430, y: 1150, draggable: true, z: 6 },
   { id: 'footer', kind: 'win', x: 1120, y: 1180, draggable: true, z: 8 },
   {
     id: 'garage',
@@ -115,7 +115,7 @@ export const elements: readonly PinElement[] = [
   { id: 'nametag', kind: 'sticker', x: 26, y: 1200, rotate: -4, draggable: true, z: 18 },
   { id: 'legit', kind: 'sticker', x: 26, y: 352, rotate: -9, draggable: true, z: 26 },
   { id: 'cert', kind: 'sticker', x: 268, y: 1210, rotate: -5, draggable: true, z: 20 },
-  { id: 'thumbs', kind: 'sticker', x: 928, y: 700, rotate: 3, draggable: true, z: 22 },
+  { id: 'thumbs', kind: 'sticker', x: 1200, y: 1320, rotate: 3, draggable: true, z: 22 },
   {
     id: 'hashtag',
     kind: 'sticker',
@@ -127,7 +127,7 @@ export const elements: readonly PinElement[] = [
     mobile: true,
   },
   { id: 'loading', kind: 'sticker', x: 900, y: 1290, rotate: -2, draggable: true, z: 23 },
-  { id: 'blink-1', kind: 'sticker', x: 330, y: 588, rotate: -6, draggable: true, z: 27 },
-  { id: 'blink-2', kind: 'sticker', x: 1022, y: 564, rotate: 6, draggable: true, z: 28 },
-  { id: 'blink-3', kind: 'sticker', x: 1024, y: 664, rotate: 0, draggable: true, z: 29 },
+  { id: 'blink-1', kind: 'sticker', x: 352, y: 636, rotate: -6, draggable: true, z: 27 },
+  { id: 'blink-2', kind: 'sticker', x: 440, y: 880, rotate: 6, draggable: true, z: 28 },
+  { id: 'blink-3', kind: 'sticker', x: 884, y: 880, rotate: 0, draggable: true, z: 29 },
 ];
