@@ -14,12 +14,18 @@ const STATS_HOST = PAY_URL && env.VITE_STATS_URL ? new URL(env.VITE_STATS_URL).h
  * The live-counter endpoint is optional by design: when it cannot be reached the page drops the
  * visitor card and carries on. Its network error is therefore expected, not a defect, so it is
  * the one console message this collector ignores.
+ *
+ * Match on the message location as well as its text: a failed request logs
+ * "Failed to load resource: net::ERR_NAME_NOT_RESOLVED" with the host only in `location().url`,
+ * so a text-only filter let it through whenever DNS gave up before the last assertion ran —
+ * which made this an intermittently failing test rather than a failing site.
  */
 function collectErrors(page: Page): Errors {
   const errors: Errors = [];
   page.on('console', (m) => {
     if (m.type() !== 'error') return;
-    if (STATS_HOST && m.text().includes(STATS_HOST)) return;
+    if (STATS_HOST && (m.text().includes(STATS_HOST) || m.location().url.includes(STATS_HOST)))
+      return;
     errors.push(m.text());
   });
   page.on('pageerror', (e) => errors.push(String(e)));
