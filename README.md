@@ -44,12 +44,66 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 `proxy` network, labels for Traefik / Caddy / Coolify commented inside. The nginx config is
 rendered at image build from `nginx/default.conf.template` with the `UMAMI_ORIGIN` build arg.
 
-## Deploy (Hetzner, later step)
+## Deploy (Hetzner)
 
-1. Put the repo on the host, fill `.env` with live values (Payment Link, Umami, `UMAMI_ORIGIN`).
-2. Uncomment the label block for your reverse proxy in `docker-compose.yml`.
-3. `docker compose up -d --build`. The proxy terminates TLS and should add HSTS.
-4. Dodo Payments and n8n: `docs/dodo-setup.md`, `docs/n8n-workflow.md`.
+The host already runs Docker, a TLS reverse proxy, Umami and n8n. The site is one more container
+on the proxy network; it publishes no port of its own.
+
+1. **DNS**: A and AAAA records for `ok-rich.com` and `www.ok-rich.com` pointing at the host.
+2. **Clone and configure**:
+
+   ```bash
+   git clone <repo> /opt/okrich && cd /opt/okrich
+   cp .env.example .env && nano .env
+   ```
+
+   Fill in, at minimum:
+
+   | Variable                                                         | Value                                                             |
+   | ---------------------------------------------------------------- | ----------------------------------------------------------------- |
+   | `VITE_DOMAIN`                                                    | `ok-rich.com`                                                     |
+   | `VITE_PAY_URL`                                                   | the live Dodo link, `https://checkout.dodopayments.com/buy/pdt_…` |
+   | `PAY_ORIGIN`                                                     | `https://checkout.dodopayments.com` (CSP form target)             |
+   | `VITE_STATS_URL`                                                 | the n8n stats endpoint, or empty                                  |
+   | `STATS_ORIGIN`                                                   | origin of that endpoint, or empty (CSP connect-src)               |
+   | `VITE_UMAMI_SCRIPT_URL`, `VITE_UMAMI_WEBSITE_ID`, `UMAMI_ORIGIN` | all three, or all three empty                                     |
+
+   The `*_ORIGIN` values are baked into the nginx config at image build, so **rebuild after
+   changing them**, not just restart.
+
+3. **Proxy labels**: uncomment exactly one block in `docker-compose.yml` (Traefik, Caddy or
+   Coolify) and make sure the external network name matches the host's proxy network.
+4. **Start**:
+
+   ```bash
+   docker compose up -d --build
+   docker compose ps          # expect: okrich-web ... (healthy)
+   ```
+
+5. **Verify from outside**:
+
+   ```bash
+   curl -sI https://ok-rich.com/ | grep -i "content-security-policy|strict-transport"
+   for p in / /pay /thanks /impressum /privacy /terms; do
+     printf '%s %s
+   ```
+
+' "$p" "$(curl -s -o /dev/null -w '%{http_code}' https://ok-rich.com$p)"
+done
+curl -s -o /dev/null -w '%{http_code}
+' https://ok-rich.com/nope # expect 404
+
+```
+
+The CSP must come from this container and HSTS from the proxy.
+
+6. **Payments and counters**: `docs/dodo-setup.md` (product, link, webhook) and
+`docs/n8n-workflow.md` (import, secrets, stats endpoint). Then buy your own thumb once for
+5 €, end to end, and refund it.
+7. **Before announcing**: `grep -r TODO-LEGAL impressum privacy terms` must come back empty.
+
+Updating later: `git pull && docker compose up -d --build`. The image builds on the host; never
+copy a local `dist/` up.
 
 ## Swapping things
 
@@ -84,3 +138,4 @@ swallow after a drag. Details: `docs/drag-reference.md`.
 `.github/workflows/ci.yml`: lint, prettier, tsc, unit, build, Playwright (Chromium), `npm audit`
 (high+), CycloneDX SBOM artifact, Lighthouse artifact (non-blocking), Docker image build with a
 container smoke test.
+```
