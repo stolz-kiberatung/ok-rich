@@ -3,7 +3,7 @@ import { loadEnv } from 'vite';
 import { STAGE } from '../../site.config';
 
 const env = loadEnv('production', process.cwd(), 'VITE_');
-const STRIPE_URL = env.VITE_STRIPE_PAYMENT_LINK_URL ?? '';
+const PAY_URL = env.VITE_PAY_URL ?? '';
 const DESIGN_WIDTH = STAGE.width;
 
 type Errors = string[];
@@ -45,10 +45,8 @@ test.describe('pinboard page', () => {
     const res = await page.goto('/');
     expect(res?.status()).toBe(200);
     await expect(page.locator('h1')).toHaveText(env.VITE_SITE_TITLE ?? 'OK RICH');
-    const cta = page.locator('a.btn');
-    await expect(cta).toHaveAttribute('href', STRIPE_URL);
-    await expect(cta).toHaveAttribute('rel', /noopener/);
-    expect(STRIPE_URL.startsWith('https://')).toBe(true);
+    await expect(page.locator('a.btn')).toHaveAttribute('href', '/pay');
+    expect(PAY_URL.startsWith('https://')).toBe(true);
     expect(errors).toEqual([]);
   });
 
@@ -106,18 +104,18 @@ test.describe('desktop pinboard', () => {
 
   test('a dragged window ends on top and is clamped to the stage', async ({ page }) => {
     await page.goto('/');
-    await dragByBar(page, 'wall', 40, 40);
-    const zWall = await page
-      .locator('[data-pin="wall"]')
+    await dragByBar(page, 'testimonials', 40, 40);
+    const zBoard = await page
+      .locator('[data-pin="testimonials"]')
       .evaluate((el) => Number((el as HTMLElement).style.zIndex));
     const zKid = await page
       .locator('[data-pin="kid"]')
       .evaluate((el) => Number((el as HTMLElement).style.zIndex));
-    expect(zWall).toBeGreaterThan(zKid);
+    expect(zBoard).toBeGreaterThan(zKid);
     // Fling the window far outside: at least 24 design px must remain visible.
-    await dragByBar(page, 'wall', -3000, -3000);
-    const pos = await position(page, 'wall');
-    const size = await page.locator('[data-pin="wall"]').evaluate((el) => ({
+    await dragByBar(page, 'testimonials', -3000, -3000);
+    const pos = await position(page, 'testimonials');
+    const size = await page.locator('[data-pin="testimonials"]').evaluate((el) => ({
       w: (el as HTMLElement).offsetWidth,
       h: (el as HTMLElement).offsetHeight,
     }));
@@ -143,13 +141,11 @@ test.describe('desktop pinboard', () => {
     await expect(page).toHaveURL(/\/impressum$/);
   });
 
-  test('the CTA is clickable without starting a drag', async ({ page }) => {
-    await page.route('https://buy.stripe.com/**', (route) =>
-      route.fulfill({ status: 200, contentType: 'text/html', body: '<title>stripe</title>' }),
-    );
+  test('the CTA is clickable without starting a drag and leads to the form', async ({ page }) => {
     await page.goto('/');
     await page.locator('a.btn').click();
-    await expect(page).toHaveURL(STRIPE_URL);
+    await expect(page).toHaveURL(/\/pay$/);
+    await expect(page.locator('#contributor-name')).toBeVisible();
   });
 
   test('resizing rescales the stage without changing design positions', async ({ page }) => {
@@ -189,6 +185,7 @@ test.describe('mobile layout', () => {
     const order = [
       'headline',
       'cta',
+      'board',
       'trade-offer',
       'kid',
       'faq',
@@ -234,6 +231,20 @@ test.describe('live counters', () => {
     await page.goto('/');
     await expect(page.locator('[data-pin="counter"]')).toHaveCount(0);
     await expect(page.locator('#million-percent')).toHaveText(/^\d+\.\d{4} %$/);
+  });
+});
+
+test.describe('pay form', () => {
+  test('collects a name and an amount and posts them to the payment provider', async ({ page }) => {
+    const res = await page.goto('/pay');
+    expect(res?.status()).toBe(200);
+    const form = page.locator('#payform');
+    await expect(form).toHaveAttribute('action', PAY_URL);
+    await expect(form).toHaveAttribute('method', 'get');
+    await expect(page.locator('#contributor-amount')).toHaveAttribute('min', '5');
+    await page.locator('#contributor-name').fill('  Ada   L.  ');
+    await expect(page.locator('#meta-name')).toHaveValue('Ada L.');
+    await expect(page.locator('input[name="redirect_url"]')).toHaveValue(/\/thanks$/);
   });
 });
 

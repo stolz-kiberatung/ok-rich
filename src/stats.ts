@@ -5,11 +5,18 @@
 
 import { STAGE, site } from '../site.config';
 
+export interface Contributor {
+  name: string;
+  amount: number;
+}
+
 export interface Stats {
   /** Euros taken so far. */
   raised: number;
   /** Page views counted by the endpoint. */
   visitors: number;
+  /** Paid names for the board, highest first. */
+  contributors: Contributor[];
 }
 
 /** Share of a goal in percent, four decimals, clamped to [0, 100]. */
@@ -39,7 +46,16 @@ export function parseStats(payload: unknown): Stats | null {
   const raised = Number(raw.raised);
   const visitors = Number(raw.visitors);
   if (!Number.isFinite(raised) || !Number.isFinite(visitors)) return null;
-  return { raised: Math.max(0, raised), visitors: Math.max(0, visitors) };
+  const list = Array.isArray(raw.contributors) ? raw.contributors : [];
+  const contributors = list
+    .map((entry) => entry as Record<string, unknown>)
+    .filter((entry) => typeof entry?.name === 'string' && Number.isFinite(Number(entry.amount)))
+    .map((entry) => ({
+      name: String(entry.name).slice(0, 40),
+      amount: Math.max(0, Number(entry.amount)),
+    }))
+    .sort((a, b) => b.amount - a.amount);
+  return { raised: Math.max(0, raised), visitors: Math.max(0, visitors), contributors };
 }
 
 /** Fetches the totals. Returns null on any error, so the page simply keeps its build-time state. */
@@ -78,6 +94,31 @@ export function applyStats(stats: Stats): void {
   setFill('.meter-fill', millionPct);
   setFill('.goal-fill', carPct);
   setText('visitor-count', padCount(stats.visitors));
+  renderBoard(stats.contributors);
+}
+
+/** Renders the Top contributors board; keeps the "nobody yet" line when the list is empty. */
+export function renderBoard(contributors: Contributor[], limit = 8): void {
+  const list = document.getElementById('board-list');
+  if (!list) return;
+  const top = contributors.slice(0, limit);
+  if (top.length === 0) return;
+  list.textContent = '';
+  top.forEach((c, i) => {
+    const li = document.createElement('li');
+    if (i === 0) li.className = 'top';
+    const rank = document.createElement('span');
+    rank.className = 'board-rank';
+    rank.textContent = `#${i + 1}`;
+    const name = document.createElement('span');
+    name.className = 'board-name';
+    name.textContent = c.name;
+    const amount = document.createElement('span');
+    amount.className = 'board-amount';
+    amount.textContent = formatEur(c.amount);
+    li.append(rank, name, amount);
+    list.append(li);
+  });
 }
 
 /** Removes the visitor card when no live source is configured or reachable. */

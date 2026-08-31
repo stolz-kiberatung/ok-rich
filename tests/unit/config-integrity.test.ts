@@ -10,6 +10,7 @@ const configIds = elements.map((e) => e.id);
 const MOBILE_ORDER = [
   'headline',
   'cta',
+  'board',
   'trade-offer',
   'kid',
   'faq',

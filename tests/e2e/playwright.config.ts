@@ -1,4 +1,8 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
+
+// Playwright resolves webServer.cwd relative to this config file, not the repo root.
+const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
 const PORT = 4173;
 
@@ -20,6 +24,7 @@ export default defineConfig({
     // Serves the production build; `npm test` runs `vite build` before this.
     command: `npx vite preview --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}/`,
+    cwd: ROOT,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
   },

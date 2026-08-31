@@ -53,13 +53,7 @@
                 ><span class="meter-fill" data-percent="%%MILLION_PERCENT%%"></span
               ></span>
             </div>
-            <a
-              class="btn"
-              href="%%STRIPE_URL%%"
-              rel="noopener noreferrer"
-              data-umami-event="make-me-rich"
-              >Make me rich →</a
-            >
+            <a class="btn" href="/pay" data-umami-event="make-me-rich">Make me rich →</a>
             <p class="deal no-drag">
               You get: one (1) personal thumbs-up photo, taken by me, for you. Delivered by email
               within 7 days. That's it.
@@ -69,6 +63,20 @@
               Paying more does not get you more thumbs. Supply is fixed at one, because I need the
               other thumb to take the photo. It does get you a happier man holding it.
             </p>
+          </div>
+        </section>
+
+        <section class="win abs" data-pin="board" aria-labelledby="board-title">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">top_contributors/</span>
+          </div>
+          <div class="body board no-drag">
+            <h2 id="board-title">Top contributors</h2>
+            <ol class="board-list" id="board-list">
+              <li class="board-empty">Nobody yet. This is your moment.</li>
+            </ol>
+            <p class="board-note">Your name lands here the moment your payment clears.</p>
           </div>
         </section>
 
@@ -290,6 +298,12 @@
         <div class="sticker abs stamp stamp-paid" data-pin="paid" aria-hidden="true">paid</div>
 
         <div class="sticker abs thumbs" data-pin="thumbs" aria-hidden="true">👍👍👍</div>
+
+        <div class="sticker abs hashtag m-show" data-pin="hashtag" aria-label="Share your thumb">
+          <span class="hashtag-line no-drag">Got your thumb?</span>
+          <span class="hashtag-tag no-drag">Post it on X with #okrich</span>
+          <span class="hashtag-note no-drag">I repost the good ones. They are all good ones.</span>
+        </div>
 
         <div class="sticker abs loading" data-pin="loading" aria-hidden="true">
           <span class="loading-label">getting rich… 99 %</span>

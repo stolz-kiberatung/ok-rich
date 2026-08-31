@@ -135,3 +135,27 @@ recognisable" for the addressed public). Same risk comparable sites carry. A law
 
 Contact addresses: ok@ok-rich.com (orders, questions, withdrawal, data-subject requests) and
 complaints@ok-rich.com (complaints, rights notices). This constitution §6 was updated accordingly.
+
+## v1.7 addendum (2026-08-31, payment flow and a taller board)
+
+- **Payment provider: Stripe → Dodo Payments** (owner decision). Dodo is a
+  Merchant of Record, so it is the seller towards the buyer and handles VAT. Legal pages, privacy
+  policy and docs were rewritten accordingly; `docs/stripe-setup.md` became `docs/dodo-setup.md`.
+- **The CTA now leads to `/pay`**, a static form asking for a display name and an amount. Its
+  fields are exactly the query parameters a Dodo static link understands (`fullName`, `quantity`,
+  `redirect_url`, `metadata_display_name`), so the flow works with JavaScript disabled. The CSP
+  `form-action` gained the payment origin (`PAY_ORIGIN`).
+- **Amounts:** Dodo products have a fixed price and no pay-what-you-want mode, so the product is
+  one 1 € share and the amount becomes the quantity. Same mechanism comparable sites use.
+- **Top contributors board:** a new window under the CTA, filled from the stats endpoint. n8n now
+  verifies Dodo webhooks per the Standard Webhooks spec (HMAC-SHA256 over
+  `webhook-id.webhook-timestamp.raw_body`, constant-time compare, 5-minute window, idempotent on
+  `webhook-id`) and keeps a name-to-amount list. "anonymous" opts out.
+- **Stage grew from 1440×900 to 1440×1220** so the windows breathe; every window is now free of
+  overlap (verified by measuring bounding boxes in the container, not by eye), and the new bottom
+  band holds the cards.
+- New card: "Post it on X with #okrich".
+- **Two latent bugs found while testing:** Playwright started `vite preview` in the config
+  directory instead of the repo root (it only ever worked because a manually started server was
+  being reused; CI would have failed), and a stale preview server had been masking a real 404 on
+  `/pay`. Both fixed.

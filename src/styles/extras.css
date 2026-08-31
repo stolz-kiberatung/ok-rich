@@ -730,3 +730,93 @@
 .is-board .chip-hint {
   font-size: 12px;
 }
+
+/* Top contributors board (v1.7): filled from the live stats endpoint */
+.stage.is-board > [data-pin='board'] {
+  width: 540px;
+}
+.board h2 {
+  margin: 0 0 8px;
+  font-size: 19px;
+}
+.board-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 24px;
+  font-size: 16px;
+}
+.board-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 2px 0;
+}
+.board-rank {
+  font: 700 13px/1.4 var(--mono);
+  color: var(--muted);
+  min-width: 22px;
+}
+.board-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.board-amount {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.board-list li.top .board-amount {
+  color: var(--green);
+}
+.board-empty {
+  grid-column: 1 / -1;
+  color: var(--muted);
+}
+.board-note {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.is-board .board h2 {
+  font-size: 21px;
+}
+.is-board .board-list {
+  font-size: 18px;
+}
+.is-board .body.board {
+  padding: 8px 18px 14px;
+}
+
+/* "Post it on X with #okrich" card (v1.7) */
+.hashtag {
+  width: 300px;
+  white-space: normal;
+  padding: 12px 16px 14px;
+  background: #161616;
+  color: #fff;
+  border-color: #161616;
+  box-shadow: 4px 4px 0 var(--accent);
+}
+.hashtag-line {
+  display: block;
+  font-size: 15px;
+  color: #cfcfc7;
+}
+.hashtag-tag {
+  display: block;
+  font-weight: 800;
+  font-size: 24px;
+  margin: 2px 0 6px;
+}
+.hashtag-note {
+  display: block;
+  font-size: 13px;
+  color: #cfcfc7;
+}
+.is-board .hashtag-tag {
+  font-size: 26px;
+}

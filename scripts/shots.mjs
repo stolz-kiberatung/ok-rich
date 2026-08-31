@@ -15,7 +15,7 @@ const homeSizes = [
   [1024, 768],
   [375, 812],
 ];
-const pages = ['/thanks', '/impressum', '/privacy', '/terms', '/404.html'];
+const pages = ['/pay', '/thanks', '/impressum', '/privacy', '/terms', '/404.html'];
 const pageSizes = [
   [1280, 800],
   [375, 812],

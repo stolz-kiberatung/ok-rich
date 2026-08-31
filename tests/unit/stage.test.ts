@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { STAGE } from '../../site.config';
 import { computeScale, isBoardViewport, scaledStageHeight } from '../../src/stage';
 
 describe('computeScale', () => {
@@ -43,8 +44,8 @@ describe('isBoardViewport', () => {
 });
 
 describe('scaledStageHeight', () => {
-  it('scales the 900 px design height', () => {
-    expect(scaledStageHeight(1)).toBe(900);
-    expect(scaledStageHeight(0.5)).toBe(450);
+  it('scales the design height', () => {
+    expect(scaledStageHeight(1)).toBe(STAGE.height);
+    expect(scaledStageHeight(0.5)).toBe(STAGE.height / 2);
   });
 });

@@ -1,0 +1,156 @@
+{
+  "name": "OK RICH — payments and public stats",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "okrich-payment",
+        "responseMode": "onReceived",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "b2d5e8f0-0001-4000-8000-000000000001",
+      "name": "Dodo webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, -160],
+      "webhookId": "okrich-payment"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Verifies a Dodo Payments webhook (Standard Webhooks spec), keeps it once, and updates the\n// public totals plus the contributors board. Returns [] to stop the workflow on anything invalid.\n// n8n host needs: DODO_WEBHOOK_SECRET (whsec_...) and NODE_FUNCTION_ALLOW_BUILTIN=crypto\nconst crypto = require('crypto');\n\nconst item = $input.first();\nconst secret = $env.DODO_WEBHOOK_SECRET;\nif (!secret) throw new Error('DODO_WEBHOOK_SECRET is not set on the n8n host');\n\nconst headers = item.json.headers || {};\nconst id = headers['webhook-id'];\nconst timestamp = headers['webhook-timestamp'];\nconst signatureHeader = headers['webhook-signature'] || '';\nif (!id || !timestamp || !signatureHeader) { console.log('rejected: missing webhook headers'); return []; }\n\n// Replay protection: reject anything older than five minutes.\nconst ageSeconds = Math.floor(Date.now() / 1000) - Number(timestamp);\nif (!Number.isFinite(ageSeconds) || Math.abs(ageSeconds) > 300) { console.log(`rejected: bad timestamp (${ageSeconds}s)`); return []; }\n\n// The signature covers the raw bytes: `${id}.${timestamp}.${body}`, HMAC-SHA256, base64.\nconst rawBody = Buffer.from(item.binary.data.data, 'base64').toString('utf8');\nconst key = Buffer.from(String(secret).replace(/^whsec_/, ''), 'base64');\nconst expected = crypto.createHmac('sha256', key).update(`${id}.${timestamp}.${rawBody}`).digest('base64');\n\n// The header is versioned and may carry several space-separated values: \"v1,sigA v1,sigB\".\nconst provided = String(signatureHeader).split(' ').map((part) => part.split(',').pop() || '');\nconst expectedBuf = Buffer.from(expected);\nconst ok = provided.some((candidate) => {\n  const candidateBuf = Buffer.from(candidate);\n  return candidateBuf.length === expectedBuf.length && crypto.timingSafeEqual(candidateBuf, expectedBuf);\n});\nif (!ok) { console.log('rejected: bad signature'); return []; }\n\nconst event = JSON.parse(rawBody);\nif (event.type !== 'payment.succeeded') { console.log(`ignored: ${event.type}`); return []; }\nconst data = event.data || {};\n\n// Idempotency on the webhook id (ring buffer of the last 500 in workflow static data).\nconst store = $getWorkflowStaticData('global');\nstore.seen = Array.isArray(store.seen) ? store.seen : [];\nif (store.seen.includes(id)) { console.log('ignored: duplicate webhook'); return []; }\nstore.seen.push(id);\nif (store.seen.length > 500) store.seen.splice(0, store.seen.length - 500);\n\n// Amounts arrive in the smallest currency unit.\nconst amount = Math.round((Number(data.total_amount) || 0)) / 100;\nconst currency = String(data.currency || 'EUR').toUpperCase();\nconst customer = data.customer || {};\nconst email = customer.email || '';\nconst masked = String(email).replace(/^(.).*(@.*)$/, '$1***$2');\n\n// Board name: the metadata field the /pay form sends, else the billing name.\nconst metadata = data.metadata || {};\nconst rawName = String(metadata.display_name || customer.name || 'anonymous');\nconst name = rawName.replace(/\\s+/g, ' ').trim().slice(0, 40) || 'anonymous';\nconst anonymous = /^anonymous$/i.test(name);\n\n// Public totals.\nstore.raised = Math.round(((Number(store.raised) || 0) + amount) * 100) / 100;\nstore.sales = (Number(store.sales) || 0) + 1;\n\n// Contributors board: one entry per name, amounts add up, highest first, top 50 kept.\nif (!anonymous) {\n  store.contributors = Array.isArray(store.contributors) ? store.contributors : [];\n  const existing = store.contributors.find((c) => c.name.toLowerCase() === name.toLowerCase());\n  if (existing) {\n    existing.amount = Math.round((existing.amount + amount) * 100) / 100;\n  } else {\n    store.contributors.push({ name, amount });\n  }\n  store.contributors.sort((a, b) => b.amount - a.amount);\n  if (store.contributors.length > 50) store.contributors.length = 50;\n}\n\nconsole.log(`accepted: ${id} ${amount} ${currency} from ${masked} as \"${name}\" — raised now ${store.raised}`);\n\nreturn [{ json: { paymentId: data.payment_id || id, amount, currency, email, maskedEmail: masked, name, anonymous, created: new Date().toISOString() } }];"
+      },
+      "id": "b2d5e8f0-0002-4000-8000-000000000002",
+      "name": "Verify, dedupe, count",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [260, -160]
+    },
+    {
+      "parameters": {
+        "sendTo": "ok@ok-rich.com",
+        "subject": "=💸 {{ $json.amount }} {{ $json.currency }} from {{ $json.name }}",
+        "emailType": "text",
+        "message": "=New order on ok-rich.com\n\nAmount:  {{ $json.amount }} {{ $json.currency }}\nName:    {{ $json.name }}{{ $json.anonymous ? ' (not shown on the board)' : '' }}\nBuyer:   {{ $json.email }}\nPayment: {{ $json.paymentId }}\nPaid at: {{ $json.created }}\n\nTake the photo and email it to the buyer within 7 days. Delete this mail afterwards.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b2d5e8f0-0003-4000-8000-000000000003",
+      "name": "Email owner",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [520, -260],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "Gmail (Google Workspace)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Payment received — your thumbs-up is in production 👍",
+        "emailType": "text",
+        "message": "=Hi {{ $json.name }},\n\nyour payment of {{ $json.amount }} {{ $json.currency }} arrived. Thank you. Genuinely.\n\nI will now go and take your personal thumbs-up photo. It lands in this inbox within 7 days.\n{{ $json.anonymous ? '' : 'Your name is already on the Top contributors board: https://ok-rich.com' }}\n\nReference: {{ $json.paymentId }}\nTerms: https://ok-rich.com/terms · Privacy: https://ok-rich.com/privacy\n\nOK RICH\nhttps://ok-rich.com",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b2d5e8f0-0004-4000-8000-000000000004",
+      "name": "Confirm to buyer",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [520, -60],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "Gmail (Google Workspace)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "okrich-stats",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b2d5e8f0-0005-4000-8000-000000000005",
+      "name": "Stats endpoint",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 200],
+      "webhookId": "okrich-stats"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Public counter: one visit per IP hash per 12 hours, plus the totals and the board from the\n// payment branch. Both branches live in one workflow so they share workflow static data.\nconst crypto = require('crypto');\n\nconst store = $getWorkflowStaticData('global');\nconst headers = $input.first().json.headers || {};\n\n// Behind a reverse proxy the client IP is the LAST entry the proxy appended.\nconst xff = String(headers['x-forwarded-for'] || '');\nconst ip = (xff.split(',').pop() || headers['x-real-ip'] || 'unknown').trim();\n// Only a salted hash is kept, never the address itself (privacy policy).\nconst salt = $env.OKRICH_IP_SALT || 'okrich-static-salt';\nconst hash = crypto.createHash('sha256').update(salt + ip).digest('hex').slice(0, 16);\n\nconst now = Date.now();\nconst WINDOW_MS = 12 * 60 * 60 * 1000;\nstore.seenIps = (Array.isArray(store.seenIps) ? store.seenIps : []).filter((e) => now - e.t < WINDOW_MS);\nif (!store.seenIps.some((e) => e.h === hash)) {\n  store.seenIps.push({ h: hash, t: now });\n  store.visitors = (Number(store.visitors) || 0) + 1;\n}\nif (store.seenIps.length > 5000) store.seenIps.splice(0, store.seenIps.length - 5000);\n\nconst contributors = (Array.isArray(store.contributors) ? store.contributors : []).slice(0, 20);\n\nreturn [{ json: { raised: Number(store.raised) || 0, visitors: Number(store.visitors) || 0, sales: Number(store.sales) || 0, contributors } }];"
+      },
+      "id": "b2d5e8f0-0006-4000-8000-000000000006",
+      "name": "Count visit, read totals",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [260, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://ok-rich.com"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "public, max-age=60"
+              }
+            ]
+          }
+        }
+      },
+      "id": "b2d5e8f0-0007-4000-8000-000000000007",
+      "name": "Respond with totals",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [520, 200]
+    }
+  ],
+  "connections": {
+    "Dodo webhook": {
+      "main": [[{ "node": "Verify, dedupe, count", "type": "main", "index": 0 }]]
+    },
+    "Verify, dedupe, count": {
+      "main": [
+        [
+          { "node": "Email owner", "type": "main", "index": 0 },
+          { "node": "Confirm to buyer", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Stats endpoint": {
+      "main": [[{ "node": "Count visit, read totals", "type": "main", "index": 0 }]]
+    },
+    "Count visit, read totals": {
+      "main": [[{ "node": "Respond with totals", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all",
+    "saveExecutionProgress": false
+  },
+  "active": false,
+  "versionId": "3",
+  "meta": {
+    "instanceId": "okrich"
+  },
+  "tags": []
+}

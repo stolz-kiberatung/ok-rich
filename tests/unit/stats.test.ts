@@ -48,11 +48,33 @@ describe('padCount', () => {
 
 describe('parseStats', () => {
   it('accepts a well-formed payload', () => {
-    expect(parseStats({ raised: 25, visitors: 7 })).toEqual({ raised: 25, visitors: 7 });
+    expect(parseStats({ raised: 25, visitors: 7 })).toEqual({
+      raised: 25,
+      visitors: 7,
+      contributors: [],
+    });
     expect(parseStats({ raised: '25', visitors: '7', sales: 2 })).toEqual({
       raised: 25,
       visitors: 7,
+      contributors: [],
     });
+  });
+
+  it('sorts contributors by amount and drops malformed entries', () => {
+    const parsed = parseStats({
+      raised: 60,
+      visitors: 3,
+      contributors: [
+        { name: 'Ada', amount: 10 },
+        { name: 'Grace', amount: 50 },
+        { name: 'no amount' },
+        { amount: 5 },
+      ],
+    });
+    expect(parsed?.contributors).toEqual([
+      { name: 'Grace', amount: 50 },
+      { name: 'Ada', amount: 10 },
+    ]);
   });
 
   it('rejects anything else', () => {

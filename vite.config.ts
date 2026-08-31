@@ -6,12 +6,12 @@ import { defineConfig } from 'vitest/config';
 type Env = Record<string, string | undefined>;
 
 /** Extension-less routes that resolve to <name>/index.html (see cleanUrls and nginx.conf). */
-const PAGES = ['thanks', 'impressum', 'privacy', 'terms'];
+const PAGES = ['pay', 'thanks', 'impressum', 'privacy', 'terms'];
 
 /** Bump when a file in public/img is replaced in place, so browser caches refetch it. */
 const IMG_V = '?v=2';
 
-const REQUIRED = ['VITE_DOMAIN', 'VITE_SITE_TITLE', 'VITE_STRIPE_PAYMENT_LINK_URL'] as const;
+const REQUIRED = ['VITE_DOMAIN', 'VITE_SITE_TITLE', 'VITE_PAY_URL'] as const;
 
 /** Fails the build loudly when a required variable is missing (constitution §8, §10). */
 export function validateEnv(env: Env): void {
@@ -20,8 +20,8 @@ export function validateEnv(env: Env): void {
       throw new Error(`[okrich] ${key} is empty. Copy .env.example to .env and fill it in.`);
     }
   }
-  if (!env.VITE_STRIPE_PAYMENT_LINK_URL?.startsWith('https://')) {
-    throw new Error('[okrich] VITE_STRIPE_PAYMENT_LINK_URL must be an https:// URL.');
+  if (!env.VITE_PAY_URL?.startsWith('https://')) {
+    throw new Error('[okrich] VITE_PAY_URL must be an https:// URL.');
   }
   if (env.VITE_STATS_URL?.trim() && !env.VITE_STATS_URL.startsWith('https://')) {
     throw new Error('[okrich] VITE_STATS_URL must be an https:// URL (or empty).');
@@ -174,7 +174,8 @@ export default defineConfig(({ mode }) => {
     SITE_URL: `https://${env.VITE_DOMAIN}`,
     MIN: `${env.VITE_MIN_AMOUNT ?? '5'} ${currencySymbol(env.VITE_CURRENCY ?? 'EUR')}`,
     MIN_SHORT: `${currencySymbol(env.VITE_CURRENCY ?? 'EUR')}${env.VITE_MIN_AMOUNT ?? '5'}`,
-    STRIPE_URL: escapeAttr(env.VITE_STRIPE_PAYMENT_LINK_URL ?? ''),
+    PAY_URL: escapeAttr(env.VITE_PAY_URL ?? ''),
+    ONE: `1 ${currencySymbol(env.VITE_CURRENCY ?? 'EUR')}`,
     SHARE_URL: shareUrl(`https://${env.VITE_DOMAIN}/`),
     GOAL_PERCENT: goalPercent(env),
     MILLION_PERCENT: millionPercent(env),
@@ -190,6 +191,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           index: resolve(root, 'index.html'),
+          pay: resolve(root, 'pay/index.html'),
           thanks: resolve(root, 'thanks/index.html'),
           impressum: resolve(root, 'impressum/index.html'),
           privacy: resolve(root, 'privacy/index.html'),

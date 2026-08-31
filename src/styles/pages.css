@@ -103,3 +103,43 @@ mark.todo {
   display: inline-block;
   margin-top: 20px;
 }
+
+/* /pay: the name and amount form (v1.7) */
+.payform {
+  margin: 20px 0 4px;
+}
+.field {
+  display: block;
+  margin-bottom: 18px;
+}
+.field .label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.field input {
+  width: 100%;
+  max-width: 340px;
+  font: inherit;
+  font-size: 20px;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+.field .hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.payform .btn {
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+  font-size: 24px;
+}
+.payment-note {
+  margin-top: 12px;
+}

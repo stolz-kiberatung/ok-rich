@@ -1,7 +1,7 @@
 # OK RICH
 
 A one-page site with one purpose: to make the owner rich. Visitors pay any amount (min 5 EUR)
-through a Stripe Payment Link and receive one personal, real thumbs-up photo by email within
+through a Dodo Payments Payment Link and receive one personal, real thumbs-up photo by email within
 7 days. Retro-window pinboard, draggable, no framework, no cookies, no backend.
 
 - Constitution and rules: `CLAUDE.md` · current state: `HANDOFF.md`
@@ -10,19 +10,19 @@ through a Stripe Payment Link and receive one personal, real thumbs-up photo by 
 ## Stack
 
 Vite 8 · TypeScript (strict) · plain CSS · zero runtime dependencies. Tests with Vitest and
-Playwright (+ axe). Served by an unprivileged nginx container. Payment = Stripe Payment Link
+Playwright (+ axe). Served by an unprivileged nginx container. Payment = Dodo Payments Payment Link
 (plain `<a href>`), post-payment automation in the owner's n8n.
 
 ## Develop
 
 ```bash
-cp .env.example .env          # fill in VITE_STRIPE_PAYMENT_LINK_URL at least
+cp .env.example .env          # fill in VITE_PAY_URL at least
 npm ci
 npm run dev                   # http://localhost:5173
 ```
 
 `vite build` fails on purpose when `VITE_DOMAIN`, `VITE_SITE_TITLE` or
-`VITE_STRIPE_PAYMENT_LINK_URL` is empty, or when only one of the two Umami variables is set.
+`VITE_PAY_URL` is empty, or when only one of the two Umami variables is set.
 
 ## Check
 
@@ -49,20 +49,20 @@ rendered at image build from `nginx/default.conf.template` with the `UMAMI_ORIGI
 1. Put the repo on the host, fill `.env` with live values (Payment Link, Umami, `UMAMI_ORIGIN`).
 2. Uncomment the label block for your reverse proxy in `docker-compose.yml`.
 3. `docker compose up -d --build`. The proxy terminates TLS and should add HSTS.
-4. Stripe and n8n: `docs/stripe-setup.md`, `docs/n8n-workflow.md`.
+4. Dodo Payments and n8n: `docs/dodo-setup.md`, `docs/n8n-workflow.md`.
 
 ## Swapping things
 
-| What                                                  | Where                                                                                                            |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Photos                                                | drop `public/img/thumb.webp` (4:5) and `public/img/kid.webp` (3:4); the build picks them up, placeholders vanish |
-| Copy                                                  | `index.html` (pinboard), `thanks/index.html`, legal pages under `impressum/`, `privacy/`, `terms/`               |
-| Title, domain, amounts, goal fund, Stripe link, Umami | `.env`                                                                                                           |
-| Positions, rotation, z-order of the 19 elements       | `elements` in `site.config.ts` (design px on a 1440×900 stage)                                                   |
-| Window widths and typography                          | `src/styles/pinboard.css` (widths), `src/styles/windows.css` (type)                                              |
-| Share text on `/thanks`                               | `SHARE_TEXT` in `vite.config.ts`                                                                                 |
-| Suggested amount chips                                | `VITE_SUGGESTED_AMOUNTS` in `.env` (text only; Stripe has the real minimum)                                      |
-| OG image layout                                       | `scripts/og.html`, then `npm run og`                                                                             |
+| What                                                   | Where                                                                                                            |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Photos                                                 | drop `public/img/thumb.webp` (4:5) and `public/img/kid.webp` (3:4); the build picks them up, placeholders vanish |
+| Copy                                                   | `index.html` (pinboard), `thanks/index.html`, legal pages under `impressum/`, `privacy/`, `terms/`               |
+| Title, domain, amounts, goal fund, payment link, Umami | `.env`                                                                                                           |
+| Positions, rotation, z-order of the 19 elements        | `elements` in `site.config.ts` (design px on a 1440×900 stage)                                                   |
+| Window widths and typography                           | `src/styles/pinboard.css` (widths), `src/styles/windows.css` (type)                                              |
+| Share text on `/thanks`                                | `SHARE_TEXT` in `vite.config.ts`                                                                                 |
+| Suggested amount chips                                 | `VITE_SUGGESTED_AMOUNTS` in `.env` (text only; Dodo Payments has the real minimum)                               |
+| OG image layout                                        | `scripts/og.html`, then `npm run og`                                                                             |
 
 Converting a photo for the board: `node scripts/convert-image.mjs tasks.json` (rotate, crop,
 resize, WebP; see the task JSON shape at the top of the script).

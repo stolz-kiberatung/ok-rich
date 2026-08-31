@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Make me rich — %VITE_SITE_TITLE%</title>
+    <meta
+      name="description"
+      content="Pick your name and your amount, then pay. One personal thumbs-up photo comes back within 7 days."
+    />
+    <meta name="robots" content="noindex" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="%VITE_SITE_TITLE% — make me rich" />
+    <meta property="og:url" content="%%SITE_URL%%/pay" />
+    <link rel="stylesheet" href="/src/styles/page.css" />
+    <script type="module" src="/src/pay.ts"></script>
+  </head>
+  <body>
+    <main class="page">
+      <section class="win" aria-labelledby="pay-title">
+        <div class="bar">
+          <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="caption">checkout.exe</span>
+        </div>
+        <div class="body">
+          <h1 id="pay-title">Two questions, then money</h1>
+          <p>
+            Your name goes on the Top Contributors board on the front page. Your amount decides
+            where on it. Then you get your photo.
+          </p>
+
+          <!-- Plain GET form: the fields become Dodo's query parameters, so this works without JS. -->
+          <form class="payform" id="payform" method="get" action="%%PAY_URL%%">
+            <label class="field">
+              <span class="label">Your name for the board</span>
+              <input
+                type="text"
+                name="fullName"
+                id="contributor-name"
+                maxlength="40"
+                required
+                autocomplete="name"
+                placeholder="Ada L."
+                enterkeyhint="go"
+              />
+              <span class="hint">Up to 40 characters. A first name and an initial is plenty.</span>
+            </label>
+
+            <label class="field">
+              <span class="label">Amount in %VITE_CURRENCY%</span>
+              <input
+                type="number"
+                name="quantity"
+                id="contributor-amount"
+                min="%VITE_MIN_AMOUNT%"
+                max="100000"
+                step="1"
+                value="%VITE_MIN_AMOUNT%"
+                required
+                inputmode="numeric"
+              />
+              <span class="hint">
+                Whole euros, minimum %%MIN%%. Checkout counts them as %%ONE%% shares, which is the
+                honest way to let you pick any amount.
+              </span>
+            </label>
+
+            <input type="hidden" name="redirect_url" value="%%SITE_URL%%/thanks" />
+            <input type="hidden" name="metadata_display_name" id="meta-name" value="" />
+
+            <button class="btn" type="submit">Continue to payment →</button>
+            <p class="note payment-note">
+              Payment is handled by Dodo Payments. You still get exactly one (1) thumbs-up photo, by
+              email, within 7 days.
+            </p>
+          </form>
+
+          <p class="note">
+            Prefer not to appear on the board? Write "anonymous" as your name. See the
+            <a href="/terms">Terms</a> and the <a href="/privacy">Privacy Policy</a>.
+          </p>
+          <a class="home" href="/">← back to the pinboard</a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

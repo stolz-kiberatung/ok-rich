@@ -6,7 +6,7 @@ import { chipsHtml, resolveImage, shareUrl, validateEnv } from '../../vite.confi
 const good = {
   VITE_DOMAIN: 'ok-rich.com',
   VITE_SITE_TITLE: 'OK RICH',
-  VITE_STRIPE_PAYMENT_LINK_URL: 'https://buy.stripe.com/test_x',
+  VITE_PAY_URL: 'https://checkout.dodopayments.com/buy/pdt_test',
 };
 
 describe('validateEnv', () => {
@@ -15,16 +15,14 @@ describe('validateEnv', () => {
   });
 
   it('names the missing required variable', () => {
-    expect(() => validateEnv({ ...good, VITE_STRIPE_PAYMENT_LINK_URL: '' })).toThrow(
-      /VITE_STRIPE_PAYMENT_LINK_URL/,
-    );
+    expect(() => validateEnv({ ...good, VITE_PAY_URL: '' })).toThrow(/VITE_PAY_URL/);
     expect(() => validateEnv({ ...good, VITE_DOMAIN: '  ' })).toThrow(/VITE_DOMAIN/);
     expect(() => validateEnv({ ...good, VITE_SITE_TITLE: undefined })).toThrow(/VITE_SITE_TITLE/);
   });
 
   it('rejects a non-https Stripe URL', () => {
     expect(() =>
-      validateEnv({ ...good, VITE_STRIPE_PAYMENT_LINK_URL: 'http://buy.stripe.com/x' }),
+      validateEnv({ ...good, VITE_PAY_URL: 'http://checkout.dodopayments.com/buy/pdt_test' }),
     ).toThrow(/https/);
   });
 
@@ -74,12 +72,12 @@ describe('vite build', () => {
       [resolve('node_modules/vite/bin/vite.js'), 'build', '--outDir', 'test-results/guard-build'],
       {
         cwd: process.cwd(),
-        env: { ...process.env, VITE_STRIPE_PAYMENT_LINK_URL: 'http://insecure.example/x' },
+        env: { ...process.env, VITE_PAY_URL: 'http://insecure.example/x' },
         encoding: 'utf8',
         timeout: 60_000,
       },
     );
     expect(result.status).not.toBe(0);
-    expect(result.stderr + result.stdout).toMatch(/VITE_STRIPE_PAYMENT_LINK_URL must be an https/);
+    expect(result.stderr + result.stdout).toMatch(/VITE_PAY_URL must be an https/);
   }, 90_000);
 });

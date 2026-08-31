@@ -16,8 +16,7 @@ env:
   # Public, non-secret build values so the env validation passes in CI (spec A8).
   VITE_DOMAIN: ok-rich.com
   VITE_SITE_TITLE: OK RICH
-  VITE_STRIPE_PAYMENT_LINK_URL: https://buy.stripe.com/test_ci_placeholder
-  VITE_WHY_PARAGRAPH: CI build placeholder
+  VITE_PAY_URL: https://checkout.dodopayments.com/buy/pdt_ci_placeholder
 
 jobs:
   quality:
@@ -104,8 +103,8 @@ jobs:
           docker build
           --build-arg VITE_DOMAIN="$VITE_DOMAIN"
           --build-arg VITE_SITE_TITLE="$VITE_SITE_TITLE"
-          --build-arg VITE_STRIPE_PAYMENT_LINK_URL="$VITE_STRIPE_PAYMENT_LINK_URL"
-          --build-arg VITE_WHY_PARAGRAPH="$VITE_WHY_PARAGRAPH"
+          --build-arg VITE_PAY_URL="$VITE_PAY_URL"
+          --build-arg VITE_PAY_URL="$VITE_PAY_URL"
           -t okrich-web:ci .
 
       - name: Smoke-test the container
@@ -113,6 +112,7 @@ jobs:
           docker run -d --rm --name okrich-ci -p 8080:8080 --read-only --tmpfs /tmp okrich-web:ci
           for i in $(seq 1 20); do curl -sf http://localhost:8080/ >/dev/null && break; sleep 1; done
           curl -sSf -o /dev/null http://localhost:8080/
+          curl -sSf -o /dev/null http://localhost:8080/pay
           curl -sSf -o /dev/null http://localhost:8080/thanks
           curl -sSf -o /dev/null http://localhost:8080/terms
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/nope)" = "404"

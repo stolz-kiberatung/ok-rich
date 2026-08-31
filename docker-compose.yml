@@ -15,7 +15,7 @@ services:
         VITE_CURRENCY: ${VITE_CURRENCY:-EUR}
         VITE_MIN_AMOUNT: ${VITE_MIN_AMOUNT:-5}
         VITE_SUGGESTED_AMOUNTS: ${VITE_SUGGESTED_AMOUNTS:-5, 10, 50}
-        VITE_STRIPE_PAYMENT_LINK_URL: ${VITE_STRIPE_PAYMENT_LINK_URL}
+        VITE_PAY_URL: ${VITE_PAY_URL}
         VITE_STATS_URL: ${VITE_STATS_URL:-}
         VITE_UMAMI_SCRIPT_URL: ${VITE_UMAMI_SCRIPT_URL:-}
         VITE_UMAMI_WEBSITE_ID: ${VITE_UMAMI_WEBSITE_ID:-}
@@ -25,6 +25,8 @@ services:
         UMAMI_ORIGIN: ${UMAMI_ORIGIN:-}
         # Origin of VITE_STATS_URL, allowed in the CSP connect-src.
         STATS_ORIGIN: ${STATS_ORIGIN:-}
+        # Origin of VITE_PAY_URL, allowed as a form target in the CSP.
+        PAY_ORIGIN: ${PAY_ORIGIN:-https://checkout.dodopayments.com}
     restart: unless-stopped
     read_only: true
     tmpfs:
