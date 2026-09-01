@@ -119,18 +119,20 @@ test.describe('desktop pinboard', () => {
 
   test('a dragged window ends on top and is clamped to the stage', async ({ page }) => {
     await page.goto('/');
-    await dragByBar(page, 'testimonials', 40, 40);
+    // A window in the top right, which since 2026-09-01 is ideas.txt: reviews moved down to sit
+    // above the legal notice and is no longer reachable inside the test viewport.
+    await dragByBar(page, 'ideas', 40, 40);
     const zBoard = await page
-      .locator('[data-pin="testimonials"]')
+      .locator('[data-pin="ideas"]')
       .evaluate((el) => Number((el as HTMLElement).style.zIndex));
     const zKid = await page
       .locator('[data-pin="kid"]')
       .evaluate((el) => Number((el as HTMLElement).style.zIndex));
     expect(zBoard).toBeGreaterThan(zKid);
     // Fling the window far outside: at least 24 design px must remain visible.
-    await dragByBar(page, 'testimonials', -3000, -3000);
-    const pos = await position(page, 'testimonials');
-    const size = await page.locator('[data-pin="testimonials"]').evaluate((el) => ({
+    await dragByBar(page, 'ideas', -3000, -3000);
+    const pos = await position(page, 'ideas');
+    const size = await page.locator('[data-pin="ideas"]').evaluate((el) => ({
       w: (el as HTMLElement).offsetWidth,
       h: (el as HTMLElement).offsetHeight,
     }));
@@ -204,9 +206,10 @@ test.describe('mobile layout', () => {
       'trade-offer',
       'kid',
       'faq',
-      'testimonials',
+      'ideas',
       'goal',
       'wall',
+      'testimonials',
       'footer',
     ];
     let lastBottom = -1;

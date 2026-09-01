@@ -14,11 +14,13 @@ const MOBILE_ORDER = [
   'trade-offer',
   'kid',
   'faq',
-  'testimonials',
-  'goal',
-  // ideas.txt sits before the wall on purpose: first what you get, then what to do with it.
+  // ideas.txt took the reviews slot at the top right on 2026-09-01; reviews moved down to sit
+  // directly above the legal notice. The DOM follows the board so the phone reads in the same
+  // order the desktop does.
   'ideas',
+  'goal',
   'wall',
+  'testimonials',
   'footer',
 ];
 

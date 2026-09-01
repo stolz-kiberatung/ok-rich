@@ -6,7 +6,7 @@
 
 export const STAGE = {
   width: 1440,
-  height: 1840,
+  height: 1670,
   /** Below this viewport width the stage is not scaled and elements stack in DOM order. */
   breakpoint: 768,
   /** Minimum px of an element that must stay inside the stage when dragged. */
@@ -71,11 +71,11 @@ export const elements: readonly PinElement[] = [
   { id: 'trade-offer', kind: 'win', x: 26, y: 60, draggable: true, z: 1 },
   { id: 'kid', kind: 'win', x: 1136, y: 58, draggable: true, z: 2 },
   { id: 'faq', kind: 'win', x: 20, y: 430, draggable: true, z: 3 },
-  { id: 'testimonials', kind: 'win', x: 1100, y: 410, draggable: true, z: 4 },
-  { id: 'goal', kind: 'win', x: 1064, y: 650, draggable: true, z: 5 },
+  { id: 'testimonials', kind: 'win', x: 1100, y: 1292, draggable: true, z: 4 },
+  { id: 'goal', kind: 'win', x: 1064, y: 770, draggable: true, z: 5 },
   { id: 'wall', kind: 'win', x: 510, y: 1150, draggable: true, z: 6 },
-  { id: 'ideas', kind: 'win', x: 530, y: 1500, draggable: true, z: 7 },
-  { id: 'footer', kind: 'win', x: 1120, y: 1349, draggable: true, z: 8 },
+  { id: 'ideas', kind: 'win', x: 1100, y: 410, draggable: true, z: 7 },
+  { id: 'footer', kind: 'win', x: 610, y: 1520, draggable: true, z: 8 },
   {
     id: 'garage',
     kind: 'sticker',
@@ -92,7 +92,7 @@ export const elements: readonly PinElement[] = [
     id: 'counter',
     kind: 'sticker',
     x: 1176,
-    y: 916,
+    y: 1062,
     rotate: 0,
     draggable: true,
     z: 13,
@@ -138,12 +138,12 @@ export const elements: readonly PinElement[] = [
   { id: 'nametag', kind: 'sticker', x: 26, y: 1337, rotate: -4, draggable: true, z: 18 },
   { id: 'legit', kind: 'sticker', x: 26, y: 352, rotate: -9, draggable: true, z: 26 },
   { id: 'cert', kind: 'sticker', x: 278, y: 1306, rotate: -5, draggable: true, z: 20 },
-  { id: 'thumbs', kind: 'sticker', x: 1214, y: 1293, rotate: 3, draggable: true, z: 22 },
+  { id: 'thumbs', kind: 'sticker', x: 955, y: 1498, rotate: 3, draggable: true, z: 22 },
   {
     id: 'hashtag',
     kind: 'sticker',
     x: 1120,
-    y: 996,
+    y: 1128,
     rotate: -2,
     draggable: true,
     z: 31,

@@ -221,7 +221,9 @@
 /* Width set here, after `.stage.is-board > .win { width: auto }`, or the cascade eats it. */
 
 .stage.is-board > [data-pin='ideas'] {
-  width: 380px;
+  /* 320 px, the same column width as the reviews window it replaced: at 380 the window would
+     run past the right edge of the 1440 px stage. */
+  width: 320px;
 }
 .ideas-list {
   margin: 0;
