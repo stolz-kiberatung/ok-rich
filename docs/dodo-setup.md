@@ -1,7 +1,7 @@
 # docs/dodo-setup.md — Dodo Payments, click by click
 
-Goal: the visitor fills in a name and an amount on `/pay`, lands on a Dodo checkout that already
-knows both, and after payment their name appears on the Top contributors board.
+Goal: the visitor fills in a display name on `/pay`, lands on a Dodo checkout that already knows
+it, picks the amount there, and after payment their name appears on the Top contributors board.
 
 Dodo Payments is a **Merchant of Record**: Dodo is the seller towards the buyer and handles VAT
 and sales tax worldwide, then pays you out. That is the main practical difference to a plain
@@ -9,20 +9,28 @@ payment processor, and it is why the legal pages name Dodo the way they do.
 
 Do everything in **Test mode** first, pay once with a test card, then repeat in Live mode.
 
-## 1. The product: one euro, bought many times
+## 1. The product: Pay What You Want, minimum 5 €
 
-Dodo products have a fixed price; there is no "pay what you want" pricing. So the product is
-**one share of one euro**, and the amount the visitor picks becomes the **quantity**. That is the
-same trick comparable sites use ("$1 at a time"), and it is what lets people pay any whole amount
-without a backend.
+Dodo supports **Pay What You Want** (PWYW) for single-payment products: you set a minimum, and the
+buyer types the amount on Dodo's own checkout page. A static link keeps that behaviour as long as
+no `paymentAmount` is attached to it.
+
+> **Corrected on 2026-09-01.** This document previously claimed Dodo had a fixed price only, and
+> worked around it by selling 1 € shares with the amount as `quantity`. That was wrong. The share
+> trick is gone and `/pay` no longer asks for an amount — one question less before the money.
 
 1. Dashboard → **Products → Add product**.
-2. Name: `Thumbs-up support (1 € per share)`.
-   Description: `One personal thumbs-up photo, taken for you and emailed within 7 days. Each
-share is 1 €; the number of shares is your amount.`
-3. Pricing: **One-time**, currency `EUR`, price `100` (that is 1.00 € in the smallest unit).
-4. Tax category: `digital_products`.
-5. Save and copy the product id (`pdt_…`).
+2. Name: `Thumbs-up photo`.
+   Description: `One personal thumbs-up photo, taken for you and emailed within 7 days.`
+3. **Product image is required** (PNG/JPG/WebP, up to 3 MB) — use `public/img/thumb.webp`.
+4. Pricing type: **Single Payment**. Enable the **Pay What You Want** toggle.
+5. **Minimum Price**: `5.00` EUR. Optionally a **Suggested Price** (`10`) to anchor expectations.
+   Leave Maximum empty.
+6. Tax category: `digital_products`.
+7. Save and copy the product id (`pdt_…`).
+
+**Do not** set a Payment amount under Advanced Settings when you copy the link: that fixes the
+price and takes the choice away from the buyer.
 
 ## 2. The payment link
 
@@ -47,7 +55,6 @@ The form sends these query parameters, which Dodo understands on a static link:
 | Field                   | Meaning                                                         |
 | ----------------------- | --------------------------------------------------------------- |
 | `fullName`              | prefills the buyer name, and is the fallback name for the board |
-| `quantity`              | the amount in euros (one share = 1 €), minimum 5                |
 | `redirect_url`          | `https://ok-rich.com/thanks`                                    |
 | `metadata_display_name` | the cleaned board name, set by JS; the webhook prefers this     |
 
@@ -88,8 +95,9 @@ Details and the import steps: `docs/n8n-workflow.md`.
 
 ## 5. Test the whole path
 
-1. `/pay`, name `Test Person`, amount `5`.
-2. Checkout shows 5 × 1 € = 5 €, name prefilled. Pay with a Dodo test card.
+1. `/pay`, name `Test Person`, continue.
+2. Checkout shows the amount field with a 5 € minimum and the name prefilled. Enter 5 € and pay
+   with a Dodo test card.
 3. You land on `https://ok-rich.com/thanks`.
 4. n8n shows one execution; you get the notification mail, the buyer gets the confirmation.
 5. Reload the front page: `Test Person 5 €` stands on the Top contributors board, the millionaire

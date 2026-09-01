@@ -23,10 +23,10 @@
           <span class="caption">checkout.exe</span>
         </div>
         <div class="body">
-          <h1 id="pay-title">Two questions, then money</h1>
+          <h1 id="pay-title">Make me rich</h1>
           <p>
             Your name goes on the Top Contributors board on the front page. Your amount decides
-            where on it. Then you get your photo.
+            where on it. You pick it in the next step. Then you get your photo.
           </p>
 
           <!-- Plain GET form: the fields become Dodo's query parameters, so this works without JS. -->
@@ -46,32 +46,13 @@
               <span class="hint">Up to 40 characters. A first name and an initial is plenty.</span>
             </label>
 
-            <label class="field">
-              <span class="label">Amount in %VITE_CURRENCY%</span>
-              <input
-                type="number"
-                name="quantity"
-                id="contributor-amount"
-                min="%VITE_MIN_AMOUNT%"
-                max="100000"
-                step="1"
-                value="%VITE_MIN_AMOUNT%"
-                required
-                inputmode="numeric"
-              />
-              <span class="hint">
-                Whole euros, minimum %%MIN%%. Checkout counts them as %%ONE%% shares, which is the
-                honest way to let you pick any amount.
-              </span>
-            </label>
-
             <input type="hidden" name="redirect_url" value="%%SITE_URL%%/thanks" />
             <input type="hidden" name="metadata_display_name" id="meta-name" value="" />
 
             <button class="btn" type="submit">Continue to payment →</button>
             <p class="note payment-note">
-              Payment is handled by Dodo Payments. You still get exactly one (1) thumbs-up photo, by
-              email, within 7 days.
+              Payment is handled by Dodo Payments. That is where you choose your amount, minimum
+              %%MIN%%. You still get exactly one (1) thumbs-up photo, by email, within 7 days.
             </p>
           </form>
 
