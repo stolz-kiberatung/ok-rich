@@ -3,6 +3,7 @@
 // plus the visitor counter. Without a configured endpoint the counter card removes itself and
 // the meters keep the build-time value, so the page never shows an invented number.
 
+import { cleanName } from './name';
 import { STAGE, site } from '../site.config';
 
 export interface Contributor {
@@ -51,7 +52,10 @@ export function parseStats(payload: unknown): Stats | null {
     .map((entry) => entry as Record<string, unknown>)
     .filter((entry) => typeof entry?.name === 'string' && Number.isFinite(Number(entry.amount)))
     .map((entry) => ({
-      name: String(entry.name).slice(0, 40),
+      // Defence in depth: the webhook already cleans this, but the page must not depend on the
+      // endpoint being intact. A name that arrives with a bidi override or zero-width characters
+      // gets neutralised here too, one layer before it is rendered.
+      name: cleanName(String(entry.name)),
       amount: Math.max(0, Number(entry.amount)),
     }))
     .sort((a, b) => b.amount - a.amount);

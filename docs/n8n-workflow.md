@@ -71,6 +71,38 @@ is readable in the Code node. The secret lives only in the n8n environment, neve
   ids. It persists across restarts but not across a workflow re-import; after a re-import, Dodo's
   own retry window (3 days) is the only overlap to watch.
 
+## 4b. Taking an entry off the board
+
+Anyone who pays can put 40 characters on the front page. The blocklist catches slurs and hate
+codes, but not an ordinary insult, and it cannot know that a payment was later charged back. So
+there is a manual branch in this same workflow.
+
+**Why it lives here and not in an admin workflow:** the board is kept in
+`$getWorkflowStaticData('global')`, which is scoped to one workflow. A separate admin workflow
+would look at empty data.
+
+**Why a manual trigger and not an admin webhook:** the n8n login already authenticates, and it is
+rate limited to 10 attempts a minute at the reverse proxy. An admin webhook would add a second
+public endpoint plus a second secret to store, for something needed a few times a year. If you
+ever want to do this from a phone without opening n8n, that is the trade to revisit.
+
+**How:**
+
+1. Open the workflow in n8n.
+2. Open **What to change** and set:
+   - `name` — the entry exactly as it appears on the board (case does not matter)
+   - `mode` — `anonymise` or `remove`
+3. Click **Execute workflow** on **Fix the board (manual)**.
+4. Read the output: it reports how many entries were affected, the new total, and lists the board.
+
+| Mode        | Use it when                               | Effect on the entry  | Effect on the total                  |
+| ----------- | ----------------------------------------- | -------------------- | ------------------------------------ |
+| `anonymise` | the name is unwanted, the payment is fine | shows as `anonymous` | unchanged, the money was really paid |
+| `remove`    | the payment is gone (refund, chargeback)  | disappears           | reduced by that amount               |
+
+A wrong name changes nothing and prints the current board so you can copy the exact spelling.
+Every run appends to `store.audit` (last 100 kept), so "who took that down and when" has an answer.
+
 ## 5. Failure modes
 
 | Symptom                                               | Cause                                                       | Fix                                                      |
