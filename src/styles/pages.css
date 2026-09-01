@@ -145,6 +145,25 @@ mark.todo {
   cursor: pointer;
   font-size: 24px;
 }
+/* Optional delivery address, folded away by default so the form still asks one question.
+   <details> is native HTML: it needs no JavaScript, so it survives the no-JS path like the rest
+   of this form. */
+.gift {
+  margin-bottom: 18px;
+}
+.gift > summary {
+  cursor: pointer;
+  font-weight: 700;
+  padding: 6px 0;
+}
+.gift > summary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.gift-field {
+  margin: 10px 0 0;
+}
+
 .payment-note {
   margin-top: 12px;
 }

@@ -57,14 +57,18 @@ The form sends these query parameters, which Dodo understands on a static link:
 | `fullName`              | prefills the buyer name, and is the fallback name for the board |
 | `redirect_url`          | `https://ok-rich.com/thanks`                                    |
 | `metadata_display_name` | the cleaned board name, set by JS; the webhook prefers this     |
+| `metadata_deliver_to`   | optional address for the photo, validated in the webhook        |
 
 Nothing here is secret: the link, the product id and the amount are all public by nature.
 
 ## 3. Checkout settings
 
 1. **Settings → Checkout**: collect the email address (required for delivery).
-2. Add a custom field if you want the optional message: label
-   `Anything you want me to know? (optional)`, type text, not required.
+2. **There is no custom field to add here.** Dodo's custom fields exist only for Checkout
+   Sessions created through the API; a static payment link accepts a fixed set of parameters plus
+   anything prefixed `metadata_`. An earlier version of this document said otherwise, which was
+   wrong. That is why the optional delivery address is a field on `/pay` that travels as
+   `metadata_deliver_to`, rather than a field on Dodo's own checkout page.
 3. **Terms acceptance**: point it at `https://ok-rich.com/terms` and use this text, German first,
    because it is what makes the right of withdrawal expire (§ 356 Abs. 5 BGB):
 

@@ -46,6 +46,26 @@
               <span class="hint">Up to 40 characters. A first name and an initial is plenty.</span>
             </label>
 
+            <details class="gift">
+              <summary>Sending it to someone else?</summary>
+              <label class="field gift-field">
+                <span class="label">Their email address</span>
+                <input
+                  type="email"
+                  name="metadata_deliver_to"
+                  id="deliver-to"
+                  maxlength="120"
+                  autocomplete="off"
+                  placeholder="their@email.com"
+                  inputmode="email"
+                />
+                <span class="hint">
+                  Leave this empty and the photo goes to the address you pay with. Nothing is sent
+                  anywhere until the payment goes through.
+                </span>
+              </label>
+            </details>
+
             <input type="hidden" name="redirect_url" value="%%SITE_URL%%/thanks" />
             <input type="hidden" name="metadata_display_name" id="meta-name" value="" />
 

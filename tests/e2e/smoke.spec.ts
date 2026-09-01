@@ -331,6 +331,19 @@ test.describe('pay form', () => {
     await expect(page.locator('input[name="redirect_url"]')).toHaveValue(/\/thanks$/);
   });
 
+  // Sending the photo elsewhere is optional and must never stand between a buyer and paying.
+  test('offers a delivery address without demanding one', async ({ page }) => {
+    await page.goto('/pay');
+    const gift = page.locator('.gift');
+    await expect(gift, 'the field starts folded away').not.toHaveAttribute('open', /.*/);
+    const input = page.locator('#deliver-to');
+    await expect(input).toHaveAttribute('name', 'metadata_deliver_to');
+    await expect(input).toHaveAttribute('type', 'email');
+    await expect(input, 'it must not be required').not.toHaveAttribute('required', /.*/);
+    await gift.locator('summary').click();
+    await expect(input).toBeVisible();
+  });
+
   // The amount is chosen inside Dodo's own checkout (Pay What You Want with a minimum),
   // so this page must not ask for it a second time.
   test('does not ask for an amount — Dodo does that', async ({ page }) => {
