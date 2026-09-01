@@ -17,10 +17,12 @@
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run --coverage",
     "test:e2e": "playwright test -c tests/e2e/playwright.config.ts",
-    "test": "npm run lint && npm run format:check && npm run typecheck && npm run test:unit && npm run build && npm run test:e2e",
+    "test": "npm run lint && npm run format:check && npm run typecheck && node scripts/sync-blocklist.mjs --check && npm run test:unit && npm run build && npm run test:e2e",
     "audit:lighthouse": "node scripts/lighthouse.mjs",
     "og": "node scripts/make-og.mjs",
-    "icons": "node scripts/make-icons.mjs"
+    "icons": "node scripts/make-icons.mjs",
+    "audit:mobile": "node scripts/check-mobile.mjs",
+    "sync:blocklist": "node scripts/sync-blocklist.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

@@ -12,7 +12,12 @@
   padding: 24px 16px 40px;
 }
 
-/* Stacked: windows flow in DOM order, stickers stay hidden */
+/* Stacked: windows AND stickers flow in DOM order.
+   Everything that hangs on the board also appears on a phone — the board is the point of the
+   site, so hiding half of it on mobile threw away the joke. Inverted on 2026-09-01; before that
+   a sticker only showed if someone remembered to add `m-show`, and twelve of them were missing.
+   The one deliberate exception is the attention arrows: they aim at the CTA in two dimensions
+   and would point at nothing in a single column. */
 
 .stage > .win {
   width: min(100%, 560px);
@@ -20,6 +25,10 @@
 }
 
 .stage > .sticker {
+  display: block;
+}
+
+.stage:not(.is-board) > .sticker.blink-arrow {
   display: none;
 }
 

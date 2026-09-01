@@ -210,6 +210,36 @@
   text-decoration: line-through;
 }
 
+/* The life list has five entries and sits in a 217 px gap between the FAQ window and the name
+   badge. Tighter leading keeps it inside that gap; the three-line note above stays as it was. */
+.sticky-life .sticky-list {
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+/* --- OnlyThumbs, a parody badge -------------------------------------------------------------
+   The mark is a generated image (nano_banana_pro, 2026-09-01), cropped and converted to WebP by
+   scripts/convert-image.mjs — 400x114, 5.6 KB, shown at half size. Deliberately an allusion and
+   not a reproduction of anyone's registered mark. The rounded corners are clipped here because
+   the source render has white corners that would otherwise show against the board's warm grey. */
+
+/* The badge arrives as a finished pill, so the generic sticker chrome (white card, 2 px ink
+   border, hard offset shadow, padding) has to come off — otherwise it reads as a pill inside a
+   box inside a frame. */
+.onlythumbs {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: none;
+  line-height: 0;
+}
+.onlythumbs img {
+  display: block;
+  border-radius: 999px;
+  filter: drop-shadow(3px 4px 8px rgba(0, 0, 0, 0.18));
+}
+
 /* --- Certificate -------------------------------------------------------------------------- */
 
 .cert {
@@ -276,7 +306,10 @@
   margin: 8px 0 6px;
   font-size: 16px;
   line-height: 1.3;
-  background: #e9e9eb;
+  /* Green bubble like an SMS. Deliberately darker than Apple's #34c759: white text on that
+     lands at 2.1:1 and the axe pass on the front page would fail. This green reaches 5.1:1. */
+  background: #1a7f37;
+  color: #fff;
   border-radius: 12px;
   padding: 8px 12px;
   width: max-content;
@@ -366,13 +399,111 @@
 
 /* --- Mobile / stacked: curated cards are visible and centered ----------------------------- */
 
-.stage:not(.is-board) > .sticker.m-show {
-  display: block;
+/* Everything below is the stacked layout only. The board at >= 768 px must not be touched by it;
+   every rule is therefore scoped to .stage:not(.is-board). Measured against
+   docs/MOBILE-BRIEF.md by `npm run audit:mobile`. */
+
+/* 1. The CTA button moves to the top of its window. On a phone the pitch is the button, not the
+   meter; the meter still follows immediately after. Screen readers keep the DOM order
+   (meter, button, detail), which stays a sensible reading sequence. */
+.stage:not(.is-board) [data-pin='cta'] .body {
+  display: flex;
+  flex-direction: column;
+}
+.stage:not(.is-board) [data-pin='cta'] .body > .btn {
+  order: -1;
+  margin-bottom: 14px;
+}
+
+/* 2. A shorter hero, so the button starts higher up the first screen. */
+.stage:not(.is-board) .headline h1 {
+  font-size: clamp(44px, 15vw, 64px);
+  line-height: 1.02;
+}
+.stage:not(.is-board) .headline .sub {
+  font-size: 16px;
+  line-height: 1.35;
+  margin-top: 8px;
+}
+
+/* 3. Small decoration flows side by side instead of stacking into a column of ornaments.
+   inline-block plus a centred line box does it without any wrapper element. */
+.stage:not(.is-board) {
+  text-align: center;
+}
+.stage:not(.is-board) > .win,
+.stage:not(.is-board) > .sticker {
+  text-align: initial;
+}
+.stage:not(.is-board) > .kao,
+.stage:not(.is-board) > .stamp,
+.stage:not(.is-board) > .thumbs,
+.stage:not(.is-board) > .loading,
+.stage:not(.is-board) > .counter {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 6px 20px;
+}
+
+/* 4. Tap targets reach 44 px (WCAG 2.5.5). Every link inside a window body, not just the footer:
+   the footer ones measured 96x24 and 56x24 before this. */
+.stage:not(.is-board) .body a {
+  display: inline-block;
+  padding: 11px 4px;
+}
+/* Links that sit inside a sentence keep the text flow; they are read, not tapped as buttons. */
+.stage:not(.is-board) .body p a {
+  display: inline;
+  padding: 0;
+}
+
+/* 5. Nothing below 14 px in the stacked layout. Listed explicitly rather than with a blanket
+   rule, so the desktop board keeps its own smaller sizes. */
+.stage:not(.is-board) .meter-note,
+.stage:not(.is-board) .chip-hint,
+.stage:not(.is-board) .hint,
+.stage:not(.is-board) .foot-note,
+.stage:not(.is-board) .board-note,
+.stage:not(.is-board) .wall-soon,
+.stage:not(.is-board) .wall-note,
+.stage:not(.is-board) .dad-status,
+.stage:not(.is-board) .dad-header,
+.stage:not(.is-board) .pol-cap,
+.stage:not(.is-board) .cert small,
+.stage:not(.is-board) .caption,
+.stage:not(.is-board) .wall-tile,
+.stage:not(.is-board) .counter-label,
+.stage:not(.is-board) .cert-sub,
+.stage:not(.is-board) .cert-title,
+.stage:not(.is-board) .nametag-sub,
+.stage:not(.is-board) .hashtag-note {
+  font-size: 14px;
+}
+/* The avatar is a 22 px disc with a single initial in it. Growing the letter alone would burst
+   the circle, so the circle grows with it. */
+.stage:not(.is-board) .dad-avatar {
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+}
+
+/* 6. Tighter spacing between the small decoration, so showing everything does not make the page
+   endless. Windows keep their 20 px. */
+.stage:not(.is-board) > .kao,
+.stage:not(.is-board) > .stamp,
+.stage:not(.is-board) > .thumbs,
+.stage:not(.is-board) > .loading,
+.stage:not(.is-board) > .counter {
+  margin-bottom: 14px;
+}
+
+/* Applies to every sticker. The old `m-show` opt-in class was removed entirely on 2026-09-01. */
+.stage:not(.is-board) > .sticker {
   width: max-content;
   max-width: calc(100% - 8px);
   margin: 0 auto 20px;
 }
-.stage:not(.is-board) > .counter.m-show {
+.stage:not(.is-board) > .counter {
   display: inline-flex;
   width: max-content;
   position: relative;
@@ -412,11 +543,20 @@
 .blink-arrow svg {
   display: block;
 }
+/* Each arrow points at the CENTRE of the CTA button (732, 663 in stage coordinates).
+   The angle below is the required bearing MINUS the element's own `rotate` in site.config.ts,
+   because the two transforms add up. Recompute both if either the button or an arrow moves.
+     blink-1  centre (376, 610)  bearing   8.5deg  element -6deg  ->  14.5deg
+     blink-2  centre (1068, 586) bearing 167.1deg  element  6deg  -> 161.1deg
+     blink-3  centre (1070, 686) bearing 183.9deg  element  0deg  -> 183.9deg */
+.blink-arrow.blink-1 svg {
+  transform: rotate(14.5deg);
+}
 .blink-arrow.blink-2 svg {
-  transform: rotate(-42deg);
+  transform: rotate(161.1deg);
 }
 .blink-arrow.blink-3 svg {
-  transform: rotate(215deg);
+  transform: rotate(183.9deg);
 }
 .blink-arrow.blink-2 {
   animation-delay: 0.3s;
@@ -1031,9 +1171,4 @@
 }
 .is-board .body.wall {
   padding: 10px 20px 18px;
-}
-
-/* All three arrows aim at the CTA button, from the left and from below (v2.1) */
-.blink-arrow.blink-3 svg {
-  transform: rotate(218deg);
 }
