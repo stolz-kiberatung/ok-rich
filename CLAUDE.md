@@ -26,6 +26,9 @@ Phases: 0 Constitution → 1 Specify (`spec.md`, `clarify.md`) → 2 Plan
 
 - Code, comments, commits, docs: English.
 - Site copy: English.
+- **No em dashes (—) in user-facing copy.** Use a full stop, a comma or a colon. Page titles are
+  the one exception, where the dash separates page name from site name. Enforced by
+  `tests/e2e/copy.spec.ts` across all seven pages, so new copy is covered automatically.
 - Legal pages (/impressum, /privacy, /terms): English, following the model of a comparable site
   (owner decision, 30.08.2026). One exception stays German: the Widerrufsbelehrung on /terms,
   because § 356 (5) BGB only extinguishes the right of withdrawal if the consumer was instructed

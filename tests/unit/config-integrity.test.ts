@@ -56,16 +56,22 @@ describe('site.config.ts ↔ index.html', () => {
     }
   });
 
-  it('hides purely decorative stickers from assistive technology, but never the mobile cards', () => {
+  // `mobile: true` used to mean "also show this on a phone" and was paired with an `m-show`
+  // class. Since 2026-09-01 every sticker shows on a phone, so the class was removed and the
+  // flag kept only its second meaning: this element carries content, not decoration. Content
+  // gets read out; ornaments are hidden from assistive technology.
+  it('hides purely decorative stickers from assistive technology, but never the content ones', () => {
     for (const e of elements.filter((e) => e.kind === 'sticker')) {
       const openingTag = html.match(new RegExp(`<[^>]*data-pin="${e.id}"[^>]*>`))?.[0] ?? '';
       if (e.mobile) {
-        expect(openingTag, e.id).toContain('m-show');
         expect(openingTag, e.id).not.toContain('aria-hidden');
       } else {
         expect(openingTag, e.id).toContain('aria-hidden="true"');
-        expect(openingTag, e.id).not.toContain('m-show');
       }
     }
+  });
+
+  it('no element still carries the retired m-show class', () => {
+    expect(html).not.toContain('m-show');
   });
 });

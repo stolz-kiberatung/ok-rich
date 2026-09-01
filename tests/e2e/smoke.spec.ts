@@ -194,7 +194,7 @@ test.describe('mobile layout', () => {
     test.skip(test.info().project.name !== 'mobile', 'mobile only');
   });
 
-  test('windows stack in DOM order, stickers are hidden, drag does nothing', async ({ page }) => {
+  test('windows stack in DOM order, everything shows, drag does nothing', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#stage')).not.toHaveClass(/is-board/);
     const order = [
@@ -216,11 +216,21 @@ test.describe('mobile layout', () => {
       expect(box.y, id).toBeGreaterThan(lastBottom);
       lastBottom = box.y + box.height;
     }
-    await expect(page.locator('[data-pin="kao-1"]')).toBeHidden();
-    await expect(page.locator('[data-pin="nametag"]')).toBeHidden();
+    // Since 2026-09-01 the phone shows the whole board, not a curated subset: hiding two thirds
+    // of a pinboard threw away the thing the site is. Previously kao-1 and nametag were asserted
+    // hidden here — now they must be visible like everything else.
+    for (const id of ['kao-1', 'nametag', 'cert', 'thumbs', 'legit', 'loading', 'onlythumbs']) {
+      await expect(page.locator(`[data-pin="${id}"]`), id).toBeVisible();
+    }
     await expect(page.locator('[data-pin="sticky"]')).toBeVisible();
     await expect(page.locator('[data-pin="dad"]')).toBeVisible();
     await expect(page.locator('[data-pin="sample"]')).toBeVisible();
+
+    // The one deliberate exception: attention arrows point at the CTA in two dimensions and
+    // would point at nothing in a single column.
+    for (const id of ['blink-1', 'blink-2', 'blink-3']) {
+      await expect(page.locator(`[data-pin="${id}"]`), id).toBeHidden();
+    }
 
     const kid = page.locator('[data-pin="kid"]');
     await kid.scrollIntoViewIfNeeded();
@@ -306,16 +316,24 @@ test.describe('growing contributors board', () => {
 });
 
 test.describe('pay form', () => {
-  test('collects a name and an amount and posts them to the payment provider', async ({ page }) => {
+  test('collects the board name and posts it to the payment provider', async ({ page }) => {
     const res = await page.goto('/pay');
     expect(res?.status()).toBe(200);
+    await expect(page.locator('h1')).toHaveText('Make me rich');
     const form = page.locator('#payform');
     await expect(form).toHaveAttribute('action', PAY_URL);
     await expect(form).toHaveAttribute('method', 'get');
-    await expect(page.locator('#contributor-amount')).toHaveAttribute('min', '5');
     await page.locator('#contributor-name').fill('  Ada   L.  ');
     await expect(page.locator('#meta-name')).toHaveValue('Ada L.');
     await expect(page.locator('input[name="redirect_url"]')).toHaveValue(/\/thanks$/);
+  });
+
+  // The amount is chosen inside Dodo's own checkout (Pay What You Want with a minimum),
+  // so this page must not ask for it a second time.
+  test('does not ask for an amount — Dodo does that', async ({ page }) => {
+    await page.goto('/pay');
+    await expect(page.locator('#contributor-amount')).toHaveCount(0);
+    await expect(page.locator('[name="quantity"]')).toHaveCount(0);
   });
 });
 
