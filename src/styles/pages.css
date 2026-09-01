@@ -29,8 +29,13 @@
   margin: 20px 0 6px;
 }
 
-.page .win .body p,
-.page .win .body ul {
+/* Base rhythm for text pages, written with :where() ON PURPOSE.
+   :where() contributes ZERO specificity, so this rule sets the default gap while every
+   more specific rule below still wins without !important and without selector escalation.
+   The earlier form of this rule was `.page .win .body p { margin: 0 0 12px }` at specificity
+   0,3,1 — it silently beat `.payment-note { margin-top: 12px }` (0,1,0) and glued the note
+   to the button. See the rhythm rule in HANDOFF.md; a test enforces it. */
+:where(.page .win .body) :where(p, ul) {
   margin: 0 0 12px;
 }
 
