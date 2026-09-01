@@ -16,6 +16,8 @@ const MOBILE_ORDER = [
   'faq',
   'testimonials',
   'goal',
+  // ideas.txt sits before the wall on purpose: first what you get, then what to do with it.
+  'ideas',
   'wall',
   'footer',
 ];

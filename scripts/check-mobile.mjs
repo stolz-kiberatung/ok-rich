@@ -13,7 +13,7 @@ const LANDSCAPE = [
 const CTA_MAX_TOP = 340; // brief item 2 — see the note there on why not 100
 const MIN_TAP = 44; // brief item 3
 const MIN_FONT = 14; // brief item 5
-const MAX_HEIGHT_375 = 5400; // brief item 8 — raised when all 27 elements came back
+const MAX_HEIGHT_375 = 5700; // brief item 8 — 5400 until ideas.txt was added on 2026-09-01
 
 const browser = await chromium.launch();
 const failures = [];

@@ -217,6 +217,24 @@
   line-height: 1.45;
 }
 
+/* --- ideas.txt --------------------------------------------------------------------------- */
+/* Width set here, after `.stage.is-board > .win { width: auto }`, or the cascade eats it. */
+
+.stage.is-board > [data-pin='ideas'] {
+  width: 380px;
+}
+.ideas-list {
+  margin: 0;
+  padding-left: 22px;
+  /* Window bodies default to 24px, which turns each of these into three lines. 18px matches the
+     other text windows and keeps an item to one or two lines at the designed width. */
+  font-size: 18px;
+  line-height: 1.4;
+}
+.ideas-list li + li {
+  margin-top: 10px;
+}
+
 /* --- OnlyThumbs, a parody badge -------------------------------------------------------------
    The mark is a generated image (nano_banana_pro, 2026-09-01), cropped and converted to WebP by
    scripts/convert-image.mjs — 400x114, 5.6 KB, shown at half size. Deliberately an allusion and

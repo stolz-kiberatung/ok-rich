@@ -54,7 +54,9 @@ to `.stage:not(.is-board)`. A measurement of the 1440 px board before and after 
 5. **No text smaller than 14 px** anywhere in the mobile layout.
 6. **Vertical rhythm holds** — `tests/e2e/rhythm.spec.ts` stays green, including on new blocks.
 7. **axe finds no serious or critical issue** at 375 px on all seven pages.
-8. **Page height stays below 5400 px** at 375 px. Originally 4000 px, written before the
+8. **Page height stays below 5700 px** at 375 px. Was 5400 until `ideas.txt` was added on
+   2026-09-01, which is a deliberate ~290 px. The ceiling exists to catch growth nobody decided
+   on, so it moves when someone decides, and only then. Originally 4000 px, written before the
    decision to bring all twelve hidden elements back; showing nine more of them costs about
    650 px. 5400 px is the ceiling that keeps the page from growing further unnoticed. Measured:
    ~5065 px.
