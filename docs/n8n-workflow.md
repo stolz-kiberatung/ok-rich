@@ -16,9 +16,11 @@ GET /webhook/okrich-stats
 Both endpoints live in the **same** workflow on purpose: they share `$getWorkflowStaticData`,
 which is where the running totals are kept. Splitting them would break the shared counter.
 
-Why a Webhook node instead of n8n's Dodo trigger: the Code node verifies the
-`Dodo-Signature` header itself (HMAC-SHA256, constant-time compare) and rejects events older
-than 300 s, which is what the constitution requires and what you can read and audit in one place.
+Why a Webhook node instead of n8n's Dodo trigger: the Code node verifies the signature itself
+(HMAC-SHA256, constant-time compare) and rejects events older than 300 s, which is what the
+constitution requires and what you can read and audit in one place. Dodo follows the
+**Standard Webhooks** spec, so the headers the node reads are `webhook-id`,
+`webhook-timestamp` and `webhook-signature` — not a single `Dodo-Signature` header.
 
 ## 1. Host prerequisites (n8n docker compose on Hetzner)
 
@@ -32,10 +34,39 @@ EXECUTIONS_DATA_PRUNE=true               # keep execution data short-lived (priv
 EXECUTIONS_DATA_MAX_AGE=720              # hours = 30 days
 ```
 
+On this host the values live in `/opt/n8n/.env` (mode 600) and `docker-compose.yml` only carries
+`${VARIABLE}` references, so the compose file stays safe to copy around. Changing `.env` needs
+`docker compose up -d n8n` — the container is recreated, a restart alone does not re-read it.
+
 `N8N_BLOCK_ENV_ACCESS_IN_NODE` must stay `false` (the default) so `$env.DODO_WEBHOOK_SECRET`
 is readable in the Code node. The secret lives only in the n8n environment, never in this repo.
 
 ## 2. Import and wire up
+
+The export carries a fixed `"id"` (`OKRICHWORKFLOW01`) on purpose. Without it the CLI import
+fails with `SQLITE_CONSTRAINT: NOT NULL constraint failed: workflow_entity.id`, and every future
+import would create a duplicate instead of updating the workflow that is already there. Keep the
+id when re-exporting from the n8n UI.
+
+**Either** in the browser, **or** from the shell on the host — the CLI route, which is what was
+actually used on 2026-09-02:
+
+```bash
+# on the laptop
+scp n8n/okrich-payments.json deploy@<host>:/tmp/okrich-payments.json
+# on the server
+docker cp /tmp/okrich-payments.json n8n-n8n-1:/tmp/okrich-payments.json
+docker compose -f /opt/n8n/docker-compose.yml exec -T n8n   n8n import:workflow --input=/tmp/okrich-payments.json
+docker compose -f /opt/n8n/docker-compose.yml exec -T n8n n8n list:workflow
+```
+
+Re-running the import overwrites the workflow of the same id. **It also drops
+`$getWorkflowStaticData`**, which is where the totals and the contributors board live — so a
+re-import after go-live resets the board to zero. Export the running workflow first if that
+matters.
+
+The Gmail credential reference in the file is the placeholder `REPLACE_WITH_CREDENTIAL_ID`; after
+the import both Gmail nodes show an empty credential field until step 3 below.
 
 1. n8n → **Workflows → Import from file** → `n8n/okrich-payments.json`.
 2. Open **Email owner**: check the recipient (preset: ok@ok-rich.com).
