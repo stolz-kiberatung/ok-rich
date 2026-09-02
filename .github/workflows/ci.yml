@@ -17,6 +17,18 @@ env:
   VITE_DOMAIN: ok-rich.com
   VITE_SITE_TITLE: OK RICH
   VITE_PAY_URL: https://checkout.dodopayments.com/buy/pdt_ci_placeholder
+  # "Optional, with defaults" in .env.example, but Vite's %VAR% HTML replacement has no
+  # fallback of its own: left unset, %VITE_MIN_AMOUNT% and %VITE_CURRENCY% end up as literal
+  # text in the built /terms page. Match the values .env.example suggests.
+  VITE_CURRENCY: EUR
+  VITE_MIN_AMOUNT: '5'
+  # .invalid is the IANA-reserved TLD for exactly this: a syntactically valid https:// URL that
+  # is guaranteed never to resolve. Needed so tests/e2e/smoke.spec.ts's "growing contributors
+  # board" test has something for its page.route('**/okrich-stats*') mock to intercept — with
+  # VITE_STATS_URL empty, src/stats.ts loadStats() returns null before ever calling fetch, so
+  # the mock is never hit and the board never renders. This was the one CI failure on every run
+  # since 2026-08-31, reproduced and confirmed locally on 2026-09-02.
+  VITE_STATS_URL: https://stats.ci.invalid/webhook/okrich-stats
 
 jobs:
   quality:
@@ -104,7 +116,9 @@ jobs:
           --build-arg VITE_DOMAIN="$VITE_DOMAIN"
           --build-arg VITE_SITE_TITLE="$VITE_SITE_TITLE"
           --build-arg VITE_PAY_URL="$VITE_PAY_URL"
-          --build-arg VITE_PAY_URL="$VITE_PAY_URL"
+          --build-arg VITE_CURRENCY="$VITE_CURRENCY"
+          --build-arg VITE_MIN_AMOUNT="$VITE_MIN_AMOUNT"
+          --build-arg VITE_STATS_URL="$VITE_STATS_URL"
           -t okrich-web:ci .
 
       - name: Smoke-test the container
