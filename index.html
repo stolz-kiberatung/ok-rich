@@ -160,48 +160,6 @@
           </div>
         </section>
 
-        <section class="win abs" data-pin="goal" aria-label="The goal">
-          <div class="bar">
-            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
-            <span class="caption no-drag">the_goal.jpg</span>
-          </div>
-          <div class="body goal no-drag">
-            <img
-              src="/img/goal-car.webp?v=2"
-              width="240"
-              height="135"
-              alt="A red sports car on a coastal road. The goal."
-            />
-            <p class="goal-label">
-              Sports car fund: <strong id="car-percent">%%GOAL_PERCENT%% % complete</strong>
-            </p>
-            <span class="goal-track"
-              ><span class="goal-fill" data-percent="%%GOAL_PERCENT%%"></span
-            ></span>
-          </div>
-        </section>
-
-        <section class="win abs" data-pin="wall" aria-labelledby="wall-title">
-          <div class="bar">
-            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
-            <span class="caption no-drag">wall/</span>
-          </div>
-          <div class="body wall no-drag">
-            <h2 id="wall-title">Wall of Thumbs <span class="wall-soon">coming soon</span></h2>
-            <div class="wall-grid">
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
-            </div>
-            <p class="wall-note">
-              Write "wall me" at checkout and your thumb joins it the day it goes up.
-            </p>
-          </div>
-        </section>
-
         <!-- Cards shown on mobile too (.) -->
 
         <div class="sticker abs polaroid" data-pin="sample">
@@ -237,7 +195,7 @@
 
         <div class="sticker abs polaroid" data-pin="garage">
           <img
-            src="/img/garage.webp?v=2"
+            src="/img/garage.webp?v=3"
             width="150"
             height="120"
             alt="My hand holding a tiny toy sports car"
@@ -376,6 +334,52 @@
 
         <!-- Footer window: last on the stage so mobile ends with the legal links -->
 
+        <!-- Sports Car Fund and the Wall of Thumbs follow the sticker cluster on purpose: on a
+             phone the page stacks in DOM order, and the owner wants the pinboard of stickers
+             right after "What you can do with the thumb", then the car, then the wall. On the
+             desktop board positions come from site.config.ts, so this order changes nothing there. -->
+        <section class="win abs" data-pin="goal" aria-label="The goal">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">the_goal.jpg</span>
+          </div>
+          <div class="body goal no-drag">
+            <img
+              src="/img/goal-car.webp?v=3"
+              width="240"
+              height="135"
+              alt="A red sports car on a coastal road. The goal."
+            />
+            <p class="goal-label">
+              Sports car fund: <strong id="car-percent">%%GOAL_PERCENT%% % complete</strong>
+            </p>
+            <span class="goal-track"
+              ><span class="goal-fill" data-percent="%%GOAL_PERCENT%%"></span
+            ></span>
+          </div>
+        </section>
+
+        <section class="win abs" data-pin="wall" aria-labelledby="wall-title">
+          <div class="bar">
+            <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="caption no-drag">wall/</span>
+          </div>
+          <div class="body wall no-drag">
+            <h2 id="wall-title">Wall of Thumbs <span class="wall-soon">coming soon</span></h2>
+            <div class="wall-grid">
+              <span class="wall-tile wall-empty">you?</span>
+              <span class="wall-tile wall-empty">you?</span>
+              <span class="wall-tile wall-empty">you?</span>
+              <span class="wall-tile wall-empty">you?</span>
+              <span class="wall-tile wall-empty">you?</span>
+              <span class="wall-tile wall-empty">you?</span>
+            </div>
+            <p class="wall-note">
+              Write "wall me" at checkout and your thumb joins it the day it goes up.
+            </p>
+          </div>
+        </section>
+
         <section class="win abs" data-pin="testimonials" aria-label="Reviews">
           <div class="bar">
             <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -405,6 +409,12 @@
               <a href="/terms">Terms</a>
             </nav>
             <p class="no-drag">No cookies. Seriously.</p>
+            <p class="no-drag ps">
+              P.S. I swear I am not as shallow as portrayed here and I have much more reasonable
+              plans in life than to spend all my money on a sports car. This is a joke and it was a
+              very fun project to build. Let's see where it goes. ;)
+            </p>
+            <p class="no-drag ps">P.P.S. Porsche 911 is a cool car.</p>
           </div>
         </section>
       </div>

@@ -6,7 +6,11 @@
 
 export const STAGE = {
   width: 1440,
-  height: 1670,
+  // 1670 until 2026-09-03. The P.S. at the bottom of legal.txt wraps to several lines on the
+  // board, which makes the footer 241 px tall with its bottom edge at 1761; 1790 keeps the
+  // 24 px clamp margin below it. Measured, not guessed: a footer poking out of the stage is
+  // exactly what the clamp is there to prevent.
+  height: 1790,
   /** Below this viewport width the stage is not scaled and elements stack in DOM order. */
   breakpoint: 768,
   /** Minimum px of an element that must stay inside the stage when dragged. */

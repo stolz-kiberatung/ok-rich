@@ -6,6 +6,7 @@ import {
   clearLayout,
   fitStage,
   growStageBelow,
+  initMobileDrag,
   initPinboard,
   reclampAll,
   unfitStage,
@@ -38,10 +39,24 @@ const wrapper = stage?.parentElement;
 if (stage && wrapper) {
   const media = window.matchMedia(`(min-width: ${STAGE.breakpoint}px)`);
   let teardown: (() => void) | null = null;
+  let mobileTeardown: (() => void) | null = null;
   let scale = 1;
+
+  // Phone: the sticker cluster is movable by finger. Switched off before the board takes over,
+  // so its inline transforms never fight the board's absolute positions.
+  const enableMobileDrag = () => {
+    if (mobileTeardown) return;
+    mobileTeardown = initMobileDrag(stage);
+  };
+  const disableMobileDrag = () => {
+    if (!mobileTeardown) return;
+    mobileTeardown();
+    mobileTeardown = null;
+  };
 
   const enableBoard = () => {
     if (teardown) return;
+    disableMobileDrag();
     stage.classList.add('is-board');
     applyLayout(stage);
     scale = fitStage(stage, wrapper);
@@ -55,6 +70,7 @@ if (stage && wrapper) {
     stage.classList.remove('is-board');
     clearLayout(stage);
     unfitStage(stage, wrapper);
+    enableMobileDrag();
   };
 
   const onResize = () => {
@@ -66,4 +82,5 @@ if (stage && wrapper) {
   media.addEventListener('change', (e) => (e.matches ? enableBoard() : disableBoard()));
   window.addEventListener('resize', onResize);
   if (media.matches) enableBoard();
+  else enableMobileDrag();
 }

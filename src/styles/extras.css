@@ -1192,3 +1192,74 @@
 .is-board .body.wall {
   padding: 10px 20px 18px;
 }
+
+/* --- Mobile pinboard cluster (2026-09-03) ------------------------------------------------- */
+
+/* The owner's brief for the phone: the stickers must not stand in a single column, one under the
+   other, but sit side by side and slightly askew, like on a real pinboard, and be movable by
+   finger. Windows stay full-width cards; only the stickers between them flow.
+
+   Done without any wrapper element: the stage itself becomes a wrapping flex row, windows take a
+   full row each, stickers take as much as they need and wrap. That keeps every `.stage > ...`
+   rule elsewhere valid and the desktop board (>= 768 px) untouched, since everything is scoped
+   to .stage:not(.is-board). */
+.stage:not(.is-board) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  column-gap: 10px;
+}
+.stage:not(.is-board) > .win {
+  flex: 0 0 min(100%, 560px);
+}
+.stage:not(.is-board) > .sticker {
+  flex: 0 0 auto;
+  margin: 0 2px 16px;
+  /* Back to the desktop's slight tilt. Each sticker carries its own --rot from site.config.ts. */
+  transform: rotate(var(--rot, 0deg));
+  /* Moving a sticker by finger must not scroll the page under it. Only the stickers are
+     affected; the gaps and every window still scroll normally. */
+  touch-action: none;
+}
+/* A little vertical stagger so a row of stickers reads as pinned, not aligned. */
+.stage:not(.is-board) > .sticker:nth-of-type(3n + 1) {
+  margin-top: 8px;
+}
+.stage:not(.is-board) > .sticker:nth-of-type(3n) {
+  margin-top: 14px;
+}
+/* The counter had its own centring trick for the column layout; the flex row centres it now. */
+.stage:not(.is-board) > .counter {
+  position: static;
+  left: auto;
+  transform: rotate(var(--rot, 0deg));
+}
+.stage:not(.is-board) > .sticker.dragging {
+  z-index: 50;
+  box-shadow: 6px 8px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* Centred text in the short windows. Mixed alignment (image centred, caption left) read as
+   crooked on the phone. Running text (FAQ) and the numbered list stay left, which is right for
+   reading. */
+.stage:not(.is-board) [data-pin='goal'] .body,
+.stage:not(.is-board) [data-pin='footer'] .body,
+.stage:not(.is-board) [data-pin='testimonials'] .body,
+.stage:not(.is-board) [data-pin='ideas'] .body > h2,
+.stage:not(.is-board) [data-pin='ideas'] .body > .h2 {
+  text-align: center;
+}
+
+/* The P.S. at the very bottom (owner, 2026-09-03): the one place the site drops the act. Quieter
+   than the body copy so it reads as an aside, never below 14 px. */
+.ps {
+  font-size: 14px;
+  color: var(--muted);
+}
+/* The board keeps legal.txt's paragraphs on one line each (rule above, "so it clears the stage
+   bottom"). The P.S. is a real paragraph and has to wrap; the stage height in site.config.ts
+   was raised for it instead. */
+.is-board .footer p.ps {
+  white-space: normal;
+}

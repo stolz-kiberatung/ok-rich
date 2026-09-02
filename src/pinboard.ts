@@ -158,3 +158,66 @@ export function initPinboard(stage: HTMLElement, getScale: () => number): () => 
   }
   return () => ac.abort();
 }
+
+/**
+ * Drag for the stacked (phone) layout. The board's drag moves absolute `left`/`top` inside a scaled
+ * stage; on a phone the stickers are flow items, so a drag is a `translate()` on top of the sticker's
+ * own tilt. Windows are deliberately not draggable here: a full-width card has nowhere to go.
+ * Rotation comes from the same --rot custom property the CSS uses, so the transform written here
+ * keeps it instead of wiping it.
+ */
+export function initMobileDrag(stage: HTMLElement): () => void {
+  const ac = new AbortController();
+  const moved = new Set<HTMLElement>();
+
+  // The `.draggable` class is handed out by applyLayout(), which only runs for the board. On the
+  // phone nothing has it, so the stickers are picked straight from the config instead.
+  const ids = elements.filter((e) => e.kind === 'sticker' && e.draggable).map((e) => e.id);
+  for (const id of ids) {
+    const el = stage.querySelector<HTMLElement>(`:scope > .sticker[data-pin="${id}"]`);
+    if (!el || el.classList.contains('blink-arrow')) continue;
+    let dx = 0;
+    let dy = 0;
+    el.addEventListener(
+      'pointerdown',
+      (ev) => {
+        if (ev.button !== 0) return;
+        ev.preventDefault();
+        const origin: [number, number] = [ev.clientX, ev.clientY];
+        const start: [number, number] = [dx, dy];
+        let dragging = false;
+        el.classList.add('dragging');
+        el.setPointerCapture(ev.pointerId);
+
+        const onMove = (e: PointerEvent) => {
+          const [mx, my] = delta(origin, [e.clientX, e.clientY], 1);
+          if (!dragging && isDrag(mx, my)) dragging = true;
+          if (!dragging) return;
+          dx = start[0] + mx;
+          dy = start[1] + my;
+          el.style.transform = `translate(${dx}px, ${dy}px) rotate(var(--rot, 0deg))`;
+          moved.add(el);
+        };
+        const onUp = () => {
+          el.removeEventListener('pointermove', onMove);
+          el.removeEventListener('pointerup', onUp);
+          el.removeEventListener('pointercancel', onUp);
+          el.classList.remove('dragging');
+          if (dragging) swallowNextClick();
+        };
+        el.addEventListener('pointermove', onMove, { signal: ac.signal });
+        el.addEventListener('pointerup', onUp, { signal: ac.signal });
+        el.addEventListener('pointercancel', onUp, { signal: ac.signal });
+      },
+      { signal: ac.signal },
+    );
+  }
+
+  // Teardown clears the inline transforms too: the board applies its own rotate via CSS, and a
+  // leftover inline translate would override it the moment the layout switches to the board.
+  return () => {
+    ac.abort();
+    for (const el of moved) el.style.transform = '';
+    moved.clear();
+  };
+}

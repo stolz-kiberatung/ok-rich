@@ -207,6 +207,10 @@ test.describe('mobile layout', () => {
       'kid',
       'faq',
       'ideas',
+      // The sticker cluster sits between the ideas and the car on purpose (owner brief,
+      // 2026-09-03). `loading` is the last sticker in DOM order, so goal below it proves the
+      // whole cluster comes first.
+      'loading',
       'goal',
       'wall',
       'testimonials',
@@ -411,5 +415,52 @@ test.describe('thanks page', () => {
     await page.goto('/thanks');
     await expect(page.locator('h1')).toContainText('Payment received');
     await expect(page.locator('#paid-block')).toBeVisible();
+  });
+});
+
+test.describe('mobile pinboard', () => {
+  test.beforeEach(() => {
+    test.skip(test.info().project.name !== 'mobile', 'mobile only');
+  });
+
+  /**
+   * Owner brief for the phone: the stickers must not stand in one column, and they must be movable
+   * by finger. Windows stay put: a full-width card has nowhere to go.
+   */
+  test('stickers share rows and move by finger, windows do not', async ({ page }) => {
+    await page.goto('/');
+    const boxes: { id: string; x: number; y: number; width: number; height: number }[] = [];
+    for (const id of ['sample', 'sticky', 'garage', 'meme', 'kao-1', 'kao-2']) {
+      const b = await page.locator(`[data-pin="${id}"]`).boundingBox();
+      if (!b) throw new Error(`no box for ${id}`);
+      boxes.push({ id, ...b });
+    }
+    const sharesRow = boxes.some((a) =>
+      boxes.some((b) => a.id !== b.id && Math.abs(a.y - b.y) < 40 && Math.abs(a.x - b.x) > 60),
+    );
+    expect(sharesRow, 'at least two stickers sit side by side').toBe(true);
+
+    const garage = page.locator('[data-pin="garage"]');
+    await garage.scrollIntoViewIfNeeded();
+    const g = await garage.boundingBox();
+    if (!g) throw new Error('no box for garage');
+    await page.mouse.move(g.x + g.width / 2, g.y + g.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(g.x + g.width / 2 + 70, g.y + g.height / 2 + 30, { steps: 8 });
+    await page.mouse.up();
+    const after = await garage.boundingBox();
+    expect(after && after.x - g.x, 'the sticker followed the finger').toBeGreaterThan(50);
+    await expect(garage).toHaveAttribute('style', /translate\(/);
+
+    const win = page.locator('[data-pin="ideas"]');
+    await win.scrollIntoViewIfNeeded();
+    const w = await win.boundingBox();
+    if (!w) throw new Error('no box for ideas');
+    await page.mouse.move(w.x + 40, w.y + 20);
+    await page.mouse.down();
+    await page.mouse.move(w.x + 140, w.y + 80, { steps: 6 });
+    await page.mouse.up();
+    const w2 = await win.boundingBox();
+    expect(w2 && Math.abs(w2.x - w.x), 'windows stay where they are').toBeLessThan(2);
   });
 });
