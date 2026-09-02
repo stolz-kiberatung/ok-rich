@@ -38,8 +38,11 @@ On this host the values live in `/opt/n8n/.env` (mode 600) and `docker-compose.y
 `${VARIABLE}` references, so the compose file stays safe to copy around. Changing `.env` needs
 `docker compose up -d n8n` — the container is recreated, a restart alone does not re-read it.
 
-`N8N_BLOCK_ENV_ACCESS_IN_NODE` must stay `false` (the default) so `$env.DODO_WEBHOOK_SECRET`
-is readable in the Code node. The secret lives only in the n8n environment, never in this repo.
+`N8N_BLOCK_ENV_ACCESS_IN_NODE` must be `false` so `$env.DODO_WEBHOOK_SECRET` is readable in the
+Code node. **Correction from 2026-09-02:** this used to be the default and needed no explicit
+setting. On n8n 2.32.5 it is not — the Code node failed with `access to env vars denied` on both
+`$env` reads until the variable was set explicitly in `docker-compose.yml`. Set it, don't rely on
+the default. The secret itself still lives only in the n8n environment, never in this repo.
 
 ## 2. Import and wire up
 
