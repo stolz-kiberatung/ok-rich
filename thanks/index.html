@@ -25,15 +25,45 @@
         </div>
         <div class="body">
           <h1 id="thanks-title">Payment received. 👍</h1>
-          <p>
-            You made me a tiny bit richer. Now I go take your photo. Check your inbox within 7 days.
-          </p>
-          <p class="note">
-            You will also get a short confirmation email. If nothing shows up, check spam first,
-            then reply to the confirmation.
-          </p>
-          <p>Meanwhile, tell someone. Misery loves company; so does generosity.</p>
-          <div class="actions">
+
+          <!--
+            Dodo sends the visitor back here for every ending, not only a paid one: an expired
+            checkout, a cancelled one and a failed card all land on this page too. It says which
+            in the `status` query parameter, and src/thanks.ts swaps the text below accordingly.
+            Without that, this page claims money that was never taken.
+
+            The parameter is a hint for the interface, not proof of payment, and it is not used as
+            proof here: nothing is unlocked on this page. The confirmation email is what actually
+            follows a payment.
+          -->
+          <div id="paid-block">
+            <p>
+              You made me a tiny bit richer. Now I go take your photo. Check your inbox within 7
+              days.
+            </p>
+            <p class="note">
+              You will also get a short confirmation email. If nothing shows up, check spam first,
+              then reply to the confirmation.
+            </p>
+            <p>Meanwhile, tell someone. Misery loves company; so does generosity.</p>
+          </div>
+
+          <div id="unpaid-block" hidden>
+            <p id="unpaid-lead">No payment was taken.</p>
+            <p class="note" id="unpaid-note">
+              Nothing was charged and no photo is on its way. If you meant to go through with it,
+              the button below starts again from the top.
+            </p>
+            <p class="note">
+              If your bank told you something else, write to
+              <a href="mailto:ok@ok-rich.com">ok@ok-rich.com</a> and I will look it up.
+            </p>
+            <div class="actions">
+              <a class="btn btn-small" href="/pay">Try again →</a>
+            </div>
+          </div>
+
+          <div class="actions" id="share-actions">
             <button class="btn btn-small" id="copy-link" type="button" data-url="%%SITE_URL%%/">
               Copy link
             </button>

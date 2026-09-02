@@ -365,4 +365,51 @@ test.describe('thanks page', () => {
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
     expect(errors).toEqual([]);
   });
+
+  /**
+   * Dodo returns the visitor here for every ending of a checkout, not only a paid one. Letting
+   * the checkout window run out lands on this page exactly like a payment does, and the page then
+   * claimed money that was never taken. These cases are the guard against that coming back.
+   */
+  for (const status of ['expired', 'cancelled', 'failed'] as const) {
+    test(`says nothing was charged when the checkout came back as ${status}`, async ({ page }) => {
+      await page.goto(`/thanks?status=${status}`);
+
+      await expect(page.locator('h1')).toContainText('Nothing was charged');
+      await expect(page.locator('#unpaid-block')).toBeVisible();
+      await expect(page.locator('#paid-block')).toBeHidden();
+      // Nothing a visitor can read may claim a payment happened. The paid block stays in the
+      // document and is only hidden, so this has to check rendered text rather than textContent.
+      await expect(page.locator('body')).not.toContainText('Payment received', {
+        useInnerText: true,
+      });
+      await expect(page.locator('body')).not.toContainText('tiny bit richer', {
+        useInnerText: true,
+      });
+      // Sharing a payment that never happened makes no sense.
+      await expect(page.locator('#share-actions')).toBeHidden();
+      // And there has to be a way onward.
+      await expect(page.locator('#unpaid-block a[href="/pay"]')).toBeVisible();
+    });
+  }
+
+  test('keeps a pending payment distinct from a failed one', async ({ page }) => {
+    await page.goto('/thanks?status=pending');
+
+    await expect(page.locator('h1')).toContainText('Still pending');
+    await expect(page.locator('#unpaid-lead')).toContainText('still being processed');
+    // It may still succeed, so it must not say the money was never taken.
+    await expect(page.locator('#unpaid-note')).not.toContainText('Nothing was charged');
+  });
+
+  test('keeps the confirmation for a paid checkout and for a direct visit', async ({ page }) => {
+    await page.goto('/thanks?status=succeeded');
+    await expect(page.locator('h1')).toContainText('Payment received');
+    await expect(page.locator('#unpaid-block')).toBeHidden();
+
+    // No parameter at all: someone who really paid must not be told otherwise.
+    await page.goto('/thanks');
+    await expect(page.locator('h1')).toContainText('Payment received');
+    await expect(page.locator('#paid-block')).toBeVisible();
+  });
 });

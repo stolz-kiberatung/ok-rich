@@ -22,6 +22,19 @@
   box-sizing: border-box;
 }
 
+/*
+ * The browser's own rule for the `hidden` attribute is `[hidden] { display: none }`, specificity
+ * 0,1,0. Any class that sets a display beats it: `.page .actions { display: flex }` is 0,2,0, so
+ * `<div class="actions" hidden>` stayed on screen. Found on /thanks, where the share buttons kept
+ * showing beside "nothing was charged".
+ *
+ * Everything this project toggles from JavaScript uses `el.hidden`, so the attribute has to win
+ * everywhere, and only `!important` does that without guessing which class might collide next.
+ */
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
