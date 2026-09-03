@@ -1263,3 +1263,65 @@
 .is-board .footer p.ps {
   white-space: normal;
 }
+
+/* --- Phone follow-ups (owner, 2026-09-03, second round) ---------------------------------- */
+
+/* "This page looks much better in the web version": phone only. */
+.web-hint {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+.is-board .web-hint {
+  display: none;
+}
+
+/* Rule 3 above resets text-align on every sticker for the stacked layout (so inline decoration
+   centres as a group). That reset also beat the centring the name tag and the certificate carry
+   themselves, which is why "HELLO / my name is" and "1 of 1 genuine thumb" sat flush left on the
+   phone. Restore it with the same specificity, and give the tag its designed width back, which
+   the stacked layout's `width: max-content` had squeezed. */
+.stage:not(.is-board) > .nametag,
+.stage:not(.is-board) > .cert {
+  text-align: center;
+}
+.stage:not(.is-board) > .nametag {
+  width: 220px;
+}
+
+/* Top contributors: the list rows are flex rows aligned left for the board's two-column grid.
+   On the phone the whole window is centred, so the rows follow. */
+.stage:not(.is-board) .body.board .board-list {
+  text-align: center;
+}
+.stage:not(.is-board) .board-list li {
+  justify-content: center;
+}
+
+/* Millionaire fund: "x € of 1,000,000 €" sits below the bar on the phone (owner, 2026-09-03).
+   The note is a sibling after the track in the markup now; the board lifts it back above the bar
+   with `order`, so the desktop reads exactly as before. */
+.meter {
+  display: flex;
+  flex-direction: column;
+}
+.meter-note {
+  display: block;
+}
+.is-board .meter-track {
+  order: 1;
+  margin-top: 6px;
+}
+/* Air between the bar's note and "You get: one (1) ..." on the phone. */
+.stage:not(.is-board) .cta .deal {
+  margin-top: 28px;
+}
+/* The three stickers ahead of the hero are shown a little smaller on the phone, so they read as
+   a row of pinned things above the name rather than a wall in front of it. `zoom` scales the
+   layout box too, unlike transform, so the row really gets shorter. */
+.stage:not(.is-board) > [data-pin='sample'],
+.stage:not(.is-board) > [data-pin='sticky'],
+.stage:not(.is-board) > [data-pin='meme'] {
+  zoom: 0.78;
+}

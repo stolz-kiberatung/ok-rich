@@ -45,10 +45,13 @@ to `.stage:not(.is-board)`. A measurement of the 1440 px board before and after 
 2. **CTA reachable without scrolling.** Originally written as "top edge ≤ 100 px". Revised on
    2026-09-01 after measuring: 100 px is only achievable by dropping the `OK RICH` headline above
    the button, and a landing page that hides its own name to save 200 px is a worse page, not a
-   better one. The requirement is now what was actually meant: **the entire button is on screen
-   without scrolling on a 320 × 568 phone**, and its top edge stays **≤ 340 px** on every width.
-   Measured result: 298–317 px, so the button sits at roughly half of the first screen with the
-   name and the pitch above it. Tapping it reaches `/pay`.
+   better one. Until 2026-09-03 the requirement was **the entire button on screen without
+   scrolling on a 320 × 568 phone**, top edge **≤ 340 px**, measured 298–317 px.
+   **Revised on 2026-09-03 by the owner:** three stickers (sample photo, life advice, todo note)
+   now open the page ahead of the hero, knowingly trading the first-screen button for the
+   pinboard feel. The button still comes right after the hero and nothing else may push it: top
+   edge **≤ 700 px** on every width, measured 627–638 px at 320–390 px and 479 px at 430 px. The
+   320 × 568 fold check prints a note instead of failing. Tapping it reaches `/pay`.
 3. **Tap targets ≥ 44 px** on every link and button (WCAG 2.5.5 / Apple HIG).
 4. **All 17 intended elements render** with height > 0; the three arrows are absent by design.
 5. **No text smaller than 14 px** anywhere in the mobile layout.

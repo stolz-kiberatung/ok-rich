@@ -10,7 +10,12 @@ const LANDSCAPE = [
   { w: 844, h: 390 },
 ];
 
-const CTA_MAX_TOP = 340; // brief item 2 — see the note there on why not 100
+// Was 340 until 2026-09-03. The owner then put three stickers (sample photo, life advice, todo
+// note) ahead of the hero on the phone, knowingly trading the first-screen button for the
+// pinboard feel. The button must still come right after the hero; this bound only says
+// "not further down than the stickers plus hero make it": measured 627–638 px at 320–390 px on
+// 2026-09-03, so 700 catches anything new creeping in above the button. Brief item 2.
+const CTA_MAX_TOP = 700;
 const MIN_TAP = 44; // brief item 3
 const MIN_FONT = 14; // brief item 5
 const MAX_HEIGHT_375 = 5700; // brief item 8 — 5400 until ideas.txt was added on 2026-09-01
@@ -79,8 +84,12 @@ for (const w of WIDTHS) {
   if (r.smallText.length) bad.push(`text: ${r.smallText.slice(0, 2).join(', ')}`);
   if (w === 375 && r.docH > MAX_HEIGHT_375) bad.push(`docH ${r.docH} > ${MAX_HEIGHT_375}`);
   // The real requirement: on the smallest phone still in use the whole button is on screen.
+  // The 320x568 fold check went with the owner's 2026-09-03 decision (see CTA_MAX_TOP). Kept as
+  // a printed note, not a failure, so the trade-off stays visible in every run.
   if (w === 320 && r.ctaTop !== null && r.ctaTop + 54 > 568)
-    bad.push(`CTA below the fold on 320x568 (${r.ctaTop} + 54 > 568)`);
+    console.log(
+      `  note: CTA below the fold on 320x568 (${r.ctaTop} + 54 > 568), accepted by owner`,
+    );
   if (bad.length) failures.push(`${w}px: ${bad.join(' | ')}`);
   rows.push({
     w,

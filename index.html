@@ -24,6 +24,41 @@
       <div class="stage" id="stage">
         <!-- Windows in mobile DOM order; footer is the very last element on the stage -->
 
+        <!-- Three stickers ahead of the hero on purpose (owner, 2026-09-03): the phone stacks in DOM
+             order, and the sample photo, the life advice and the todo note open the page there. On the
+             board they already sit along the top edge; positions come from site.config.ts. -->
+        <div class="sticker abs polaroid" data-pin="sample">
+          <img
+            src="%%THUMB_SRC%%"
+            width="110"
+            height="138"
+            alt="Sample thumbs-up photo. Already sold."
+            class="no-drag"
+          />
+          <span class="pol-cap no-drag">sample</span>
+          <span class="stamp stamp-sold no-drag" aria-hidden="true">sold</span>
+        </div>
+
+        <div class="sticker abs sticky" data-pin="sticky" aria-label="Todo list">
+          <span class="sticky-title no-drag">todo</span>
+          <ul class="sticky-list no-drag">
+            <li class="done">build website</li>
+            <li>get rich</li>
+            <li>buy car</li>
+          </ul>
+        </div>
+
+        <div class="sticker abs taped" data-pin="meme">
+          <img
+            src="/img/meme.webp?v=2"
+            width="140"
+            height="127"
+            alt="Blonde party guest in a shirt that reads Stop Being Poor"
+            class="no-drag"
+          />
+          <span class="pol-cap no-drag">life advice</span>
+        </div>
+
         <section class="win abs" data-pin="headline" aria-labelledby="site-title">
           <div class="bar">
             <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -47,11 +82,13 @@
             <div class="meter no-drag">
               <p class="meter-label">
                 Millionaire fund: <strong id="million-percent">%%MILLION_PERCENT%% %</strong>
-                <span class="meter-note" id="million-note">%%RAISED%% of 1,000,000 €</span>
               </p>
               <span class="meter-track"
                 ><span class="meter-fill" data-percent="%%MILLION_PERCENT%%"></span
               ></span>
+              <!-- Below the bar on the phone (owner, 2026-09-03); the board lifts it above the bar
+                   with `order`, see extras.css. -->
+              <span class="meter-note" id="million-note">%%RAISED%% of 1,000,000 €</span>
             </div>
             <a class="btn" href="/pay" data-umami-event="make-me-rich">Make me rich →</a>
             <p class="deal no-drag">
@@ -63,6 +100,10 @@
               Paying more does not get you more thumbs. Supply is fixed at one, because I need the
               other thumb to take the photo. It does get you a happier man holding it.
             </p>
+            <!-- Phone only; the board hides it. Sits at the end of the checkout window rather than
+                 under the headline, so the button keeps its place in the first screen
+                 (docs/MOBILE-BRIEF.md item 2). -->
+            <p class="web-hint no-drag">This page looks much better in the web version.</p>
           </div>
         </section>
 
@@ -162,27 +203,6 @@
 
         <!-- Cards shown on mobile too (.) -->
 
-        <div class="sticker abs polaroid" data-pin="sample">
-          <img
-            src="%%THUMB_SRC%%"
-            width="110"
-            height="138"
-            alt="Sample thumbs-up photo. Already sold."
-            class="no-drag"
-          />
-          <span class="pol-cap no-drag">sample</span>
-          <span class="stamp stamp-sold no-drag" aria-hidden="true">sold</span>
-        </div>
-
-        <div class="sticker abs sticky" data-pin="sticky" aria-label="Todo list">
-          <span class="sticky-title no-drag">todo</span>
-          <ul class="sticky-list no-drag">
-            <li class="done">build website</li>
-            <li>get rich</li>
-            <li>buy car</li>
-          </ul>
-        </div>
-
         <div class="sticker abs dadmsg" data-pin="dad" aria-label="Message from Dad">
           <span class="dad-header no-drag">
             <span class="dad-avatar" aria-hidden="true">D</span>
@@ -202,17 +222,6 @@
             class="no-drag"
           />
           <span class="pol-cap no-drag">current garage. help!</span>
-        </div>
-
-        <div class="sticker abs taped" data-pin="meme">
-          <img
-            src="/img/meme.webp?v=2"
-            width="140"
-            height="127"
-            alt="Blonde party guest in a shirt that reads Stop Being Poor"
-            class="no-drag"
-          />
-          <span class="pol-cap no-drag">life advice</span>
         </div>
 
         <div class="sticker abs counter" data-pin="counter">
