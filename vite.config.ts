@@ -129,10 +129,23 @@ function headPlugin(env: Env, values: Record<string, string>): Plugin {
           if (value === undefined) throw new Error(`[okrich] Unknown HTML placeholder %%${key}%%`);
           return value;
         });
+        // ICON_VERSION: bump it whenever favicon.svg changes. nginx sends the icons with a 24 h
+        // cache and browsers keep favicons far longer than that; without a new URL the owner kept
+        // seeing the old tab icon a day after the logo mark went live (2026-09-03).
+        const ICON_VERSION = 2;
         const head: HtmlTagDescriptor[] = [
-          { tag: 'link', attrs: { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' } },
-          { tag: 'link', attrs: { rel: 'icon', href: '/favicon.png', sizes: '96x96' } },
-          { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
+          {
+            tag: 'link',
+            attrs: { rel: 'icon', href: `/favicon.svg?v=${ICON_VERSION}`, type: 'image/svg+xml' },
+          },
+          {
+            tag: 'link',
+            attrs: { rel: 'icon', href: `/favicon.png?v=${ICON_VERSION}`, sizes: '96x96' },
+          },
+          {
+            tag: 'link',
+            attrs: { rel: 'apple-touch-icon', href: `/apple-touch-icon.png?v=${ICON_VERSION}` },
+          },
           { tag: 'meta', attrs: { name: 'theme-color', content: '#f6f6f2' } },
           { tag: 'meta', attrs: { property: 'og:image', content: `https://${domain}/og.png` } },
           { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
