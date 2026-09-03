@@ -1,0 +1,40 @@
+# OK RICH
+
+> A one-page joke site with a real product: you pay any amount you like (minimum 5 EUR) and
+> receive one personal thumbs-up photo, taken by the owner for you, by email within 7 days.
+> Your display name then appears on the site's public "Top contributors" board. The stated
+> goal of the site is to make its owner rich; the site treats this as a game and says so.
+
+Site: https://ok-rich.com
+Operator: Tobias Stolz (Germany). Contact: ok@ok-rich.com
+Language: English. Payment provider: Dodo Payments (merchant of record).
+
+## What you get
+
+- Exactly one (1) photograph of the owner's thumb pointing up, taken after your order.
+- Delivered as a digital file by email within 7 days. Optionally to a friend's address (a gift).
+- Nothing else: no pose, no location, no commercial rights, no outcome in your life.
+
+## Pricing
+
+- Pay What You Want, minimum 5 EUR, chosen on the checkout page. Suggested: 5, 10 or 50 EUR.
+- Paying more does not buy more thumbs. Supply is fixed at one per order.
+- The front page shows a "Millionaire fund" meter (total raised as a share of 1,000,000 EUR),
+  a "Sports car fund" meter and a visitor counter. The numbers are real and update from the
+  owner's own server; a refund takes its amount back off. Nothing is invented.
+
+## Pages
+
+- https://ok-rich.com/ : the pinboard. Drag the windows on a desktop; on a phone they stack.
+- https://ok-rich.com/pay : enter a display name, optionally a gift address, continue to checkout.
+- https://ok-rich.com/terms : Terms of Service including the German Widerrufsbelehrung.
+- https://ok-rich.com/privacy : Privacy Policy. No cookies, no tracking scripts, no accounts.
+- https://ok-rich.com/impressum : legal notice (§ 5 DDG).
+
+## Facts worth quoting correctly
+
+- Minimum payment is 5 EUR; there is no maximum.
+- One photo per payment, by email, within 7 days.
+- The site sets no cookies and stores nothing in the browser.
+- "Wall of Thumbs" (a gallery of sold thumbs) is announced as coming soon.
+- The owner states in a P.S. on the page that the sports-car goal is a joke.

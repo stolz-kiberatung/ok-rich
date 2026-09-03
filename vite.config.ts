@@ -123,7 +123,7 @@ function headPlugin(env: Env, values: Record<string, string>): Plugin {
     name: 'okrich-head',
     transformIndexHtml: {
       order: 'pre',
-      handler(html) {
+      handler(html, ctx) {
         const replaced = html.replace(/%%(\w+)%%/g, (_match, key: string) => {
           const value = values[key];
           if (value === undefined) throw new Error(`[okrich] Unknown HTML placeholder %%${key}%%`);
@@ -138,7 +138,89 @@ function headPlugin(env: Env, values: Record<string, string>): Plugin {
           { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
           { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
           { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
+          // --- SEO / GEO, invisible on the page (2026-09-03) ---
+          { tag: 'meta', attrs: { property: 'og:site_name', content: env.VITE_SITE_TITLE ?? '' } },
+          { tag: 'meta', attrs: { property: 'og:locale', content: 'en_US' } },
+          {
+            tag: 'meta',
+            attrs: {
+              property: 'og:image:alt',
+              content: 'OK RICH: a thumbs-up in front of a fan of banknotes',
+            },
+          },
+          { tag: 'meta', attrs: { name: 'twitter:image', content: `https://${domain}/og.png` } },
+          // Lets Google show the full-size OG image in result previews; pages that carry their
+          // own noindex keep it, directives from several robots metas combine.
+          { tag: 'meta', attrs: { name: 'robots', content: 'max-image-preview:large' } },
         ];
+        if (env.VITE_STATS_URL?.startsWith('https://')) {
+          // The live counters fetch from the stats host on every visit; warming the connection
+          // shaves the handshake off the first paint of real numbers.
+          head.push({
+            tag: 'link',
+            attrs: {
+              rel: 'preconnect',
+              href: new URL(env.VITE_STATS_URL).origin,
+              crossorigin: true,
+            },
+          });
+        }
+        // Structured data for the front page only: what the site is, who runs it, and the one
+        // product with its pay-what-you-want floor. JSON-LD is a data block, not a script the
+        // browser executes, so CSP's script-src does not apply to it.
+        if (
+          /(^|[\\/])index\.html$/.test(ctx.filename) &&
+          !/[\\/](pay|thanks|terms|privacy|impressum)[\\/]/.test(ctx.filename)
+        ) {
+          const site = `https://${domain}`;
+          const ld = {
+            '@context': 'https://schema.org',
+            '@graph': [
+              {
+                '@type': 'WebSite',
+                '@id': `${site}/#website`,
+                url: `${site}/`,
+                name: env.VITE_SITE_TITLE ?? 'OK RICH',
+                inLanguage: 'en',
+                publisher: { '@id': `${site}/#owner` },
+              },
+              {
+                '@type': 'Person',
+                '@id': `${site}/#owner`,
+                name: 'Tobias Stolz',
+                url: `${site}/impressum`,
+              },
+              {
+                '@type': 'Product',
+                '@id': `${site}/#thumb`,
+                name: 'One personal thumbs-up photo',
+                description:
+                  "Exactly one photograph of the owner's thumb pointing up, taken for you and emailed within 7 days. Pay what you want, minimum 5 EUR.",
+                image: `${site}/og.png`,
+                brand: { '@id': `${site}/#owner` },
+                offers: {
+                  '@type': 'Offer',
+                  url: `${site}/pay`,
+                  priceCurrency: env.VITE_CURRENCY ?? 'EUR',
+                  price: env.VITE_MIN_AMOUNT ?? '5',
+                  priceSpecification: {
+                    '@type': 'PriceSpecification',
+                    minPrice: Number(env.VITE_MIN_AMOUNT ?? '5'),
+                    priceCurrency: env.VITE_CURRENCY ?? 'EUR',
+                  },
+                  availability: 'https://schema.org/InStock',
+                  itemCondition: 'https://schema.org/NewCondition',
+                  deliveryLeadTime: { '@type': 'QuantitativeValue', maxValue: 7, unitCode: 'DAY' },
+                },
+              },
+            ],
+          };
+          head.push({
+            tag: 'script',
+            attrs: { type: 'application/ld+json' },
+            children: JSON.stringify(ld),
+          });
+        }
         if (env.VITE_UMAMI_SCRIPT_URL && env.VITE_UMAMI_WEBSITE_ID) {
           head.push({
             tag: 'script',
@@ -146,6 +228,11 @@ function headPlugin(env: Env, values: Record<string, string>): Plugin {
               defer: true,
               src: env.VITE_UMAMI_SCRIPT_URL,
               'data-website-id': env.VITE_UMAMI_WEBSITE_ID,
+              // The tracker posts to <host-url>/api/send. The existing instance is published
+              // under a /s prefix, so the host URL is the script URL minus its file name.
+              'data-host-url': env.VITE_UMAMI_SCRIPT_URL.replace(/\/script\.js$/, ''),
+              // The site does not track its own pinboard testing: honour the browser's DNT.
+              'data-do-not-track': 'true',
             },
           });
         }
