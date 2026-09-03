@@ -101,43 +101,16 @@ on the proxy network; it publishes no port of its own.
 Updating later: `git pull && docker compose up -d --build`. The image builds on the host; never
 copy a local `dist/` up.
 
-## Server logs and the 14-day retention
+## Server logs
 
-`/privacy` states that server logs holding IP addresses are deleted after 14 days. That sentence is
-only true if the host enforces it — set this up **before** the site goes public.
+Since 2026-09-03 the nginx access log is written with the `noip` format defined in
+`nginx/default.conf.template`: time, request line, status, bytes, referer, user agent. **No client
+address.** The log therefore holds no personal data, `/privacy` says exactly that, and no retention
+job is needed for it. Docker still caps the file (`logging` block in `docker-compose.yml`,
+3 x 10 MB). Read it with `docker logs okrich-web` to see which crawlers fetch what.
 
-Two places log the same request, and both need the limit.
-
-**The container.** nginx writes its access log to stdout, so Docker keeps it. The `logging` block
-in `docker-compose.yml` caps the size (3 × 10 MB), but Docker's `json-file` driver has no
-time-based rotation at all — the time limit has to come from logrotate on the host. Write this
-file, keeping the glob exactly as shown:
-
-```conf
-# /etc/logrotate.d/docker-containers
-/var/lib/docker/containers/*/*-json.log {
-  daily
-  rotate 14
-  maxage 14
-  missingok
-  notifempty
-  compress
-  copytruncate
-}
-```
-
-`copytruncate` matters: Docker holds the file open, so a plain rename would leave it writing into
-an unlinked inode. Dry-run it with `logrotate -d /etc/logrotate.d/docker-containers` before
-trusting it.
-
-**The reverse proxy**, which terminates TLS and therefore sees the real client IP. Caddy: add
-`roll_keep_for 14d` to the `log` directive. Traefik: point `accessLog.filePath` at a file and give
-it the same logrotate stanza. If the proxy keeps logs longer than 14 days, the privacy page is
-wrong no matter what the container does.
-
-The honest alternative, if you would rather not maintain any of this: put `access_log off;` into
-`nginx/default.conf.template`, keep only the proxy log, and rewrite the hosting paragraph on
-`/privacy` accordingly. Fewer copies of an IP address is the better privacy answer anyway.
+Caddy in front of the container keeps no access log for this site (no `log` directive in its
+block), only error lines.
 
 ## Swapping things
 
