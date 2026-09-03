@@ -100,10 +100,6 @@
               Paying more does not get you more thumbs. Supply is fixed at one, because I need the
               other thumb to take the photo. It does get you a happier man holding it.
             </p>
-            <!-- Phone only; the board hides it. Sits at the end of the checkout window rather than
-                 under the headline, so the button keeps its place in the first screen
-                 (docs/MOBILE-BRIEF.md item 2). -->
-            <p class="web-hint no-drag">This page looks much better in the web version.</p>
           </div>
         </section>
 
@@ -418,14 +414,19 @@
               <a href="/terms">Terms</a>
             </nav>
             <p class="no-drag">No cookies. Seriously.</p>
-            <p class="no-drag ps">
-              P.S. I swear I am not as shallow as portrayed here and I have much more reasonable
-              plans in life than to spend all my money on a sports car. This is a joke and it was a
-              very fun project to build. Let's see where it goes. ;)
-            </p>
-            <p class="no-drag ps">P.P.S. Porsche 911 is a cool car.</p>
           </div>
         </section>
+
+        <!-- The P.S., its own element: under legal.txt at the bottom of the board, after it on the
+             phone. Not a sticker (no frame): it is the one place the site drops the act. -->
+        <div class="abs ps-block" data-pin="ps">
+          <p class="ps">
+            P.S. I swear I am not as shallow as portrayed here and I have much more reasonable plans
+            in life than to spend all my money on a sports car. This is a joke and it was a very fun
+            project to build. Let's see where it goes. ;)
+          </p>
+          <p class="ps">P.P.S. Porsche 911 is a cool car.</p>
+        </div>
       </div>
     </main>
   </body>

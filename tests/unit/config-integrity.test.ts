@@ -34,10 +34,12 @@ describe('site.config.ts ↔ index.html', () => {
     expect(new Set(domIds).size).toBe(domIds.length);
   });
 
-  it('keeps the windows in the mobile DOM order, footer last on the stage', () => {
+  it('keeps the windows in the mobile DOM order, the P.S. last on the stage', () => {
     const windows = domIds.filter((id) => elements.find((e) => e.id === id)?.kind === 'win');
     expect(windows).toEqual(MOBILE_ORDER);
-    expect(domIds[domIds.length - 1]).toBe('footer');
+    // legal.txt is the last window; since 2026-09-03 the owner's P.S. hangs below it as plain
+    // text and is therefore the last thing on the stage and on the phone.
+    expect(domIds[domIds.length - 1]).toBe('ps');
   });
 
   it('marks headline and cta as fixed and above everything else', () => {

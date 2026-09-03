@@ -9,8 +9,9 @@ export const STAGE = {
   // 1670 until 2026-09-03. The P.S. at the bottom of legal.txt wraps to several lines on the
   // board, which makes the footer 241 px tall with its bottom edge at 1761; 1790 keeps the
   // 24 px clamp margin below it. Measured, not guessed: a footer poking out of the stage is
-  // exactly what the clamp is there to prevent.
-  height: 1790,
+  // exactly what the clamp is there to prevent. Later the same day the P.S. moved out of the
+  // footer into its own block below it (bottom edge 1808), hence 1832.
+  height: 1832,
   /** Below this viewport width the stage is not scaled and elements stack in DOM order. */
   breakpoint: 768,
   /** Minimum px of an element that must stay inside the stage when dragged. */
@@ -80,6 +81,9 @@ export const elements: readonly PinElement[] = [
   { id: 'wall', kind: 'win', x: 510, y: 1150, draggable: true, z: 6 },
   { id: 'ideas', kind: 'win', x: 1100, y: 410, draggable: true, z: 7 },
   { id: 'footer', kind: 'win', x: 610, y: 1520, draggable: true, z: 8 },
+  // Plain text under legal.txt, not a window and not a sticker; y measured after the footer lost
+  // the P.S. paragraphs. Content, so it shows on the phone too.
+  { id: 'ps', kind: 'sticker', x: 560, y: 1668, draggable: true, z: 8, mobile: true },
   {
     id: 'garage',
     kind: 'sticker',

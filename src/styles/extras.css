@@ -1266,17 +1266,6 @@
 
 /* --- Phone follow-ups (owner, 2026-09-03, second round) ---------------------------------- */
 
-/* "This page looks much better in the web version": phone only. */
-.web-hint {
-  margin-top: 10px;
-  font-size: 14px;
-  color: var(--muted);
-  text-align: center;
-}
-.is-board .web-hint {
-  display: none;
-}
-
 /* Rule 3 above resets text-align on every sticker for the stacked layout (so inline decoration
    centres as a group). That reset also beat the centring the name tag and the certificate carry
    themselves, which is why "HELLO / my name is" and "1 of 1 genuine thumb" sat flush left on the
@@ -1299,19 +1288,14 @@
   justify-content: center;
 }
 
-/* Millionaire fund: "x € of 1,000,000 €" sits below the bar on the phone (owner, 2026-09-03).
-   The note is a sibling after the track in the markup now; the board lifts it back above the bar
-   with `order`, so the desktop reads exactly as before. */
+/* Millionaire fund: "x € of 1,000,000 €" sits below the bar, phone and board alike (owner,
+   2026-09-03; the board briefly lifted it back above with `order`, dropped the same day). */
 .meter {
   display: flex;
   flex-direction: column;
 }
 .meter-note {
   display: block;
-}
-.is-board .meter-track {
-  order: 1;
-  margin-top: 6px;
 }
 /* Air between the bar's note and "You get: one (1) ..." on the phone. */
 .stage:not(.is-board) .cta .deal {
@@ -1324,4 +1308,26 @@
 .stage:not(.is-board) > [data-pin='sticky'],
 .stage:not(.is-board) > [data-pin='meme'] {
   zoom: 0.78;
+}
+
+/* The P.S. is its own pinned element (owner, 2026-09-03): on the board it hangs at the bottom of
+   the stage under legal.txt, on the phone it stacks right after that window. Plain text on the
+   dot grid, no window frame: it is the one place the site drops the act. */
+.ps-block {
+  max-width: 400px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted);
+  text-align: center;
+}
+.ps-block p + p {
+  margin-top: 8px;
+}
+.stage.is-board > .ps-block {
+  width: 400px;
+}
+.stage:not(.is-board) > .ps-block {
+  flex: 0 0 min(100%, 560px);
+  margin: -4px auto 24px;
+  padding: 0 12px;
 }
