@@ -7,6 +7,7 @@ POST /webhook/okrich-payment (raw body)
   → Verify, dedupe, count (Code)   signature · age ≤ 5 min · idempotency · raised += amount
       → Email owner (Gmail)        amount, buyer email, message, session id
       → Confirm to buyer (Gmail)   "payment received, photo within 7 days"
+      → Write the photo mail (Code) → Draft photo mail (Gmail draft)   see §4c
 
 GET /webhook/okrich-stats
   → Count visit, read totals (Code)  one visit per IP hash per 12 h
@@ -66,7 +67,13 @@ docker compose -f /opt/n8n/docker-compose.yml exec -T n8n n8n list:workflow
 Re-running the import overwrites the workflow of the same id. **It also drops
 `$getWorkflowStaticData`**, which is where the totals and the contributors board live — so a
 re-import after go-live resets the board to zero. Export the running workflow first if that
-matters.
+matters. **Verified 2026-09-03:** `n8n export:workflow --id=…` carries `staticData` (totals,
+board, ledger) in the file, so the safe route is export → merge the change into the export →
+import the merged file. **It also resets the credential fields** of every node to whatever the
+file says; the repo file says `REPLACE_WITH_CREDENTIAL_ID`, so after any import open all four
+Gmail nodes in the UI and pick the credential again, then save. The 2026-09-03 refund import
+skipped that step and both real payments that day errored on the mail nodes (board updated,
+mails not sent).
 
 The Gmail credential reference in the file is the placeholder `REPLACE_WITH_CREDENTIAL_ID`; after
 the import both Gmail nodes show an empty credential field until step 3 below.
@@ -136,6 +143,34 @@ ever want to do this from a phone without opening n8n, that is the trade to revi
 
 A wrong name changes nothing and prints the current board so you can copy the exact spelling.
 Every run appends to `store.audit` (last 100 kept), so "who took that down and when" has an answer.
+
+## 4c. The photo mail is written for you
+
+Every accepted payment also produces a **Gmail draft** in the `ok@ok-rich.com` mailbox, addressed
+to the person who should get the photo. The owner opens Drafts, attaches the thumb, sends. Nothing
+leaves the mailbox on its own.
+
+- **Recipient** is `sendPhotoTo` from the verification node: the address the buyer typed on `/pay`
+  (gift), otherwise the payment email from Dodo. Same rule the owner mail already prints.
+- **Text** comes from `Write the photo mail`, a Code node with eight templates for a buyer and five
+  for a gift recipient, chosen from the payment id (same payment, same joke; a redelivered event
+  writes the identical draft, and the unit tests can pin it). Tone matches the site. No em dashes.
+- **A gift recipient learns the buyer's board name only**, never the buyer's email. An anonymous
+  buyer is introduced as "someone who wishes to stay anonymous".
+- **The checkout message is never quoted.** It is free text from a stranger; for a gift it would
+  be forwarded to someone who never agreed to receive it. It stays in the owner mail, between the
+  UNTRUSTED markers, for the owner to quote by hand if they want.
+- Tests: `tests/unit/photo-draft.test.ts` runs the node's real code.
+
+Adding or changing templates: edit `scripts/add-photo-draft.py` (the JS lives there as a string),
+run it against `n8n/okrich-payments.json`, then re-import. To merge into the **running** workflow
+without losing the board, export it first and run the script on the export (see §2 note on
+`staticData`): `python scripts/add-photo-draft.py live-export.json`.
+
+**Gmail scope.** The draft is created through the same Gmail OAuth2 credential as the other three
+Gmail nodes. n8n's Gmail credential requests the compose and modify scopes, which cover drafts;
+if the first draft fails with an insufficient-scope error, reconnect the credential once in the
+n8n UI so Google re-issues the token with the current scopes.
 
 ## 5. Failure modes
 

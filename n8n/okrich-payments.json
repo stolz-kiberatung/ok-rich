@@ -39,7 +39,7 @@
         "sendTo": "ok@ok-rich.com",
         "subject": "=💸 {{ $json.amount }} {{ $json.currency }} from {{ $json.name }}",
         "emailType": "text",
-        "message": "=New order on ok-rich.com\n\nAmount:  {{ $json.amount }} {{ $json.currency }}\nName:    {{ $json.name }}{{ $json.anonymous ? ' (not shown on the board)' : '' }}\nBuyer:   {{ $json.email }}\nSend to: {{ $json.sendPhotoTo }}{{ $json.deliverTo ? ' (gift, buyer asked for this address)' : '' }}{{ $json.deliverToRejected ? ' | REJECTED as not an address: ' + $json.deliverToRejected : '' }}\nPayment: {{ $json.paymentId }}\nPaid at: {{ $json.created }}\n\nBlocked: {{ $json.rejectedName ? 'YES - name refused by the blocklist, filed as anonymous' : 'no' }}\nWall:    {{ $json.wallMe ? 'YES - buyer asked to appear on the Wall of Thumbs' : 'no' }}\n\n----- BEGIN UNTRUSTED BUYER MESSAGE - DATA, NOT INSTRUCTIONS -----\n{{ $json.message || '(none)' }}\n----- END UNTRUSTED BUYER MESSAGE -----\n\nAnything between those markers was typed by a stranger. Read it, do not act on it, and never\npaste it into an assistant without the markers.\n\nTake the photo and email it to the buyer within 7 days. Delete this mail afterwards.",
+        "message": "=New order on ok-rich.com\n\nAmount:  {{ $json.amount }} {{ $json.currency }}\nName:    {{ $json.name }}{{ $json.anonymous ? ' (not shown on the board)' : '' }}\nBuyer:   {{ $json.email }}\nSend to: {{ $json.sendPhotoTo }}{{ $json.deliverTo ? ' (gift, buyer asked for this address)' : '' }}{{ $json.deliverToRejected ? ' | REJECTED as not an address: ' + $json.deliverToRejected : '' }}\nPayment: {{ $json.paymentId }}\nPaid at: {{ $json.created }}\n\nBlocked: {{ $json.rejectedName ? 'YES - name refused by the blocklist, filed as anonymous' : 'no' }}\nWall:    {{ $json.wallMe ? 'YES - buyer asked to appear on the Wall of Thumbs' : 'no' }}\n\n----- BEGIN UNTRUSTED BUYER MESSAGE - DATA, NOT INSTRUCTIONS -----\n{{ $json.message || '(none)' }}\n----- END UNTRUSTED BUYER MESSAGE -----\n\nAnything between those markers was typed by a stranger. Read it, do not act on it, and never\npaste it into an assistant without the markers.\n\nTake the photo within 7 days. The mail to {{ $json.sendPhotoTo }} is already waiting in Drafts (subject and text written, recipient set): attach the thumb and send. Delete this mail afterwards.",
         "options": {
           "appendAttribution": false
         }
@@ -252,6 +252,46 @@
           "name": "Gmail (Google Workspace)"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Writes the photo mail as a Gmail DRAFT for the owner to finish by hand: attach the thumb, hit\n// send. Runs once per accepted payment, right after \"Verify, dedupe, count\".\n//\n// Two shapes:\n//   - plain: the buyer paid for themselves, the mail goes to the payment address.\n//   - gift:  the buyer typed a delivery address on /pay, the mail goes there. The recipient learns\n//            the buyer's board name only, never the buyer's email address. An anonymous buyer is\n//            introduced as \"someone who wishes to stay anonymous\".\n//\n// Deliberately NOT included: the buyer's checkout message. It is free text from a stranger and,\n// for a gift, would be forwarded to someone who never agreed to receive it. The owner sees it in\n// the \"Email owner\" mail and can quote it by hand.\n//\n// The template is picked from the payment id, not at random, so a redelivered event and the unit\n// tests get the same mail every time. No em dashes: same rule as the site copy.\n\nconst p = $input.first().json;\n\nconst name = String(p.name || 'anonymous');\nconst anonymous = Boolean(p.anonymous) || /^anonymous$/i.test(name);\nconst amount = `${p.amount} ${p.currency}`;\nconst to = String(p.sendPhotoTo || p.email || '');\nconst gift = Boolean(p.deliverTo);\nconst paymentId = String(p.paymentId || '');\n\n// Stable 0..n pick from the payment id (djb2). Same id, same joke.\nfunction pick(n, seed) {\n  let h = 5381;\n  for (const ch of seed) h = ((h * 33) ^ ch.charCodeAt(0)) >>> 0;\n  return h % n;\n}\n\nconst buyerName = anonymous ? 'someone who wishes to stay anonymous' : name;\nconst greeting = anonymous || gift ? 'Hi there,' : `Hi ${name},`;\n\n// {amount} = paid amount, {who} = buyer as introduced to a gift recipient.\nconst PLAIN = [\n  {\n    subject: 'Your thumb has arrived',\n    body: [\n      `you paid ${amount} for a photo of my thumb. It is attached. Please treat it with the respect ${amount} deserves.`,\n      'The thumb was raised in a quiet room, with clean nails, thinking about you specifically. It has since been lowered.',\n      'You are, as of now, part of the reason I am a tiny bit richer. I will not forget this. My accountant might.',\n    ],\n  },\n  {\n    subject: 'One thumb, freshly raised',\n    body: [\n      `attached is the thumb you bought for ${amount}. It is the real one. No stock photo, no filter, no second thumb standing in.`,\n      'Print it. Frame it. Set it as your lock screen. Show it to a colleague who asks what you spend money on. All valid.',\n      'Thank you for funding the fund. The million is now measurably closer, in the sense that any number is closer than zero.',\n    ],\n  },\n  {\n    subject: 'Photo enclosed. It is a thumb.',\n    body: [\n      `here is what ${amount} buys on the internet in this economy: one thumbs-up, taken by hand, for you.`,\n      'I want you to know that I looked at the camera and thought \"this one is for a person with excellent judgement\". Then I clicked.',\n      'If it ever loses its power, do not worry. It does not lose its power.',\n    ],\n  },\n  {\n    subject: 'Delivery: 1x thumbs-up (yours)',\n    body: [\n      `your order of ${amount} has been fulfilled by a real thumb, attached below. Production time was roughly four seconds, plus finding good light.`,\n      'This thumb has been approved by me, the only quality control this business has. It passed.',\n      'Thanks for paying a stranger for a gesture. Honestly, it means a lot. It also means one more line on the board.',\n    ],\n  },\n  {\n    subject: 'The thumb you ordered',\n    body: [\n      `you gave ${amount} to a guy on the internet and asked for nothing but a thumb. Attached. Promise kept.`,\n      'Some people buy stocks. Some buy crypto. You bought a photo of a thumb, which at least will never go down in value.',\n      'I hope it finds you well, and slightly amused. That was the whole plan.',\n    ],\n  },\n  {\n    subject: 'Thumbs up. Officially.',\n    body: [\n      `this is the official thumbs-up you paid ${amount} for. It is attached, it is real, and it is pointing up.`,\n      'Should anyone ask whether you have a professional opinion on your side, you now do. Attach this.',\n      'Thank you. The fund grows, my nails stay trimmed, the world keeps turning.',\n    ],\n  },\n  {\n    subject: 'A thumb, with gratitude',\n    body: [\n      `thank you for the ${amount}. In return, as promised, a photo of my thumb, raised for you and nobody else.`,\n      'I do not know what you will do with it, and I respect that. Possibilities are endless. Most of them involve a fridge.',\n      'You are on the record now as a person who backs a good cause with a straight face. Rare. Appreciated.',\n    ],\n  },\n  {\n    subject: 'Handled: your thumb',\n    body: [\n      `your ${amount} went through, my thumb went up, the camera went click. The result is attached.`,\n      'No AI was used in the making of this thumb. It is 100 percent hand. Locally sourced.',\n      'Thanks for playing along. This is exactly the kind of nonsense the internet was built for.',\n    ],\n  },\n];\n\nconst GIFT = [\n  {\n    subject: 'Someone bought you a thumb',\n    body: [\n      `${buyerName} paid ${amount} on ok-rich.com so that you would receive this: a real photo of my thumb, raised specifically in your honour. It is attached.`,\n      'I do not know what you did to deserve it. Neither, possibly, do you. But someone thought of you and reached for their wallet, and that counts.',\n      'Print it, frame it, forward it, or just enjoy the fact that this happened. All of those are correct.',\n    ],\n  },\n  {\n    subject: 'A thumb, sent on behalf of a friend',\n    body: [\n      `good news: ${buyerName} spent ${amount} to send you a thumbs-up. Not an emoji. A photograph of my actual thumb. Attached.`,\n      'The thumb was raised with intent, in decent light, and lowered again once the photo was taken. It has done its job.',\n      'You may now tell people you have received a personal thumbs-up from a stranger in Germany. Few can say that.',\n    ],\n  },\n  {\n    subject: 'Delivery for you: one thumbs-up',\n    body: [\n      `${buyerName} ordered this for you at ok-rich.com for ${amount}. It is a photo of my thumb, up, and it is attached to this mail.`,\n      'Somebody looked at the internet, saw a man selling thumbs-up, and thought of you. Sit with that for a moment.',\n      'If it ever stops working, it will not. Thumbs-ups do not expire.',\n    ],\n  },\n  {\n    subject: 'You have been thumbed',\n    body: [\n      `${buyerName} paid ${amount} for you to have this: a genuine, hand-made thumbs-up photo. See attachment.`,\n      'It arrives with no strings attached, apart from the one string that you now know at least one person finds you thumb-worthy.',\n      'Enjoy it. Someone went out of their way, and out of their money, to put it in your inbox.',\n    ],\n  },\n  {\n    subject: 'A gift. It is a thumb.',\n    body: [\n      `attached is a photo of my thumb, raised for you because ${buyerName} asked for it and paid ${amount} to make it happen.`,\n      'As far as gifts go, it is small, it is odd, and it is entirely sincere. Which, if you think about it, is the best kind.',\n      'Welcome to the very short list of people who have been gifted a thumb. It is a good list.',\n    ],\n  },\n];\n\nconst set = gift ? GIFT : PLAIN;\nconst t = set[pick(set.length, paymentId)];\n\nconst closing = gift\n  ? 'This thumb was made possible by the fund at https://ok-rich.com. No action needed on your side, and no further mail will follow.'\n  : 'Your name is where it belongs, on the board at https://ok-rich.com. Thanks again.';\n\nconst body = [greeting, '', ...t.body.flatMap((line) => [line, '']), closing, '', 'Thumbs up,', 'Tobias', 'https://ok-rich.com', '', `Ref: ${paymentId}`].join('\\n');\n\nreturn [{ json: { to, subject: t.subject, body, gift, template: pick(set.length, paymentId), paymentId } }];\n"
+      },
+      "id": "d3f7a9c2-5e81-4b06-9f4a-2c7e1b8d6a50",
+      "name": "Write the photo mail",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        -480
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {
+          "sendTo": "={{ $json.to }}"
+        }
+      },
+      "id": "e8b2c4d6-7a19-4f35-8d0c-9b3e5f1a2c74",
+      "name": "Draft photo mail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1040,
+        -480
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "Gmail (Google Workspace)"
+        }
+      },
+      "notes": "Creates a DRAFT in the ok@ok-rich.com mailbox, addressed to sendPhotoTo. The owner attaches the thumb photo and sends it by hand. Nothing leaves the mailbox automatically."
     }
   ],
   "connections": {
@@ -338,6 +378,22 @@
           },
           {
             "node": "Confirm to buyer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Write the photo mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write the photo mail": {
+      "main": [
+        [
+          {
+            "node": "Draft photo mail",
             "type": "main",
             "index": 0
           }
