@@ -149,9 +149,6 @@ function headPlugin(env: Env, values: Record<string, string>): Plugin {
             },
           },
           { tag: 'meta', attrs: { name: 'twitter:image', content: `https://${domain}/og.png` } },
-          // Lets Google show the full-size OG image in result previews; pages that carry their
-          // own noindex keep it, directives from several robots metas combine.
-          { tag: 'meta', attrs: { name: 'robots', content: 'max-image-preview:large' } },
         ];
         if (env.VITE_STATS_URL?.startsWith('https://')) {
           // The live counters fetch from the stats host on every visit; warming the connection

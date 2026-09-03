@@ -101,16 +101,19 @@ on the proxy network; it publishes no port of its own.
 Updating later: `git pull && docker compose up -d --build`. The image builds on the host; never
 copy a local `dist/` up.
 
-## Server logs
+## Server logs and the 14-day retention
 
-Since 2026-09-03 the nginx access log is written with the `noip` format defined in
-`nginx/default.conf.template`: time, request line, status, bytes, referer, user agent. **No client
-address.** The log therefore holds no personal data, `/privacy` says exactly that, and no retention
-job is needed for it. Docker still caps the file (`logging` block in `docker-compose.yml`,
-3 x 10 MB). Read it with `docker logs okrich-web` to see which crawlers fetch what.
+`/privacy` states that the access log, which carries client addresses, is deleted after 14 days
+and never archived. That sentence is only true while the host enforces it.
 
-Caddy in front of the container keeps no access log for this site (no `log` directive in its
-block), only error lines.
+nginx writes the access log (format `okrich` in `nginx/default.conf.template`: address, time,
+request, status, bytes, referer, user agent) to stdout, so Docker keeps it as a json-file under
+`/var/lib/docker/containers/`. Docker's driver rotates by size only (`logging` block in
+`docker-compose.yml`, 3 x 10 MB). The time limit comes from `ops/logrotate-okrich.conf`:
+daily rotation, `maxage 14`, `nocompress`, `copytruncate`. Install it once on the host as root,
+the file's header has the three commands. Read the log with `docker logs okrich-web`.
+
+Caddy in front of the container keeps no access log for this site, only error lines.
 
 ## Swapping things
 

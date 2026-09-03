@@ -2,13 +2,12 @@
 # ${UMAMI_ORIGIN} and ${STATS_ORIGIN} are build args (see Dockerfile); leave empty when unused.
 # TLS, HSTS and compression-at-the-edge belong to the reverse proxy in front of this container.
 
-# --- Access log without personal data (2026-09-03) ---------------------------------------
-# The access log exists for one reason: to see which crawlers (Googlebot, GPTBot, ClaudeBot,
-# PerplexityBot ...) fetch which pages and whether they hit 404s. That needs time, path, status
-# and user agent, and nothing else. The client address is deliberately not written, so the log
-# holds no personal data, no retention promise has to be kept for it, and /privacy can say so.
-# `log_format` is only valid in the http context; this file is included there by nginx.conf.
-log_format noip '$time_iso8601 "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
+# --- Access log (2026-09-03) ---------------------------------------------------------------
+# The access log keeps the client address on purpose: the owner wants to be able to react to
+# an incident in the days after it. Retention is therefore a host concern, not an nginx one:
+# ops/logrotate-okrich.conf deletes the container log after 14 days (no archive), and /privacy
+# says exactly that. Time, path, status and user agent also show which crawlers read the site.
+log_format okrich '$remote_addr $time_iso8601 "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
 
 server {
     listen 8080;
@@ -19,7 +18,7 @@ server {
     index index.html;
 
     server_tokens off;
-    access_log /var/log/nginx/access.log noip;
+    access_log /var/log/nginx/access.log okrich;
 
     # --- Security headers (constitution §5) ------------------------------------------------
     # Exactly two origins: the site itself and the self-hosted Umami instance.
