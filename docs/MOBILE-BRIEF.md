@@ -57,17 +57,26 @@ to `.stage:not(.is-board)`. A measurement of the 1440 px board before and after 
 5. **No text smaller than 14 px** anywhere in the mobile layout.
 6. **Vertical rhythm holds** — `tests/e2e/rhythm.spec.ts` stays green, including on new blocks.
 7. **axe finds no serious or critical issue** at 375 px on all seven pages.
-8. **Page height stays below 5700 px** at 375 px. Was 5400 until `ideas.txt` was added on
+8. **Page height stays below 6000 px** at 375 px (5700 until 2026-09-03, see the end of this item). Was 5400 until `ideas.txt` was added on
    2026-09-01, which is a deliberate ~290 px. The ceiling exists to catch growth nobody decided
    on, so it moves when someone decides, and only then. Originally 4000 px, written before the
    decision to bring all twelve hidden elements back; showing nine more of them costs about
    650 px. 5400 px is the ceiling that keeps the page from growing further unnoticed. Measured:
-   ~5065 px.
-9. **Landscape works**: 667 × 375 and 844 × 390 show no overflow and keep the CTA reachable.
-10. **The whole thing still works with JavaScript off**, because the stacked layout is the
+   ~5065 px. **Raised to 6000 px on 2026-09-03**, when the check started measuring with a full
+   board: eight names at the 40-character limit, one column on the phone, which is about 240 px
+   more than the empty "Nobody yet" line the earlier ceilings were calibrated against. Measured
+   5736 px at 375 px with that fixture. The page itself did not grow.
+9. **The contributors board is measured full, not empty** (added 2026-09-03). The check serves
+   eight contributors with 40-character names to the page; no row may cross the window's edge
+   and the board's body may not be wider than its window. Found on the live site the day real
+   names arrived: the two-column grid (`1fr 1fr`, i.e. minmax(auto, 1fr)) could not shrink
+   below its nowrap content and ran out of the right edge on every phone. One column on the
+   phone since. Also enforced by `tests/e2e/smoke.spec.ts` → "mobile pinboard".
+10. **Landscape works**: 667 × 375 and 844 × 390 show no overflow and keep the CTA reachable.
+11. **The whole thing still works with JavaScript off**, because the stacked layout is the
     fallback: load with JS disabled and check the CTA links to `/pay`.
-11. **Desktop unchanged**: element positions at 1440 px are byte-identical to before.
-12. `npm test` green, Lighthouse mobile ≥ 95 on performance and 100 on accessibility.
+12. **Desktop unchanged**: element positions at 1440 px are byte-identical to before.
+13. `npm test` green, Lighthouse mobile ≥ 95 on performance and 100 on accessibility.
 
 ## Traps this repo has already fallen into — do not repeat
 

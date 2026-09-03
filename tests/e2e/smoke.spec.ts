@@ -463,4 +463,48 @@ test.describe('mobile pinboard', () => {
     const w2 = await win.boundingBox();
     expect(w2 && Math.abs(w2.x - w.x), 'windows stay where they are').toBeLessThan(2);
   });
+
+  /**
+   * Found on the live site on 2026-09-03: with real names on the board, the two-column list ran
+   * out of the window's right edge on every phone. The board renders one column on the phone now.
+   * Names at the 40-character limit, amounts as wide as the formatter makes them.
+   */
+  test('top contributors stay inside their window with long names', async ({ page }) => {
+    const contributors = Array.from({ length: 8 }, (_, i) => ({
+      name: `Maximiliane-Alexandra von Hohenlohe ${i + 1}`.slice(0, 40),
+      amount: 1000 - i * 100,
+    }));
+    await page.route('**/okrich-stats*', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'access-control-allow-origin': '*' },
+        body: JSON.stringify({ raised: 4400, visitors: 4711, contributors }),
+      }),
+    );
+    await page.goto('/');
+    await expect(page.locator('.board-name')).toHaveCount(8);
+
+    const win = await page.locator('[data-pin="board"]').boundingBox();
+    if (!win) throw new Error('no box for board');
+    const body = await page.locator('[data-pin="board"] .body.board').boundingBox();
+    if (!body) throw new Error('no box for board body');
+    expect(body.x + body.width, 'the body is no wider than its window').toBeLessThanOrEqual(
+      win.x + win.width + 1,
+    );
+
+    const rows = page.locator('#board-list li');
+    for (let i = 0; i < 8; i++) {
+      const r = await rows.nth(i).boundingBox();
+      if (!r) throw new Error(`no box for row ${i + 1}`);
+      expect(r.x + r.width, `row ${i + 1} ends inside the window`).toBeLessThanOrEqual(
+        win.x + win.width + 1,
+      );
+      expect(r.x, `row ${i + 1} starts inside the window`).toBeGreaterThanOrEqual(win.x - 1);
+    }
+    // One column on the phone: every row starts at the same x.
+    const first = await rows.nth(0).boundingBox();
+    const second = await rows.nth(1).boundingBox();
+    expect(first && second && Math.abs(first.x - second.x), 'rows form one column').toBeLessThan(2);
+  });
 });

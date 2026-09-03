@@ -18,15 +18,44 @@ const LANDSCAPE = [
 const CTA_MAX_TOP = 700;
 const MIN_TAP = 44; // brief item 3
 const MIN_FONT = 14; // brief item 5
-const MAX_HEIGHT_375 = 5700; // brief item 8 — 5400 until ideas.txt was added on 2026-09-01
+// Brief item 8. 5400 until ideas.txt was added on 2026-09-01, 5700 until 2026-09-03. Raised to
+// 6000 the day the script started measuring with eight names on the board (see BOARD_FIXTURE):
+// the phone shows them in one column, which is about 240 px more than the empty "Nobody yet"
+// line this ceiling was calibrated against. Measured 5736 px at 375 px with the fixture.
+const MAX_HEIGHT_375 = 6000;
 
 const browser = await chromium.launch();
 const failures = [];
 const rows = [];
 
+// The board is measured FULL, not empty. Until 2026-09-03 this script saw the page with the
+// "Nobody yet" line only, and the two-column contributors list ran out of the window on every
+// phone the moment real names arrived. Eight rows, names at the 40-character limit of
+// src/name.ts, the amounts as wide as the formatter makes them. Needs VITE_STATS_URL set to
+// anything non-empty in the build under test (a `.invalid` host is fine, the route answers first).
+const BOARD_FIXTURE = {
+  raised: 1234,
+  visitors: 4711,
+  contributors: Array.from({ length: 8 }, (_, i) => ({
+    name: `Maximiliane-Alexandra von Hohenlohe ${i + 1}`.slice(0, 40),
+    amount: 1000 - i * 100,
+  })),
+};
+
 async function measure(width, height) {
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 2 });
+  await page.route('**/okrich-stats*', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: JSON.stringify(BOARD_FIXTURE),
+    }),
+  );
   await page.goto(BASE + '/', { waitUntil: 'load' });
+  await page.waitForSelector('.board-name', { timeout: 5000 }).catch(() => {
+    failures.push(`${width}px: board never rendered its rows (is VITE_STATS_URL set?)`);
+  });
   await page.waitForTimeout(250);
   const r = await page.evaluate(
     ({ minTap, minFont }) => {

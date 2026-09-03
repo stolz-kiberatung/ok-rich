@@ -1279,13 +1279,31 @@
   width: 220px;
 }
 
-/* Top contributors: the list rows are flex rows aligned left for the board's two-column grid.
-   On the phone the whole window is centred, so the rows follow. */
+/* Top contributors on the phone: ONE column, not two (2026-09-03). The board's two-column grid
+   is `1fr 1fr`, which means minmax(auto, 1fr): with `white-space: nowrap` names its min-content
+   width wins over the window, and the rows ran out of the right edge (measured 377 px of content
+   inside a 358 px window at 390 px; the second column was cut off). Only the 560 px desktop
+   window has room for two columns. `minmax(0, 1fr)` lets the name column shrink and ellipsize,
+   `min-width: 0` on the body does the same for the flex item the window is. The rows read as a
+   leaderboard: rank, name, amount on the right. Guarded by scripts/check-mobile.mjs, which now
+   measures with eight long names on the board, and by the mobile e2e test in smoke.spec.ts. */
+.stage:not(.is-board) .body.board {
+  min-width: 0;
+}
 .stage:not(.is-board) .body.board .board-list {
-  text-align: center;
+  grid-template-columns: minmax(0, 1fr);
+  width: min(100%, 360px);
+  margin: 0 auto;
+  text-align: left;
 }
 .stage:not(.is-board) .board-list li {
-  justify-content: center;
+  justify-content: flex-start;
+  min-width: 0;
+}
+/* Brief item 5, no text under 14 px on the phone. The rank is 13 px on the board, where the
+   whole stage is scaled anyway; the stacked layout renders it at its own size. */
+.stage:not(.is-board) .board-rank {
+  font-size: 14px;
 }
 
 /* Millionaire fund: "x € of 1,000,000 €" sits below the bar, phone and board alike (owner,
