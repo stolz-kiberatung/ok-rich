@@ -29,24 +29,24 @@ inert; the page still renders and every test passes.
 
 ## Where things are
 
-| Concern                                                        | File                                                                        |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Variables (from `.env`) and all element positions              | `site.config.ts`                                                            |
-| Env validation, placeholder images, head injection, clean URLs | `vite.config.ts`                                                            |
-| Pinboard markup, 1440-wide stage                               | `index.html`, positions in `site.config.ts`                                 |
-| Drag maths / scale maths / DOM wiring / entry                  | `src/drag.ts`, `src/stage.ts`, `src/pinboard.ts`, `src/main.ts`             |
-| Live counters and the contributors board                       | `src/stats.ts`                                                              |
-| The board-name form + optional gift-delivery field             | `pay/index.html`, `src/pay.ts`                                              |
-| Board-name rules (clean + block), shared with the webhook      | `src/name.ts`, `src/moderation/` (bundled by `scripts/sync-blocklist.mjs`)  |
-| Mobile contract (every requirement is a check)                 | `docs/MOBILE-BRIEF.md`, enforced by `scripts/check-mobile.mjs`              |
-| Styles, in cascade order                                       | `src/styles/board.css` → base, windows, stickers, pinboard, extras          |
-| Styles for the text pages                                      | `src/styles/page.css` → base, windows, pages                                |
-| Pages                                                          | `pay/`, `thanks/`, `impressum/`, `privacy/`, `terms/`, `404.html`           |
-| Tests                                                          | `tests/unit/*.test.ts`, `tests/e2e/*.spec.ts`                               |
-| Helper scripts                                                 | `scripts/{shots,make-og,make-icons,convert-image,lighthouse,check-mobile}`  |
-| Ops                                                            | `Dockerfile`, `nginx/default.conf.template`, `docker-compose*.yml`, `ops/`  |
-| Payments and automation                                        | `docs/dodo-setup.md`, `docs/n8n-workflow.md`, `n8n/okrich-payments.json`    |
-| CI                                                             | `.github/workflows/ci.yml`                                                  |
+| Concern                                                        | File                                                                       |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Variables (from `.env`) and all element positions              | `site.config.ts`                                                           |
+| Env validation, placeholder images, head injection, clean URLs | `vite.config.ts`                                                           |
+| Pinboard markup, 1440-wide stage                               | `index.html`, positions in `site.config.ts`                                |
+| Drag maths / scale maths / DOM wiring / entry                  | `src/drag.ts`, `src/stage.ts`, `src/pinboard.ts`, `src/main.ts`            |
+| Live counters and the contributors board                       | `src/stats.ts`                                                             |
+| The board-name form + optional gift-delivery field             | `pay/index.html`, `src/pay.ts`                                             |
+| Board-name rules (clean + block), shared with the webhook      | `src/name.ts`, `src/moderation/` (bundled by `scripts/sync-blocklist.mjs`) |
+| Mobile contract (every requirement is a check)                 | `docs/MOBILE-BRIEF.md`, enforced by `scripts/check-mobile.mjs`             |
+| Styles, in cascade order                                       | `src/styles/board.css` → base, windows, stickers, pinboard, extras         |
+| Styles for the text pages                                      | `src/styles/page.css` → base, windows, pages                               |
+| Pages                                                          | `pay/`, `thanks/`, `impressum/`, `privacy/`, `terms/`, `404.html`          |
+| Tests                                                          | `tests/unit/*.test.ts`, `tests/e2e/*.spec.ts`                              |
+| Helper scripts                                                 | `scripts/{shots,make-og,make-icons,convert-image,lighthouse,check-mobile}` |
+| Ops                                                            | `Dockerfile`, `nginx/default.conf.template`, `docker-compose*.yml`, `ops/` |
+| Payments and automation                                        | `docs/dodo-setup.md`, `docs/n8n-workflow.md`, `n8n/okrich-payments.json`   |
+| CI                                                             | `.github/workflows/ci.yml`                                                 |
 
 ## How the moving parts fit together
 
