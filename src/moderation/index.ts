@@ -34,3 +34,8 @@ export function isBlockedName(raw: string): boolean {
     digitTokens: n.digitTokens,
   });
 }
+
+// Re-exported so the generated n8n bundle carries it too: the board name has to be judged
+// server-side, and a second hand-written copy inside the workflow JSON is exactly how the old
+// ten-entry TLD list drifted out of step with this one. See adlike.ts for what it catches.
+export { looksLikeAd } from './adlike';

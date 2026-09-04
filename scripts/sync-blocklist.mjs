@@ -39,6 +39,7 @@ const block = [
   '// Generated from src/moderation/*.ts — do not edit here, edit there and re-run the script.',
   bundled,
   'const isBlockedName = __moderation.isBlockedName;',
+  'const looksLikeAd = __moderation.looksLikeAd;',
   END,
 ].join('\n');
 

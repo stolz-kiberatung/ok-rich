@@ -75,6 +75,39 @@ Verified, not assumed:
    either anonymises an entry or removes it and corrects the total. It is reachable only through
    the n8n UI, so no new public endpoint exists.
 
+## Closed on the 2026-09-04 pass (the repository went public that day)
+
+Publishing the code turns every "an attacker would have to guess this" into "an attacker reads
+this". The board name was attacked from that side of the table, with the shipped code, and three
+things gave way.
+
+8. **The board name was an advertising slot for the price of one minimum payment.** The link
+   filter was a strip-on-sight regex with a ten-entry TLD list. Every cheap evasion used a TLD
+   outside it, and the list was now readable: `t.me/pumpgroup`, `bit.ly/…`, `casino-bonus.ru`,
+   `discord.gg/…` all reached the front page unchanged, as did `buy now at spam . com` (a space
+   either side of the dot defeats the pattern) and a plain phone number, which is not a domain at
+   all. Fixed by `looksLikeAd()` in `src/moderation/adlike.ts`: a yes/no question asked on a
+   normalised probe (unicode full-stop look-alikes, spelled-out "dot", spaced dots, digit runs)
+   against a long TLD list. It does not modify the name, because every attempt to normalise
+   separators before stripping mangles real names. A name that answers yes is filed as
+   `anonymous` exactly like a blocklisted one. It is bundled into the n8n Code node by
+   `scripts/sync-blocklist.mjs`, so the workflow copy can no longer drift from the source the way
+   the TLD list did. `tests/unit/adlike.test.ts` keeps every one of the bypasses as a test, and
+   an equally long list of real names ("Dr. No", "St. Pauli", "J. R. R. Tolkien") as the
+   false-positive half; the three-character rule in the probe exists because that half failed.
+
+9. **An unauthenticated request could fill the host's disk, for free.** A POST to the payment
+   webhook carrying the three Standard Webhooks header names but no body reached
+   `item.binary.data.data`, threw a TypeError, and the workflow stores every errored execution.
+   No signature and no payment required, and the path is in this repository. Both the raw body and
+   the JSON parse now fail closed and return nothing, the same way a bad signature already did.
+
+10. **The visitor-hash salt had a fallback.** `$env.OKRICH_IP_SALT || 'okrich-static-salt'` was
+    fine while the string was private. A known salt makes a SHA-256 of an IPv4 address enumerable
+    in seconds, which would quietly make the privacy policy's "only a salted hash is kept"
+    untrue whenever the variable went missing. It now throws when the variable is unset, like the
+    webhook secret two nodes over.
+
 ## What moderation still does not do
 
 Catch an insult nobody has listed, or one aimed at a specific person. The blocklist is a floor,

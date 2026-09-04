@@ -7,8 +7,15 @@
  *
  * This copy runs in the browser and is therefore a convenience, NOT a defence: the field is a
  * query parameter on a static payment link, so anyone can skip this page and send whatever they
- * like straight to the checkout. The identical rules run again inside the n8n webhook before a
- * name ever reaches the board — that copy is the one that counts. Keep the two in step.
+ * like straight to the checkout.
+ *
+ * The decision that counts is server-side. Since 2026-09-04 the link rule there is no longer a
+ * hand-copied twin of the one below but `looksLikeAd()` in src/moderation/adlike.ts, which the n8n
+ * workflow receives from scripts/sync-blocklist.mjs and which therefore cannot drift out of step.
+ * The strip below stays as a tidy-up for the preview on /pay and catches the obvious case. It is
+ * deliberately not the filter: a strip-on-sight TLD list is exactly what was walked around with
+ * "t.me/x" and "spam . com" on the day this repository went public. Whatever it misses, the server
+ * files as `anonymous`.
  *
  * Hostile characters are matched by named Unicode class, never pasted literally: as literals they
  * are invisible in a diff, which is precisely why they work as an attack.
