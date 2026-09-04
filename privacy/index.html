@@ -23,7 +23,7 @@
         <div class="body">
           <article lang="en">
             <h1 id="privacy-title">Privacy Policy</h1>
-            <p class="note">Effective 30 August 2026. Last updated 3 September 2026.</p>
+            <p class="note">Effective 30 August 2026. Last updated 4 September 2026.</p>
 
             <p>
               This policy explains how %VITE_DOMAIN% handles information when you visit the page or
@@ -53,13 +53,14 @@
             <h2>Hosting (Hetzner)</h2>
             <p>
               The page runs on a server of Hetzner Online GmbH, Industriestr. 25, 91710
-              Gunzenhausen, Germany. The web server's access log records your IP address, the time,
-              the page requested, the response code and the browser identification string. It exists
+              Gunzenhausen, Germany. Two programs handle your request there. The reverse proxy in
+              front of the site records your IP address, the time, the page requested, the response
+              code and the browser identification string. The web server behind it records the same
+              request without your address, because it only ever sees the proxy. Together they exist
               so that I can react to an attack or a fault in the days after it, and to see which
-              search and AI crawlers read the site. The log is deleted automatically after 14 days;
-              nothing is archived. The reverse proxy in front of it keeps no access log, only error
-              lines. Legal basis: Art. 6 (1) (f) GDPR (secure operation). A data processing
-              agreement with Hetzner is in place.
+              search and AI crawlers read the site. Both logs are deleted automatically after 14
+              days; nothing is archived. Legal basis: Art. 6 (1) (f) GDPR (secure operation). A data
+              processing agreement with Hetzner is in place.
             </p>
 
             <h2>Cookieless analytics (Umami)</h2>

@@ -48,13 +48,17 @@ describe('looksLikeAd', () => {
     // The cost of a false positive is a paid entry filed as anonymous, so this list matters as
     // much as the one above. Initials, particles, apostrophes, non-Latin scripts and numbers that
     // are part of a name all have to survive.
+    //
+    // The names are invented on purpose. An earlier draft used the real ones from the live board;
+    // they are visible on the front page anyway, but a test fixture is the wrong place for a
+    // customer's data, and this repository is public.
     for (const name of [
       'Ada L.',
       'Ada L. Smith',
+      'Sofia K.',
+      "Elif's Dad",
+      'the night shift',
       'J. R. R. Tolkien',
-      'Benni M.',
-      "Tobias' Mom",
-      'Get a job noob',
       'Anna von Berg',
       'Jean-Luc Picard',
       'Ente 🦆',
@@ -63,7 +67,6 @@ describe('looksLikeAd', () => {
       'Player 1',
       'Agent 007',
       'Dr. No',
-      'Marshall P.',
       'anonymous',
       'C3PO and R2D2',
       'Blink 182',
