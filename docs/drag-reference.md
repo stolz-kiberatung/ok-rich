@@ -1,7 +1,7 @@
 # docs/drag-reference.md — Pinboard & drag implementation reference
 
-Derived from analysing the reference site (technique only — no assets, copy or
-design are copied). Implement exactly this; do not invent a different model.
+The pointer-capture drag model this site uses, written down so it is implemented
+exactly like this and not re-invented. No third-party assets, copy or design.
 
 ## 1. Stage model
 
@@ -105,8 +105,7 @@ export function initPinboard(stage: HTMLElement, getScale: () => number): () => 
 Notes:
 
 - `setPointerCapture` keeps events flowing to the element even when the
-  pointer outruns it (equivalent to the reference site's window-level listeners, but
-  cleaner).
+  pointer outruns it (the cleaner equivalent of window-level move/up listeners).
 - All non-interactive children (images, icons, text) get `class="no-drag"`:
   `.no-drag { pointer-events: none; -webkit-user-drag: none; user-select: none; }`
   Interactive children (links, the CTA button) keep pointer events and must

@@ -25,8 +25,8 @@ Visitors pay any amount (min MIN_AMOUNT). All they get is a personal, real
 photograph of the owner's thumbs-up, taken for them and emailed within 7 days.
 Tone: playful, self-aware, absurd. Look: a digital pinboard of overlapping
 retro-macOS-style windows and small decorative stickers on a dotted grid,
-casual copy, kaomoji. Reference for the _technique_ is the reference site; do not
-copy its assets, copy or layout.
+casual copy, kaomoji. The drag technique is documented in `docs/drag-reference.md`;
+no third-party assets, copy or layout are used.
 
 ## Pinboard: about 20 elements on a 1440×900 stage
 

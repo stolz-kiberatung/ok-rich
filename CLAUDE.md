@@ -8,8 +8,7 @@ When a request conflicts with this file, stop and ask before proceeding.
 A one-page joke website. Visitors pay any amount (min 5 EUR) and receive
 exactly one thing: a personal, real thumbs-up photo of the owner, taken for
 them and sent by email within 7 days. Tone: playful, self-aware, absurd.
-Reference look: the reference site (overlapping retro-macOS windows on a plain
-background, casual copy).
+Look: overlapping retro-macOS windows on a plain background, casual copy.
 
 ## 2. Working mode (spec-driven, non-negotiable)
 
