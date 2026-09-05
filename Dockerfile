@@ -32,8 +32,12 @@ ARG UMAMI_ORIGIN=""
 ARG STATS_ORIGIN=""
 ARG PAY_ORIGIN="https://checkout.dodopayments.com"
 COPY --chown=nginx:nginx nginx/default.conf.template /tmp/default.conf.template
-RUN envsubst '${UMAMI_ORIGIN} ${STATS_ORIGIN} ${PAY_ORIGIN}' < /tmp/default.conf.template > /etc/nginx/conf.d/default.conf \
-  && rm /tmp/default.conf.template \
+COPY --chown=nginx:nginx nginx/security-headers.conf.template /tmp/security-headers.conf.template
+# The snippet is written as .inc, not .conf: nginx.conf auto-includes /etc/nginx/conf.d/*.conf
+# into the http block, and this file is meant to be included by hand inside each location.
+RUN envsubst '${UMAMI_ORIGIN} ${STATS_ORIGIN} ${PAY_ORIGIN}' < /tmp/security-headers.conf.template > /etc/nginx/conf.d/okrich-security-headers.inc \
+  && envsubst '${UMAMI_ORIGIN} ${STATS_ORIGIN} ${PAY_ORIGIN}' < /tmp/default.conf.template > /etc/nginx/conf.d/default.conf \
+  && rm /tmp/default.conf.template /tmp/security-headers.conf.template \
   && nginx -t
 
 EXPOSE 8080

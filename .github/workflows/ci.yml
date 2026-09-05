@@ -81,7 +81,10 @@ jobs:
 
       - name: CycloneDX SBOM
         # No runtime dependencies exist, so the SBOM records the build toolchain (dev deps included).
-        run: npx --yes @cyclonedx/cyclonedx-npm@6 --output-format JSON --output-file sbom.cdx.json
+        # Pinned to an exact version, not to `@6`: everything else in this job comes from the
+        # lockfile, and a floating major was the one package the CI runner would fetch and execute
+        # without anyone having seen it. Bump it deliberately.
+        run: npx --yes @cyclonedx/cyclonedx-npm@6.0.1 --output-format JSON --output-file sbom.cdx.json
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
@@ -131,4 +134,16 @@ jobs:
           curl -sSf -o /dev/null http://localhost:8080/terms
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/nope)" = "404"
           curl -sI http://localhost:8080/ | grep -i "content-security-policy"
+          # Every location must carry the full header set, not just the HTML one. /favicon.svg was
+          # live for days with no CSP and no X-Frame-Options because `add_header` inside an nginx
+          # location drops everything inherited from the server block (found 2026-09-05).
+          # Written on single lines on purpose: prettier reflows backslash continuations in this
+          # file and silently glues them together.
+          HEADERS="content-security-policy x-frame-options x-content-type-options referrer-policy permissions-policy cross-origin-opener-policy cross-origin-resource-policy"
+          for path in / /pay /favicon.svg /robots.txt /404-does-not-exist; do
+            out="$(curl -sI "http://localhost:8080$path")"
+            for header in $HEADERS; do
+              echo "$out" | grep -qi "^$header:" || { echo "MISSING $header on $path"; echo "$out"; exit 1; }
+            done
+          done
           docker stop okrich-ci

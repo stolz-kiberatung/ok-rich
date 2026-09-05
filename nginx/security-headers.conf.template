@@ -1,0 +1,19 @@
+# nginx/security-headers.conf.template — the complete security header set, in ONE place.
+#
+# Why a snippet and not three copies: `add_header` inside a location block discards every header
+# inherited from the server block, so each location has to repeat the full set. Repeating it by
+# hand is how /favicon.svg ended up served without a Content-Security-Policy and without
+# X-Frame-Options while / had both (found 2026-09-05, live). Every location now `include`s this
+# file, and tests/unit/build-guards.test.ts fails if a location ever stops doing so.
+#
+# Rendered with envsubst during the image build; ${UMAMI_ORIGIN}, ${STATS_ORIGIN} and
+# ${PAY_ORIGIN} are build args (see Dockerfile). Cache-Control is deliberately NOT here: it is
+# the one header that genuinely differs per location.
+
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' ${UMAMI_ORIGIN}; connect-src 'self' ${UMAMI_ORIGIN} ${STATS_ORIGIN}; img-src 'self' data:; style-src 'self'; font-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' ${PAY_ORIGIN}; upgrade-insecure-requests" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-Frame-Options "DENY" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" always;
+add_header Cross-Origin-Opener-Policy "same-origin" always;
+add_header Cross-Origin-Resource-Policy "same-origin" always;

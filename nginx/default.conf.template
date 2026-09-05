@@ -1,6 +1,10 @@
 # nginx/default.conf.template — rendered with envsubst during the image build.
 # ${UMAMI_ORIGIN} and ${STATS_ORIGIN} are build args (see Dockerfile); leave empty when unused.
 # TLS, HSTS and compression-at-the-edge belong to the reverse proxy in front of this container.
+#
+# Every location includes nginx/security-headers.conf.template, because `add_header` inside a location
+# drops every header inherited from the server block. Do not add a header here directly: put it
+# in the snippet, or it will silently exist on some paths and not on others.
 
 # --- Access log (2026-09-03) ---------------------------------------------------------------
 # The access log keeps the client address on purpose: the owner wants to be able to react to
@@ -21,14 +25,8 @@ server {
     access_log /var/log/nginx/access.log okrich;
 
     # --- Security headers (constitution §5) ------------------------------------------------
-    # Exactly two origins: the site itself and the self-hosted Umami instance.
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' ${UMAMI_ORIGIN}; connect-src 'self' ${UMAMI_ORIGIN} ${STATS_ORIGIN}; img-src 'self' data:; style-src 'self'; font-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' ${PAY_ORIGIN}; upgrade-insecure-requests" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header X-Frame-Options "DENY" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" always;
-    add_header Cross-Origin-Opener-Policy "same-origin" always;
-    add_header Cross-Origin-Resource-Policy "same-origin" always;
+    # Server level, for anything no location matches. Each location repeats the include.
+    include /etc/nginx/conf.d/okrich-security-headers.inc;
 
     # --- Compression ------------------------------------------------------------------------
     gzip on;
@@ -39,39 +37,31 @@ server {
     # --- Caching ------------------------------------------------------------------------------
     # Vite hashes everything under /assets; HTML must always be revalidated.
     location /assets/ {
+        include /etc/nginx/conf.d/okrich-security-headers.inc;
         add_header Cache-Control "public, max-age=31536000, immutable" always;
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' ${UMAMI_ORIGIN}; connect-src 'self' ${UMAMI_ORIGIN} ${STATS_ORIGIN}; img-src 'self' data:; style-src 'self'; font-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' ${PAY_ORIGIN}; upgrade-insecure-requests" always;
-        add_header X-Content-Type-Options "nosniff" always;
         try_files $uri =404;
     }
 
+    # Images, icons and the plain-text files (robots.txt, llms.txt). An SVG opened as a top-level
+    # document is a script context, so this location needs the full header set exactly as much as
+    # an HTML page does — it used to get four of the seven headers and no CSP at all.
     location ~* \.(svg|png|webp|jpg|ico|txt)$ {
+        include /etc/nginx/conf.d/okrich-security-headers.inc;
         add_header Cache-Control "public, max-age=86400" always;
-        add_header X-Content-Type-Options "nosniff" always;
-        # add_header inside a location drops every inherited header, so the ones that matter for
-        # a served file are repeated here on purpose. CORP is what stops another site from
-        # embedding these images as if they were its own.
-        add_header Cross-Origin-Resource-Policy "same-origin" always;
-        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
         try_files $uri =404;
     }
 
     # --- Routes -------------------------------------------------------------------------------
     # /thanks → thanks/index.html without a redirect; unknown paths → the custom 404 page.
     location / {
+        include /etc/nginx/conf.d/okrich-security-headers.inc;
         add_header Cache-Control "no-cache" always;
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' ${UMAMI_ORIGIN}; connect-src 'self' ${UMAMI_ORIGIN} ${STATS_ORIGIN}; img-src 'self' data:; style-src 'self'; font-src 'self'; object-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' ${PAY_ORIGIN}; upgrade-insecure-requests" always;
-        add_header X-Content-Type-Options "nosniff" always;
-        add_header X-Frame-Options "DENY" always;
-        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-        add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" always;
-        add_header Cross-Origin-Opener-Policy "same-origin" always;
-        add_header Cross-Origin-Resource-Policy "same-origin" always;
         try_files $uri $uri/index.html =404;
     }
 
     error_page 404 /404.html;
     location = /404.html {
+        include /etc/nginx/conf.d/okrich-security-headers.inc;
         internal;
     }
 }

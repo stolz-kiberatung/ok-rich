@@ -32,6 +32,27 @@ describe('looksLikeAd', () => {
     }
   });
 
+  it('catches the short-label shorteners the three-character floor let through', () => {
+    // Found 2026-09-05 by running the shipped module against its own rule rather than reading it.
+    // The floor that protects "Dr. No" also protected every host whose first label is one or two
+    // characters, which is most of the shortener world. Each of these reached the board verbatim
+    // for the price of one minimum payment.
+    for (const name of [
+      't . me/pumpgroup',
+      'x . com/xyz',
+      'gg . gg/abc',
+      'is . gd/x',
+      'v . gd/aaa',
+      'ok . gg',
+      't . co/abc',
+      'ow . ly/xyz',
+      'free at is . gd',
+      'discord . gg/abc',
+    ]) {
+      expect(looksLikeAd(name), name).toBe(true);
+    }
+  });
+
   it('still catches what the old list did catch', () => {
     for (const name of [
       'http://evil.example',
@@ -73,6 +94,13 @@ describe('looksLikeAd', () => {
       'St. Pauli',
       'Mr. X',
       'Prof. Klein',
+      // Surnames that collide with a shortener TLD after an initial. They are the reason
+      // SHORT_HOST_TLD is a narrow list and not simply "every TLD".
+      'Nguyen V. Ly',
+      'Kim J. Im',
+      'Tran T. To',
+      'Ada L. Smith / Berlin',
+      'Hans-Peter St. John',
     ]) {
       expect(looksLikeAd(name), name).toBe(false);
     }

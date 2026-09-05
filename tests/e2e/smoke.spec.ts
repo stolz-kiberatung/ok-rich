@@ -397,6 +397,25 @@ test.describe('thanks page', () => {
     });
   }
 
+  /**
+   * `status` is whatever is in the query string. With the old object-literal lookup, a key that
+   * exists on Object.prototype answered with a function instead of undefined, the fallback never
+   * fired, and the page printed the literal word "undefined" where the sentence about the money
+   * belongs. Found 2026-09-05. The four keys below are the ones a stranger would reach for.
+   */
+  for (const status of ['toString', 'constructor', '__proto__', 'hasOwnProperty'] as const) {
+    test(`falls back to an honest sentence for ?status=${status}`, async ({ page }) => {
+      await page.goto(`/thanks?status=${status}`);
+
+      await expect(page.locator('h1')).toContainText('Nothing was charged');
+      await expect(page.locator('#unpaid-lead')).toContainText('did not complete');
+      await expect(page.locator('#unpaid-note')).toContainText('Nothing was charged');
+      // The actual defect: no rendered text anywhere may read "undefined".
+      await expect(page.locator('body')).not.toContainText('undefined', { useInnerText: true });
+      await expect(page.locator('#paid-block')).toBeHidden();
+    });
+  }
+
   test('keeps a pending payment distinct from a failed one', async ({ page }) => {
     await page.goto('/thanks?status=pending');
 

@@ -9,25 +9,46 @@
 // it only decides which sentence to show. What actually follows a payment is the confirmation
 // email, sent from the signature-verified webhook.
 
-/** Dodo's terminal states, with the wording each one deserves. */
-const NOT_PAID: Record<string, { lead: string; note: string }> = {
-  expired: {
-    lead: 'The checkout expired before it was paid.',
-    note: 'Nothing was charged and no photo is on its way. Checkouts time out after a few minutes. The button below starts a fresh one.',
-  },
-  cancelled: {
-    lead: 'You stopped at the checkout.',
-    note: 'Nothing was charged and no photo is on its way. No hard feelings. The button below starts again if you change your mind.',
-  },
-  failed: {
-    lead: 'The payment did not go through.',
-    note: 'Nothing was charged and no photo is on its way. Your bank or card provider refused it, and they can tell you why. The button below tries again.',
-  },
-  pending: {
-    lead: 'Your payment is still being processed.',
-    note: 'Some payment methods take a moment. If it goes through you get a confirmation email, and the photo follows within 7 days. Nothing more to do here.',
-  },
+interface Copy {
+  lead: string;
+  note: string;
+}
+
+/** Shown for any status that is not one of the four below, including nonsense in the URL. */
+const GENERIC: Copy = {
+  lead: 'The payment did not complete.',
+  note: 'Nothing was charged and no photo is on its way. The button below starts again from the top.',
 };
+
+/**
+ * Dodo's terminal states, with the wording each one deserves.
+ *
+ * A Map rather than an object literal, because `status` comes straight out of the query string.
+ * With a plain object, `?status=toString` reaches Object.prototype, `NOT_PAID[status]` answers
+ * with a function instead of undefined, the `??` fallback never fires, and the page renders the
+ * literal word "undefined" where the sentence about the money belongs. Found 2026-09-05. A Map
+ * has no prototype chain to walk into, so a hostile key simply misses.
+ */
+const NOT_PAID = new Map<string, Copy>(
+  Object.entries({
+    expired: {
+      lead: 'The checkout expired before it was paid.',
+      note: 'Nothing was charged and no photo is on its way. Checkouts time out after a few minutes. The button below starts a fresh one.',
+    },
+    cancelled: {
+      lead: 'You stopped at the checkout.',
+      note: 'Nothing was charged and no photo is on its way. No hard feelings. The button below starts again if you change your mind.',
+    },
+    failed: {
+      lead: 'The payment did not go through.',
+      note: 'Nothing was charged and no photo is on its way. Your bank or card provider refused it, and they can tell you why. The button below tries again.',
+    },
+    pending: {
+      lead: 'Your payment is still being processed.',
+      note: 'Some payment methods take a moment. If it goes through you get a confirmation email, and the photo follows within 7 days. Nothing more to do here.',
+    },
+  }),
+);
 
 function applyStatus(): void {
   const status = (new URLSearchParams(location.search).get('status') ?? '').trim().toLowerCase();
@@ -35,10 +56,7 @@ function applyStatus(): void {
   // really did pay must not be told otherwise, and this page grants nothing either way.
   if (status === '' || status === 'succeeded') return;
 
-  const copy = NOT_PAID[status] ?? {
-    lead: 'The payment did not complete.',
-    note: 'Nothing was charged and no photo is on its way. The button below starts again from the top.',
-  };
+  const copy = NOT_PAID.get(status) ?? GENERIC;
 
   const paid = document.getElementById('paid-block');
   const unpaid = document.getElementById('unpaid-block');

@@ -328,8 +328,27 @@ export default defineConfig(({ mode }) => {
       include: ['tests/unit/**/*.test.ts'],
       coverage: {
         provider: 'v8',
-        include: ['src/drag.ts', 'src/stage.ts'],
-        thresholds: { lines: 90, functions: 90, branches: 90, statements: 90 },
+        // Every source file is measured. The previous setting named two files by path, which
+        // under Vitest 4 produced an EMPTY per-file table and a total of ten statements, so the
+        // 90 % gate below was passing against nothing at all (found 2026-09-05 by re-running the
+        // suite with a corrected include: the real figure across src/ was 23 %).
+        include: ['src/**/*.ts'],
+        exclude: ['src/vite-env.d.ts'],
+        thresholds: {
+          // The global floor is deliberately low, because it counts the DOM wiring too, and that
+          // is covered by Playwright rather than by vitest. It is a ratchet against regression,
+          // not a claim. Raise it when a file moves from e2e-only to unit-tested.
+          lines: 22,
+          functions: 38,
+          branches: 25,
+          statements: 22,
+          // The files that DECIDE something get a real gate. These are the ones an attacker
+          // interacts with: what a board name may be, and how the stage maths behaves.
+          'src/moderation/**/*.ts': { lines: 95, functions: 95, branches: 88, statements: 95 },
+          'src/name.ts': { lines: 95, functions: 100, branches: 85, statements: 95 },
+          'src/drag.ts': { lines: 90, functions: 90, branches: 90, statements: 90 },
+          'src/stage.ts': { lines: 90, functions: 90, branches: 90, statements: 90 },
+        },
       },
     },
   };
