@@ -9,6 +9,7 @@ import {
   initMobileDrag,
   initPinboard,
   reclampAll,
+  resizeStageBelow,
   unfitStage,
 } from './pinboard';
 import { initStats } from './stats';
@@ -32,6 +33,44 @@ async function loadLiveNumbers(): Promise<void> {
 }
 
 void loadLiveNumbers();
+
+/**
+ * The Wall of Thumbs ships with its later tiles already `hidden` in the markup (progressive
+ * enhancement: no flash of the full grid before this runs, and nothing to see here without JS
+ * either). The toggle reveals them and, on the board, has to make room the same way the
+ * contributors board does: everything below the window moves down by exactly the height the
+ * window gained, and back up again on collapse.
+ */
+function initWallExpand(): void {
+  const wall = document.querySelector<HTMLElement>('[data-pin="wall"]');
+  const grid = document.getElementById('wall-grid');
+  const toggle = document.getElementById('wall-toggle');
+  if (!wall || !grid || !toggle) return;
+  const extra = [...grid.querySelectorAll<HTMLElement>('.wall-tile[hidden]')];
+  if (extra.length === 0) return; // Everything already fits in the collapsed row.
+
+  const total = grid.children.length;
+  toggle.hidden = false;
+  toggle.textContent = `Show all photos (${total})`;
+
+  toggle.addEventListener('click', () => {
+    const stageEl = document.getElementById('stage');
+    const wrap = stageEl?.parentElement;
+    const isBoard = Boolean(stageEl?.classList.contains('is-board'));
+    const before = wall.offsetHeight;
+    const wasExpanded = toggle.getAttribute('aria-expanded') === 'true';
+
+    for (const tile of extra) tile.hidden = wasExpanded;
+    toggle.setAttribute('aria-expanded', String(!wasExpanded));
+    toggle.textContent = wasExpanded ? `Show all photos (${total})` : 'Show fewer photos';
+
+    if (!isBoard || !stageEl || !wrap) return;
+    const delta = wall.offsetHeight - before;
+    resizeStageBelow(stageEl, wrap, (parseFloat(wall.style.top) || 0) + before, delta);
+  });
+}
+
+initWallExpand();
 
 const stage = document.getElementById('stage');
 const wrapper = stage?.parentElement;

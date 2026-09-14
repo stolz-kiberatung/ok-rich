@@ -59,6 +59,21 @@ export function growStageBelow(
   delta: number,
 ): void {
   if (!Number.isFinite(delta) || delta <= 0) return;
+  resizeStageBelow(stage, wrapper, fromY, delta);
+}
+
+/**
+ * Same shift as growStageBelow, but symmetric: a negative `delta` moves everything from `fromY`
+ * down back up and shrinks the stage again. Used by the Wall of Thumbs toggle, which grows the
+ * window on expand and has to give the space back on collapse.
+ */
+export function resizeStageBelow(
+  stage: HTMLElement,
+  wrapper: HTMLElement,
+  fromY: number,
+  delta: number,
+): void {
+  if (!Number.isFinite(delta) || delta === 0) return;
   for (const el of stage.querySelectorAll<HTMLElement>(':scope > .abs')) {
     const top = parseFloat(el.style.top);
     if (Number.isFinite(top) && top >= fromY) el.style.top = `${top + delta}px`;

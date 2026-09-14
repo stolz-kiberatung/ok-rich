@@ -370,15 +370,51 @@
             <span class="caption no-drag">wall/</span>
           </div>
           <div class="body wall no-drag">
-            <h2 id="wall-title">Wall of Thumbs <span class="wall-soon">coming soon</span></h2>
-            <div class="wall-grid">
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
-              <span class="wall-tile wall-empty">you?</span>
+            <h2 id="wall-title">Wall of Thumbs</h2>
+            <div class="wall-grid" id="wall-grid">
+              <span class="wall-tile"
+                ><img
+                  src="/img/wall/thumb-1.webp?v=1"
+                  width="360"
+                  height="639"
+                  alt="A thumbs-up in a meadow, a tower in the background."
+                  loading="lazy"
+              /></span>
+              <span class="wall-tile"
+                ><img
+                  src="/img/wall/thumb-2.webp?v=1"
+                  width="360"
+                  height="640"
+                  alt="A thumbs-up next to a small balcony pepper plant."
+                  loading="lazy"
+              /></span>
+              <span class="wall-tile" hidden
+                ><img
+                  src="/img/wall/thumb-3.webp?v=1"
+                  width="360"
+                  height="639"
+                  alt="A thumbs-up against a cloudy sky over rooftops."
+                  loading="lazy"
+              /></span>
+              <span class="wall-tile" hidden
+                ><img
+                  src="/img/wall/thumb-4.webp?v=1"
+                  width="360"
+                  height="639"
+                  alt="A thumbs-up in front of a houseplant on a sideboard."
+                  loading="lazy"
+              /></span>
+              <span class="wall-tile wall-empty" hidden>you?</span>
+              <span class="wall-tile wall-empty" hidden>you?</span>
             </div>
+            <button
+              type="button"
+              class="wall-toggle"
+              id="wall-toggle"
+              aria-controls="wall-grid"
+              aria-expanded="false"
+              hidden
+            ></button>
             <p class="wall-note">
               Write "wall me" at checkout and your thumb joins it the day it goes up.
             </p>

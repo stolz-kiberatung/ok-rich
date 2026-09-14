@@ -10,8 +10,12 @@ export const STAGE = {
   // board, which makes the footer 241 px tall with its bottom edge at 1761; 1790 keeps the
   // 24 px clamp margin below it. Measured, not guessed: a footer poking out of the stage is
   // exactly what the clamp is there to prevent. Later the same day the P.S. moved out of the
-  // footer into its own block below it (bottom edge 1808), hence 1832.
-  height: 1832,
+  // footer into its own block below it (bottom edge 1808), hence 1832. On 2026-09-14 the Wall of
+  // Thumbs got real photos in place of the "coming soon" placeholders, which made its collapsed
+  // (one-row) height 427 px instead of 323 px, a 104 px gain measured the same way. `footer` and
+  // `ps` move down by that same 104 px below, so the wall-to-footer gap (47 px) is unchanged, and
+  // the stage grows by it too: 1832 + 104 = 1936.
+  height: 1936,
   /** Below this viewport width the stage is not scaled and elements stack in DOM order. */
   breakpoint: 768,
   /** Minimum px of an element that must stay inside the stage when dragged. */
@@ -80,10 +84,13 @@ export const elements: readonly PinElement[] = [
   { id: 'goal', kind: 'win', x: 1064, y: 770, draggable: true, z: 5 },
   { id: 'wall', kind: 'win', x: 510, y: 1150, draggable: true, z: 6 },
   { id: 'ideas', kind: 'win', x: 1100, y: 410, draggable: true, z: 7 },
-  { id: 'footer', kind: 'win', x: 610, y: 1520, draggable: true, z: 8 },
+  // y was 1520 until 2026-09-14, moved down 104 px with the rest of the band below the Wall of
+  // Thumbs when it grew (see the STAGE.height comment above).
+  { id: 'footer', kind: 'win', x: 610, y: 1624, draggable: true, z: 8 },
   // Plain text under legal.txt, not a window and not a sticker; y measured after the footer lost
-  // the P.S. paragraphs. Content, so it shows on the phone too.
-  { id: 'ps', kind: 'sticker', x: 560, y: 1668, draggable: true, z: 8, mobile: true },
+  // the P.S. paragraphs, then moved down another 104 px on 2026-09-14 with `footer`. Content, so
+  // it shows on the phone too.
+  { id: 'ps', kind: 'sticker', x: 560, y: 1772, draggable: true, z: 8, mobile: true },
   {
     id: 'garage',
     kind: 'sticker',

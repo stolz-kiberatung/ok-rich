@@ -1349,3 +1349,78 @@
   margin: -4px auto 24px;
   padding: 0 12px;
 }
+
+/* --- Wall of Thumbs: real photos, collapsible grid (v2.1, 2026-09-14) ---------------------
+   Real submitted photos replace the placeholder tiles, so the tiles need to read as photos, not
+   icons: same grid on the phone and the board, tall enough that a portrait shot is not just a
+   thumbnail. Beyond the first row the grid grows a window at a time, so it stays collapsed by
+   default and only takes the extra height once a visitor asks for it (`#wall-toggle`, wired in
+   main.ts). On the board that height change pushes everything below the window down (or back up),
+   the same growStageBelow() the contributors board already uses. */
+.wall-grid {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-content: center;
+  gap: 14px;
+}
+.wall-tile {
+  width: 128px;
+  height: 208px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.12);
+}
+.is-board .wall-tile {
+  width: 128px;
+  height: 208px;
+}
+.wall-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.wall-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #b5b5ad;
+  border-radius: 8px;
+  box-shadow: none;
+  color: var(--muted);
+  font-size: 16px;
+}
+.is-board .wall-empty {
+  font-size: 16px;
+}
+.wall-toggle {
+  display: inline-block;
+  /* The window body carries .no-drag (pointer-events: none), so children stay unclickable by
+     default and let a drag start underneath them. This is the one real control in there. */
+  pointer-events: auto;
+  background: none;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font: 700 14px/1.4 var(--font);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    background 120ms ease;
+}
+.wall-toggle:hover {
+  background: var(--accent);
+}
+.wall-toggle:active {
+  transform: translateY(1px);
+}
+.wall-toggle:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wall-toggle {
+    transition: none;
+  }
+}

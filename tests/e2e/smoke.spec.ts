@@ -322,6 +322,51 @@ test.describe('growing contributors board', () => {
   });
 });
 
+test.describe('Wall of Thumbs toggle', () => {
+  test.beforeEach(() => {
+    test.skip(test.info().project.name !== 'desktop', 'desktop only');
+  });
+
+  /** Stage height and the gap between the wall window and the footer below it. */
+  async function geometry(page: Page) {
+    return page.evaluate(() => {
+      const stage = document.getElementById('stage') as HTMLElement;
+      const wall = document.querySelector('[data-pin="wall"]') as HTMLElement;
+      const footer = document.querySelector('[data-pin="footer"]') as HTMLElement;
+      return {
+        stageHeight: parseFloat(stage.style.height),
+        gap: parseFloat(footer.style.top) - (parseFloat(wall.style.top) + wall.offsetHeight),
+      };
+    });
+  }
+
+  test('expands every photo and gives the space back below it on collapse', async ({ page }) => {
+    await page.goto('/');
+    const toggle = page.locator('#wall-toggle');
+    const tiles = page.locator('#wall-grid .wall-tile');
+    await expect(toggle).toHaveText('Show all photos (6)');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(tiles.locator('visible=true')).toHaveCount(2);
+    const collapsed = await geometry(page);
+
+    await toggle.click();
+    await expect(toggle).toHaveText('Show fewer photos');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(tiles.locator('visible=true')).toHaveCount(6);
+    const expanded = await geometry(page);
+    expect(expanded.stageHeight).toBeGreaterThan(collapsed.stageHeight);
+    // The footer moves down by exactly the height the wall gained, so the designed gap holds.
+    expect(expanded.gap).toBeCloseTo(collapsed.gap, 0);
+
+    await toggle.click();
+    await expect(toggle).toHaveText('Show all photos (6)');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(tiles.locator('visible=true')).toHaveCount(2);
+    const collapsedAgain = await geometry(page);
+    expect(collapsedAgain).toEqual(collapsed);
+  });
+});
+
 test.describe('pay form', () => {
   test('collects the board name and posts it to the payment provider', async ({ page }) => {
     const res = await page.goto('/pay');
