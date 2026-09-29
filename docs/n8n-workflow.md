@@ -33,7 +33,15 @@ NODE_FUNCTION_ALLOW_BUILTIN=crypto       # lets the Code nodes require('crypto')
 OKRICH_IP_SALT=<random 32+ chars>        # salt for the visitor-counter IP hash (never logged)
 EXECUTIONS_DATA_PRUNE=true               # keep execution data short-lived (privacy, A13)
 EXECUTIONS_DATA_MAX_AGE=720              # hours = 30 days
+N8N_CONCURRENCY_PRODUCTION_LIMIT=1       # one production execution at a time, see below
 ```
+
+**`N8N_CONCURRENCY_PRODUCTION_LIMIT=1` is required, not tuning.** The visitor counter and the
+payment branch share the workflow's static data, and n8n writes that object whole at the end of an
+execution, last write wins. A page view that finishes while a payment execution is still waiting on
+Gmail would otherwise write back the board as it was before the payment. The counter also writes
+only when something changed, but only the serialisation closes the race. Verify it after every
+change with `docker compose exec n8n printenv N8N_CONCURRENCY_PRODUCTION_LIMIT`.
 
 On this host the values live in `/opt/n8n/.env` (mode 600) and `docker-compose.yml` only carries
 `${VARIABLE}` references, so the compose file stays safe to copy around. Changing `.env` needs
@@ -85,13 +93,14 @@ the import both Gmail nodes show an empty credential field until step 3 below.
    client with the Gmail send scope, redirect URL from n8n.
 4. Save, then **Activate** the workflow. Open the Webhook node and copy the **Production URL**,
    e.g. `https://n8n.example.com/webhook/okrich-payment`. That is `N8N_WEBHOOK_URL`.
-5. Register that URL in Dodo with the event `checkout.session.completed`
-   (docs/dodo-setup.md §5) and put the signing secret into `DODO_WEBHOOK_SECRET`.
+5. Register that URL in Dodo with the events `payment.succeeded` **and** `refund.succeeded`
+   (docs/dodo-setup.md §4) and put the signing secret into `DODO_WEBHOOK_SECRET`. The workflow
+   acknowledges any other event type and does nothing with it.
 
 ## 3. Test
 
 - Dodo Dashboard → Webhooks → your endpoint → **Send test event** →
-  `checkout.session.completed`. Expect: one execution, both emails sent (the test payload has a
+  `payment.succeeded`. Expect: one execution, both emails sent (the test payload has a
   placeholder buyer email; the confirmation to it will bounce, that is fine).
 - Or with the Dodo CLI: `dodo wh listen https://n8n.example.com/webhook/okrich-payment`,
   then `dodo wh trigger payment.success`.

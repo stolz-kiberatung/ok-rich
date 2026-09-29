@@ -19,7 +19,7 @@ Playwright suite need `@axe-core/playwright`. Options:
 - **(a) approve both as devDependencies; `npm run audit` runs Lighthouse locally against the production build (report in CI as a non-blocking artifact, because Lighthouse scores fluctuate on shared runners); axe runs inside the e2e suite and blocks.**
 - (b) approve none; Lighthouse is run manually in Chrome DevTools before each release, accessibility relies on Lighthouse only.
 
-**Q3 — Repository.** The working folder is `Hobbyprojekte/okrich`
+**Q3 — Repository.** The working folder is a local `Hobbyprojekte/okrich` folder
 (outside the business folder, as the app playbook requires; trivially movable).
 The CI deliverable presumes GitHub. Options:
 

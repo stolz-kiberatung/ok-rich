@@ -40,9 +40,10 @@ Phases: 0 Constitution → 1 Specify (`spec.md`, `clarify.md`) → 2 Plan
 - No frontend framework, no UI/CSS library, no runtime npm dependencies.
 - Allowed devDependencies: vite, typescript, eslint (+ typescript-eslint),
   prettier, vitest, @playwright/test. Anything else needs approval.
-- No backend, no database. Payment = Stripe Payment Link (external URL).
-  Post-payment automation lives in the owner's n8n, documented in
-  `docs/n8n-workflow.md`, exported to `n8n/okrich-stripe.json`.
+- No backend, no database. Payment = Dodo Payments static payment link
+  (external URL, Dodo is merchant of record). Post-payment automation lives in
+  the owner's n8n, documented in `docs/n8n-workflow.md`, exported to
+  `n8n/okrich-payments.json`.
 - Deployment: multi-stage Dockerfile (node build → nginx:alpine),
   `nginx.conf` with security headers, `docker-compose.yml` for the
   existing Hetzner host behind an existing TLS reverse proxy.
@@ -73,28 +74,28 @@ connect-src 'self' <umami-host>; img-src 'self' data:; style-src 'self';
 frame-ancestors 'none'; base-uri 'self'; form-action 'self'`.
 - No inline scripts or styles. No CDN fonts (system font stack or
   self-hosted WOFF2).
-- Stripe is a plain `<a href>` — no Stripe JS on the page.
+- Payment is a plain link/GET form to Dodo — no payment JS on the page.
 - Every external link: `rel="noopener noreferrer"`.
 - Dependency hygiene: `npm audit --audit-level=high` in CI; lockfile committed;
   `npm ci` only. Generate a CycloneDX SBOM (`@cyclonedx/cyclonedx-npm`) in CI
   as an artifact.
-- Webhook (n8n side): verify Stripe signature, reject events older than
-  5 min, idempotency keyed on `checkout.session.id`, never log card data
-  or full email addresses.
+- Webhook (n8n side): verify the Standard Webhooks signature Dodo sends,
+  reject events older than 5 min, idempotency keyed on `webhook-id`, never
+  log card data or full email addresses.
 
 ## 6. Privacy & legal (German law)
 
 - No cookies, no localStorage, no fingerprinting. Umami is cookieless and
   self-hosted in the EU → no consent banner; this reasoning is written into
   the privacy page.
-- Personal data (email, optional message, amount) is processed by Stripe
-  and n8n only; the site itself stores nothing.
+- Personal data (email, optional message, amount) is processed by Dodo
+  Payments and n8n only; the site itself stores nothing in the browser.
 - Pages that must exist before launch, with `TODO-LEGAL` markers where the
   owner/lawyer fills content: `/impressum` (§ 5 DDG), `/privacy`
-  (DSGVO Art. 13; recipients: Stripe, Hetzner, Google Workspace for email),
+  (DSGVO Art. 13; recipients: Dodo Payments, Hetzner, Google Workspace for email),
   `/terms` incl. Widerrufsbelehrung and the digital-content consent text
   (§ 356 Abs. 5 BGB). The exact consent text also goes into
-  `docs/stripe-setup.md` for the Payment Link "terms acceptance" field.
+  `docs/dodo-setup.md` for the payment link "terms acceptance" field.
 - Button wording on the CTA must not hide that this is a paid order
   (§ 312j BGB): the CTA reads "Make me rich →" and the line directly next to
   it states price, product and delivery time.
@@ -128,12 +129,12 @@ frame-ancestors 'none'; base-uri 'self'; form-action 'self'`.
 
 User accounts, own checkout or backend, live counter, "Wall of Thumbs"
 gallery, dark mode, i18n of site copy, PayPal as separate button (PayPal
-only if available inside the Stripe Payment Link), SEO beyond
+only if available inside the Dodo checkout), SEO beyond
 title/description/OG image, A/B testing.
 
 ## 10. Project variables (single place, `site.config.ts`)
 
-DOMAIN, SITE_TITLE, OWNER_NAME, CURRENCY, MIN_AMOUNT, STRIPE_PAYMENT_LINK_URL,
+DOMAIN, SITE_TITLE, OWNER_NAME, CURRENCY, MIN_AMOUNT, PAY_URL,
 UMAMI_SCRIPT_URL, UMAMI_WEBSITE_ID, WHY_PARAGRAPH. Values come from
 `.env` via `import.meta.env`; build fails if a required one is empty.
 

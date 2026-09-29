@@ -87,7 +87,8 @@ Nothing here is secret: the link, the product id and the amount are all public b
 1. **Developer → Webhooks → Create Webhook**.
 2. URL: the production URL of the _Dodo webhook_ node in n8n, e.g.
    `https://n8n.example.com/webhook/okrich-payment`.
-3. Event: `payment.succeeded` only.
+3. Events: `payment.succeeded` **and** `refund.succeeded`. The second one is what takes a refunded
+   amount off the total and the entry off the board; without it a refund leaves the board wrong.
 4. Copy the signing secret (`whsec_…`) into the n8n host environment as `DODO_WEBHOOK_SECRET`.
    It never goes into this repository.
 5. Send a test event from the dashboard and check the n8n execution.
@@ -106,8 +107,8 @@ Details and the import steps: `docs/n8n-workflow.md`.
 4. n8n shows one execution; you get the notification mail, the buyer gets the confirmation.
 5. Reload the front page: `Test Person 5 €` stands on the Top contributors board, the millionaire
    meter moved, and the visitor counter is running.
-6. Refund the test payment in the dashboard. Note: a refund does **not** reduce the counters
-   automatically. Correct them by editing the workflow's static data if a real refund happens.
+6. Refund the test payment in the dashboard. The `refund.succeeded` event takes the amount off the
+   total and the entry off the board (partial refunds included); reload the front page to see it.
 
 ## 6. Go live
 
