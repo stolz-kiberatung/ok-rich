@@ -343,8 +343,12 @@ export default defineConfig(({ mode }) => {
           // kind as the rest of those two files, covered by the Playwright test in
           // tests/e2e/smoke.spec.ts rather than by a unit test. Statements 22 -> 21, branches
           // 25 -> 24; lines and functions did not move.
-          lines: 22,
-          functions: 38,
+          // Lowered again on 2026-09-30 for judge mode (src/easter-egg.ts): its unlocking logic
+          // (konamiStep, tapStep) is unit-tested in full, the window and the thumb rain are DOM
+          // wiring covered by the judge-mode tests in tests/e2e/smoke.spec.ts. Lines 22 -> 21,
+          // functions 38 -> 37.
+          lines: 21,
+          functions: 37,
           branches: 24,
           statements: 21,
           // The files that DECIDE something get a real gate. These are the ones an attacker

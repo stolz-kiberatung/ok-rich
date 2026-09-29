@@ -1424,3 +1424,59 @@
     transition: none;
   }
 }
+
+/* Judge mode (src/easter-egg.ts). The headline sits in a .no-drag body, which switches pointer
+   events off for every descendant, so the title has to take them back to receive the taps. */
+#site-title {
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.win.judge {
+  position: fixed;
+  z-index: 10000;
+  top: 50%;
+  left: 50%;
+  width: min(420px, calc(100vw - 32px));
+  transform: translate(-50%, -50%) rotate(-1.5deg);
+}
+.win.judge .body {
+  padding: 8px 16px 18px;
+}
+.win.judge h2 {
+  margin: 4px 0 10px;
+}
+.win.judge .judge-small {
+  font-size: 14px;
+  color: var(--muted);
+}
+.win.judge .btn {
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.thumb-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  pointer-events: none;
+}
+.thumb-drop {
+  position: absolute;
+  top: -60px;
+  animation-name: thumb-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes thumb-fall {
+  to {
+    transform: translateY(calc(100vh + 120px)) rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb-rain {
+    display: none;
+  }
+}

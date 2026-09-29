@@ -367,6 +367,53 @@ test.describe('Wall of Thumbs toggle', () => {
   });
 });
 
+// The easter egg must open from its two doors, close cleanly, and never cost a console error.
+test.describe('judge mode', () => {
+  test('opens with the Konami code and closes with Escape', async ({ page }) => {
+    test.skip(test.info().project.name !== 'desktop', 'desktop only');
+    const errors = collectErrors(page);
+    await page.goto('/');
+    await expect(page.locator('#judge-mode')).toHaveCount(0);
+    for (const key of [
+      'ArrowUp',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowLeft',
+      'ArrowRight',
+      'b',
+      'a',
+    ]) {
+      await page.keyboard.press(key);
+    }
+    const dialog = page.getByRole('dialog', { name: /judge mode unlocked/i });
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toContainText('Tony, Dudu and Andrej');
+    await expect(dialog.getByRole('button')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#judge-mode')).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+
+  test('opens with seven quick taps on the headline', async ({ page }) => {
+    test.skip(test.info().project.name !== 'mobile', 'mobile only');
+    await page.goto('/');
+    const title = page.locator('#site-title');
+    for (let i = 0; i < 7; i++) await title.click();
+    await expect(page.getByRole('dialog', { name: /judge mode unlocked/i })).toBeVisible();
+    await page.getByRole('button', { name: 'Keep judging' }).click();
+    await expect(page.locator('#judge-mode')).toHaveCount(0);
+  });
+
+  test('leaves a note for people who read the source', async ({ request }) => {
+    const html = await (await request.get('/')).text();
+    expect(html).toContain('Hello, source reader.');
+    expect(html).toContain('up up down down left right left right B A');
+  });
+});
+
 test.describe('pay form', () => {
   test('collects the board name and posts it to the payment provider', async ({ page }) => {
     const res = await page.goto('/pay');

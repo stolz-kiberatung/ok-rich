@@ -12,6 +12,7 @@ import {
   resizeStageBelow,
   unfitStage,
 } from './pinboard';
+import { initEasterEgg } from './easter-egg';
 import { initStats } from './stats';
 
 /**
@@ -33,6 +34,7 @@ async function loadLiveNumbers(): Promise<void> {
 }
 
 void loadLiveNumbers();
+initEasterEgg();
 
 /**
  * The Wall of Thumbs ships with its later tiles already `hidden` in the markup (progressive
