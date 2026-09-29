@@ -93,18 +93,18 @@ function openJudgeMode(): void {
   const body = el('div', 'body');
   const title = el('h2', '', 'Judge mode unlocked 👍');
   title.id = 'judge-title';
-  const close = el('button', 'btn', 'Keep judging');
+  const close = el('button', 'btn', 'Totally not a bribe');
   close.type = 'button';
+  const mail = el('a', '', 'email');
+  mail.href =
+    'mailto:ok@ok-rich.com?subject=' + encodeURIComponent('Judge mode: one thumb, please');
+  const offer = el('p');
+  offer.append('Send me an ', mail, " and you'll get one for free.");
   body.append(
     title,
-    el('p', '', 'Hi Tony, Dudu and Andrej. You found the only thing on this site that is free.'),
-    el(
-      'p',
-      '',
-      'Best Replacement? OK RICH replaces exactly one paid product: the feeling that a stranger ' +
-        'on the internet believes in you. For 5 € and up, with a photo as proof.',
-    ),
-    el('p', 'judge-small', 'This thumb is on the house. Scores are final, thumbs are forever.'),
+    el('p', '', 'Hi Tony, Dudu and Andrej.'),
+    el('p', '', "I'd offer you a bribe, but all I have is a thumb."),
+    offer,
     close,
   );
   win.append(bar, body);

@@ -1446,10 +1446,6 @@
 .win.judge h2 {
   margin: 4px 0 10px;
 }
-.win.judge .judge-small {
-  font-size: 14px;
-  color: var(--muted);
-}
 .win.judge .btn {
   border: 0;
   font-family: inherit;

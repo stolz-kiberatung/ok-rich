@@ -391,7 +391,13 @@ test.describe('judge mode', () => {
     const dialog = page.getByRole('dialog', { name: /judge mode unlocked/i });
     await expect(dialog).toBeVisible();
     await expect(dialog).toContainText('Tony, Dudu and Andrej');
-    await expect(dialog.getByRole('button')).toBeFocused();
+    await expect(dialog).toContainText("I'd offer you a bribe, but all I have is a thumb.");
+    await expect(dialog).toContainText("you'll get one for free");
+    await expect(dialog.getByRole('link', { name: 'email' })).toHaveAttribute(
+      'href',
+      /^mailto:ok@ok-rich\.com\?subject=/,
+    );
+    await expect(dialog.getByRole('button', { name: 'Totally not a bribe' })).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(page.locator('#judge-mode')).toHaveCount(0);
     expect(errors).toEqual([]);
@@ -403,7 +409,7 @@ test.describe('judge mode', () => {
     const title = page.locator('#site-title');
     for (let i = 0; i < 7; i++) await title.click();
     await expect(page.getByRole('dialog', { name: /judge mode unlocked/i })).toBeVisible();
-    await page.getByRole('button', { name: 'Keep judging' }).click();
+    await page.getByRole('button', { name: 'Totally not a bribe' }).click();
     await expect(page.locator('#judge-mode')).toHaveCount(0);
   });
 
