@@ -1,5 +1,7 @@
 # OK RICH
 
+**Live: https://ok-rich.com**
+
 A one-page site with one purpose: to make the owner rich. Visitors pay any amount (min 5 EUR)
 through a Dodo Payments Payment Link and receive one personal, real thumbs-up photo by email within
 7 days. Retro-window pinboard, draggable, no framework, no cookies, no backend.
