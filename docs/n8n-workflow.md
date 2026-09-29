@@ -60,6 +60,11 @@ fails with `SQLITE_CONSTRAINT: NOT NULL constraint failed: workflow_entity.id`, 
 import would create a duplicate instead of updating the workflow that is already there. Keep the
 id when re-exporting from the n8n UI.
 
+The payment branch acts only on payments whose `product_cart` contains `OKRICH_PRODUCT_ID`,
+a constant near the top of the payment logic in `Verify, dedupe, count`. Set it to your own Dodo
+product id before importing. A Dodo account can sell several products, and every one of them
+fires the same webhook; without the filter, any sale lands on this board.
+
 **Either** in the browser, **or** from the shell on the host — the CLI route, which is what was
 actually used on 2026-09-02:
 
