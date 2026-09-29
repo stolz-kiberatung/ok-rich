@@ -163,6 +163,38 @@ mark.todo {
 .gift-field {
   margin: 10px 0 0;
 }
+/* Wall of Thumbs consent: a native checkbox, unticked by default, label clickable as a whole. */
+.consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+.consent input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 2px 0 0;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+.consent input:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.consent label {
+  cursor: pointer;
+}
+.consent .label {
+  display: block;
+  font-weight: 700;
+}
+.consent .hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--muted);
+}
 
 .payment-note {
   margin-top: 12px;

@@ -1,5 +1,9 @@
 # spec.md — OK RICH (ok-rich.com)
 
+> **Historical document.** Written during the spec-driven build (30 August to early September 2026) and kept as a record of how decisions were made. Parts are superseded: payment moved from
+> Stripe to Dodo Payments, and several checklists here were completed or replaced. The current
+> state is in `README.md`, `docs/` and the code.
+
 Phase 1 · Specify · 2026-08-30 · status: **approved 2026-08-30 (defaults from clarify.md)**
 Inputs: `CLAUDE.md` (constitution), `docs/drag-reference.md` (binding pinboard
 reference), `PROMPT.md` (kickoff v2). This document adds only what those do not

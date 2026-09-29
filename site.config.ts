@@ -62,7 +62,7 @@ export const site = {
     .split(',')
     .map((s) => Number(s.trim()))
     .filter((n) => Number.isFinite(n)),
-  /** Dodo Payments static link of the 1 EUR product; /pay adds name and quantity. */
+  /** Dodo Payments static link of the Pay What You Want product; /pay adds the name. */
   payUrl: env.VITE_PAY_URL ?? '',
   /** Public n8n endpoint with the live totals; empty means "no live numbers". */
   statsUrl: env.VITE_STATS_URL ?? '',

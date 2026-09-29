@@ -5,7 +5,7 @@ through a Dodo Payments Payment Link and receive one personal, real thumbs-up ph
 7 days. Retro-window pinboard, draggable, no framework, no cookies, no backend.
 
 - Constitution and rules: `CLAUDE.md` · current state: `HANDOFF.md`
-- Spec-driven phase documents: `spec.md`, `clarify.md`, `plan.md`, `tasks.md`, `analysis.md`
+- Spec-driven phase documents, kept as history (partly superseded, e.g. Stripe → Dodo): `spec.md`, `clarify.md`, `plan.md`, `tasks.md`, `analysis.md`
 
 ## Stack
 

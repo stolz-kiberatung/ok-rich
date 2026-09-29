@@ -1,5 +1,9 @@
 # tasks.md — OK RICH task list
 
+> **Historical document.** Written during the spec-driven build (30 August to early September 2026) and kept as a record of how decisions were made. Parts are superseded: payment moved from
+> Stripe to Dodo Payments, and several checklists here were completed or replaced. The current
+> state is in `README.md`, `docs/` and the code.
+
 Phase 3 · Tasks · 2026-08-30 · approved together with plan.md ("los").
 One commit per numbered step (Conventional Commits). A step is done only when its check passes.
 Environment: Node 24.14, npm 11, Docker 29 + Compose v5, Playwright Chromium present.

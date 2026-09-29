@@ -28,7 +28,7 @@ constitution requires and what you can read and audit in one place. Dodo follows
 Add to the n8n service environment and restart n8n:
 
 ```
-DODO_WEBHOOK_SECRET=whsec_...          # from the Dodo webhook endpoint (docs/dodo-setup.md §5)
+DODO_WEBHOOK_SECRET=whsec_...          # from the Dodo webhook endpoint (docs/dodo-setup.md §4)
 NODE_FUNCTION_ALLOW_BUILTIN=crypto       # lets the Code nodes require('crypto')
 OKRICH_IP_SALT=<random 32+ chars>        # salt for the visitor-counter IP hash (never logged)
 EXECUTIONS_DATA_PRUNE=true               # keep execution data short-lived (privacy, A13)

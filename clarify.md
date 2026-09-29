@@ -1,5 +1,9 @@
 # clarify.md — Phase 1 clarifications
 
+> **Historical document.** Written during the spec-driven build (30 August to early September 2026) and kept as a record of how decisions were made. Parts are superseded: payment moved from
+> Stripe to Dodo Payments, and several checklists here were completed or replaced. The current
+> state is in `README.md`, `docs/` and the code.
+
 2026-08-30 · companion to `spec.md`. Max three open questions (constitution §2);
 everything else was resolved by reference or by an assumption listed in `spec.md` §9.
 

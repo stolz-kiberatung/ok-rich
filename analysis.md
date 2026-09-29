@@ -1,5 +1,9 @@
 # analysis.md — Phase 5, v1 against the gates
 
+> **Historical document.** Written during the spec-driven build (30 August to early September 2026) and kept as a record of how decisions were made. Parts are superseded: payment moved from
+> Stripe to Dodo Payments, and several checklists here were completed or replaced. The current
+> state is in `README.md`, `docs/` and the code.
+
 2026-08-30 · status: **v1 complete locally; owner inputs and Hetzner rollout outstanding**
 
 ## 1. Constitution §7 gates vs. results

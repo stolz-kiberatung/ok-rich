@@ -12,7 +12,7 @@ site structurally cannot do wrong, and what was fixed on this pass.
 | Surface               | Exposure                                                                             | Assessment                                                                    |
 | --------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
 | The static site       | nginx serving pre-built files, no backend, no database, no server-side form handling | **Very small.** Nothing to inject into, nothing to query                      |
-| Buyer-controlled text | the board name, and the optional checkout message                                    | **The real one.** See below                                                   |
+| Buyer-controlled text | the board name, the delivery address, anything added to the checkout URL by hand     | **The real one.** See below                                                   |
 | n8n                   | two public webhooks plus a login page                                                | **The largest.** A Node process, and it holds credentials                     |
 | The host              | SSH, Docker, the reverse proxy                                                       | Key-only SSH, firewall, fail2ban, unattended upgrades, rate limiting          |
 | Supply chain          | 8 dev dependencies, zero runtime dependencies                                        | `npm audit`: 0 vulnerabilities. Nothing ships to the browser but our own code |

@@ -393,6 +393,30 @@ test.describe('pay form', () => {
     await expect(input).toBeVisible();
   });
 
+  // The Wall of Thumbs needs consent, and the only way to give it is this box. It must start
+  // unticked, send nothing while unticked, and send exactly metadata_wall=yes when ticked.
+  test('asks for Wall of Thumbs consent with an unticked box', async ({ page }) => {
+    await page.goto('/pay');
+    const box = page.locator('#wall-consent');
+    await expect(box).toHaveAttribute('type', 'checkbox');
+    await expect(box).toHaveAttribute('name', 'metadata_wall');
+    await expect(box).toHaveAttribute('value', 'yes');
+    await expect(box, 'consent is never pre-ticked').not.toBeChecked();
+    await expect(box, 'it must not be required').not.toHaveAttribute('required', /.*/);
+
+    const submitted = async () =>
+      page.evaluate(() =>
+        new URLSearchParams(
+          new FormData(document.getElementById('payform') as HTMLFormElement) as never,
+        ).toString(),
+      );
+    expect(await submitted()).not.toContain('metadata_wall');
+    await page.locator('label[for="wall-consent"]').click();
+    await expect(box).toBeChecked();
+    expect(await submitted()).toContain('metadata_wall=yes');
+    await expect(page.locator('body')).not.toContainText(/wall me/i);
+  });
+
   // The amount is chosen inside Dodo's own checkout (Pay What You Want with a minimum),
   // so this page must not ask for it a second time.
   test('does not ask for an amount — Dodo does that', async ({ page }) => {
